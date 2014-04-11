@@ -25,21 +25,21 @@
             <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
                 <div class="container-fluid">
                     <!-- Brand and toggle get grouped for better mobile display -->
-                    <div class="navbar-header">
-                        <ol class="breadcrumb">
+                    <ul class="nav navbar-nav navbar-left">
+                        <ol class="breadcrumb list inline">
                           <li><a href="#">Show</a></li>
                           <li><a href="#">Act</a></li>
                           <li class="active">Current Section</li><!-- or could be Edit -->
                         </ol>
-                    </div>
+                    </ul>
               
                 </div><!--container-fluid -->
             </nav>
             
-            <div class="row" id="left-pane">
-                
+            <div class="row" id="main-pane">
+
                 <!-- Sections -->
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                     <div class="panel panel-default">
                       <div class="panel-heading">Sections</div>
                     
@@ -48,11 +48,20 @@
                         <li class="list-group-item">Section 1</li>
                         <li class="list-group-item">Section 2</li>
                       </ul>
+                    
+                      <form class="form-inline" role="form">
+                          <div class="form-group">
+                            <label class="sr-only" for="add-section">Add Section</label>
+                            <textarea class="form-control" id="add-section" rows="3"></textarea>
+                            <button type="submit" class="btn btn-primary">Add</button>
+                          </div>
+                      </form>
+                        
                     </div>
                 </div>
                 
                 <!-- Moves container -->
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                     <div class="panel panel-default">
                       <div class="panel-heading">Moves</div>
                     
@@ -61,11 +70,35 @@
                         <li class="list-group-item">Move 1</li>
                         <li class="list-group-item">Move 2</li>
                       </ul>
+                        
+                      <form class="form-inline" role="form">
+                          <div class="form-group">
+                            <label class="sr-only" for="add-move">Add Move</label>
+                            <textarea class="form-control" id="add-move" rows="3"></textarea>
+                            <button type="submit" class="btn btn-primary">Add</button>
+                          </div>
+                      </form>
+                        
                     </div>
                 </div>
                 
+                <!-- Right side of the panel -->
+                <div class="col-sm-6">
+                    
+                    <!-- Weapons Group Buttons -->
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-default">Sword</button>
+                      <button type="button" class="btn btn-default">Staff</button>
+                      <button type="button" class="btn btn-default">Fist</button>
+                    </div>
+                    
+                    <!-- Add Youtube player here -->
+                    
+                </div><!-- col-sm-6 -->
+                
             </div><!-- row -->
 
+   
         </div><!-- panel-container -->
         
         <!-- Bootstrap core JavaScript

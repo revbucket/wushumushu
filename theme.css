@@ -1,6 +1,6 @@
 body {
-  padding-top: 70px;
-  margin:30px;
+  padding-top: 90px;
+  
 }
 
 .theme-dropdown .dropdown-menu {
@@ -11,5 +11,17 @@ body {
 
 .panel-container > p > .btn {
   margin: 5px 0;
+}
+
+/* Credit to http://stackoverflow.com/questions/20270438/breadcrumb-into-a-navbar-in-bootstrap-3-0-2
+for this. */
+.nav .breadcrumb {
+    margin: 0 7px;
+}
+@media (min-width: 768px) {
+    .nav .breadcrumb {
+        float: left;
+        margin: 7px 10px;
+    }
 }
 
