@@ -1,6 +1,6 @@
 body {
   padding-top: 70px;
-  padding-bottom: 30px;
+  margin:30px;
 }
 
 .theme-dropdown .dropdown-menu {
@@ -9,6 +9,7 @@ body {
   margin-bottom: 20px;
 }
 
-.theme-showcase > p > .btn {
+.panel-container > p > .btn {
   margin: 5px 0;
 }
+
