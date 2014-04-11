@@ -1,3 +1,21 @@
+#top-pane {
+    overflow:hidden;
+    display:table;
+}
+
+#top-row {
+    display:table-cell;
+}
+
+#breadcrumbs {
+    float:left;
+    margin-right:50px;
+}
+
+#song-title {
+    float:left;  
+}
+
 #left-pane {
     float:left;
     margin-right:50px;
@@ -24,6 +42,10 @@
     border:1px solid black;
     float:left;
     padding:10px;
+}
+
+#weapons {
+    padding-bottom:20px;  
 }
 
 #youtube {
