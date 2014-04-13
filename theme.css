@@ -25,3 +25,12 @@ for this. */
     }
 }
 
+.nav .btn-group {
+    margin: 0 7px;
+}
+@media (min-width: 768px) {
+    .nav .btn-group {
+        float: left;
+        margin: 7px 10px;
+    }
+}

@@ -32,6 +32,13 @@
                           <li class="active">Current Section</li><!-- or could be Edit -->
                         </ol>
                     </ul>
+            
+                    <ul class="nav navbar-nav navbar-right">
+                        <div class="btn-group">
+                          <button type="button" class="btn btn-default">Edit</button>
+                          <button type="button" class="btn btn-default">View</button>
+                        </div>
+                    </ul>
               
                 </div><!--container-fluid -->
             </nav>
@@ -49,19 +56,20 @@
                         <li class="list-group-item">Section 2</li>
                       </ul>
                     
-                      <form class="form-inline" role="form">
-                          <div class="form-group">
-                            <label class="sr-only" for="add-section">Add Section</label>
-                            <textarea class="form-control" id="add-section" rows="3"></textarea>
-                            <button type="submit" class="btn btn-primary">Add</button>
-                          </div>
-                      </form>
+                     
+                      <div class="input-group">
+                          <input type="text" class="form-control">
+                          <span class="input-group-btn">
+                            <button class="btn btn-default" type="button">Add</button>
+                          </span>      
+                      </div>
+                   
                         
                     </div>
                 </div>
                 
                 <!-- Moves container -->
-                <div class="col-sm-3">
+                <div class="col-sm-4">
                     <div class="panel panel-default">
                       <div class="panel-heading">Moves</div>
                     
@@ -70,12 +78,19 @@
                         <li class="list-group-item">Move 1</li>
                         <li class="list-group-item">Move 2</li>
                       </ul>
-                        
-                      <form class="form-inline" role="form">
+                    
+                      <form class="form-horizontal" role="form">
                           <div class="form-group">
-                            <label class="sr-only" for="add-move">Add Move</label>
-                            <textarea class="form-control" id="add-move" rows="3"></textarea>
-                            <button type="submit" class="btn btn-primary">Add</button>
+                            <div class="col-sm-12">
+                                <label class="sr-only" for="add-move">Add Move</label>
+                                <textarea class="form-control" id="add-move" rows="3"></textarea>
+                            </div>
+                          </div>
+                          
+                          <div class="form-group">
+                            <div class="col-sm-offset-5">
+                                <button type="submit" class="btn btn-default">Add</button>
+                            </div>
                           </div>
                       </form>
                         
@@ -83,7 +98,7 @@
                 </div>
                 
                 <!-- Right side of the panel -->
-                <div class="col-sm-6">
+                <div class="col-sm-5">
                     
                     <!-- Weapons Group Buttons -->
                     <div class="btn-group">
@@ -93,6 +108,7 @@
                     </div>
                     
                     <!-- Add Youtube player here -->
+                    <iframe width="560" height="315" src="http://www.youtube.com/embed/WzUxxqSMpB0?rel=0" frameborder="0" allowfullscreen></iframe>
                     
                 </div><!-- col-sm-6 -->
                 
