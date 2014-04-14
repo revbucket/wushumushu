@@ -74,14 +74,10 @@
                   <div class="panel-heading">Sections</div>
                 
                   <!-- List group -->
-                  <ul class="list-group">
-                    <li class="list-group-item">
-                        Section 1
-                        
-                        
-                    </li>
-                    <li class="list-group-item">Section 2</li>
-                  </ul>
+                  <div class="list-group">
+                    <a href="#" class="list-group-item">Section 1</a>
+                    <a href="#" class="list-group-item">Section 2</a>
+                  </div>
                 
                  
                   <div class="input-group edit">
@@ -102,10 +98,10 @@
                 
 
                   <!-- List group -->
-                  <ul class="list-group">
-                    <li class="list-group-item">Move 1</li>
-                    <li class="list-group-item">Move 2</li>
-                  </ul>
+                  <div class="list-group">
+                    <a href="#" class="list-group-item">Move 1</a>
+                    <a href="#" class="list-group-item">Move 2</a>
+                  </div>
                 
                   <form class="form-horizontal" role="form">
                       <div class="form-group edit">
@@ -353,14 +349,25 @@
      
     <script>
         /* Add edit and delete buttons to each list element. */  
-        $(".list-group-item").append(
-            '<div class="pull-right" style:"padding-right:1em;">' + 
+        /*$(".list-group-item").append(
+            '<div class="pull-right">' + 
                 '<button type="button" class="btn btn-default btn-xs">' +
                   '<span class="glyphicon glyphicon-pencil"></span>' +
                 '</button>' + 
                 '<button type="button" class="btn btn-default btn-xs">' + 
                   '<span class="glyphicon glyphicon-remove"></span>' + 
                 '</button>' + 
+            '</div>'
+        );*/
+        
+        $(".list-group-item").append(
+            '<div class="pull-right">' +
+            '<a href="#" style="padding-right:0.5em;">' +
+            '<span class="glyphicon glyphicon-pencil"></span>' +
+            '</a>' +
+            '<a href="#">' +
+            '<span class="glyphicon glyphicon-remove"></span>' +
+            '</a>' +
             '</div>'
         );
     </script>
