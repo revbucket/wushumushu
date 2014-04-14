@@ -212,7 +212,7 @@
             '</div>'
         );*/
         
-        /* Add edit and delete links to each list element. They serve as buttons. */
+        /* Add edit and delete icons for each list element. They serve as buttons. */
         var addListEditing = function(id) {
             $("#"+id).append(
             '<div class="pull-right edit">' +
@@ -220,23 +220,7 @@
             '<span class="glyphicon glyphicon-remove"></span>' +
             '</div>'
             );
-            
-            /*var inverseClass = "";
-            
-            if (isActive) {
-                inverseClass = ".icon-white";
-            } 
-            $("#"+id).append(
-            '<div class="pull-right">' +
-            '<a href="#" style="padding-right:0.5em;">' +
-            '<span class="glyphicon glyphicon-pencil ' + inverseClass + '"></span>' +
-            '</a>' +
-            '<a href="#">' +
-            '<span class="glyphicon glyphicon-remove ' + inverseClass + '"></span>' +
-            '</a>' +
-            '</div>'
-        );*/
-            
+ 
         }
         
         /* 
@@ -267,12 +251,15 @@
                 }
             }
         }
-        
-        /* Select a section */
-        
-        
+                 
         listSections(0);
         addListEditing();
+        
+         /* Select a section */
+        $('.section').click(function() {
+              $(".section.active").removeClass("active");
+              $(this).addClass('active');
+        });
 
       /*Video section handling */
 
