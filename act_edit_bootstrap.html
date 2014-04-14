@@ -227,39 +227,53 @@
         List all sections
         Reference: http://stackoverflow.com/questions/10654992/how-to-get-collection-of-keys-in-javascript-dictionary 
         */
-        var listSections = function(activeSection) {
-            var n = 0;
+        var listSections = function() {
+            var useFirst = true;
             
             for(var key in actDictionary) {
-                if(actDictionary.hasOwnProperty(key)){ 
-                    if (n === activeSection) {
+                if(actDictionary.hasOwnProperty(key)){
+                    if (useFirst) {
                         $("#section-list").append(
-                            '<a href="#" class="list-group-item active section" id="section_' + 
-                            n + '">' + key + '</a>'
+                            '<a href="#" class="list-group-item active section" id="' +
+                            key + '">' + key + '</a>'
                         );
+                        useFirst = false;
                         
                     } else {
                         $("#section-list").append(
-                            '<a href="#" class="list-group-item section" id="section_' +
-                            n + '">' + key + '</a>'
+                            '<a href="#" class="list-group-item section" id="' +
+                            key + '">' + key + '</a>'
                         );
                     }
                     
-                    addListEditing("section_"+n);
-                    n += 1;
-                    
+                    addListEditing(key);
+
                 }
             }
         }
-                 
-        listSections(0);
-        addListEditing();
         
-         /* Select a section */
+        /*
+        List moves for the selected section.
+        */
+        var listMoves = function() {
+            var activeSection = $(".section.active").attr('id');
+            console.log(activeSection);
+        }
+                 
+        listSections();
+        addListEditing();
+        listMoves();
+        
+        /* 
+        Select a section
+        Reference for using .section: http://stackoverflow.com/questions/12687085/jquery-remove-class-if-other-element-is-clicked
+        */
         $('.section').click(function() {
               $(".section.active").removeClass("active");
               $(this).addClass('active');
         });
+        
+        
 
       /*Video section handling */
 
