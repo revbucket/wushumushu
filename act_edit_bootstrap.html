@@ -9,47 +9,21 @@
     
     <title>WushuMushu Edit</title>
       
-    <!-- jQuery -->
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    
     <!-- Bootstrap core CSS -->
     <link href="bootstrap-3.1.1-dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap theme -->
     <link href="bootstrap-3.1.1-dist/css/bootstrap-theme.min.css" rel="stylesheet">
-      
-    <!-- Bootstrap JS -->
-    <script src="bootstrap-3.1.1-dist/js/bootstrap.min.js"></script>
     
     <!-- Custom styles for this template -->
     <link href="theme.css" rel="stylesheet">
-      
-    <!-- Reference: view-source:http://labs.abeautifulsite.net/demos/bootstrap-file-inputs/ -->
-    <script>
-		$(document)
-			.on('change', '.btn-file :file', function() {
-				var input = $(this),
-				numFiles = input.get(0).files ? input.get(0).files.length : 1,
-				label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-				input.trigger('fileselect', [numFiles, label]);
-		});
-		
-		$(document).ready( function() {
-			$('.btn-file :file').on('fileselect', function(event, numFiles, label) {
-				
-				var input = $(this).parents('.input-group').find(':text'),
-					log = numFiles > 1 ? numFiles + ' files selected' : label;
-				
-				if( input.length ) {
-					input.val(log);
-				} else {
-					if( log ) alert(log);
-				}
-				
-			});
-		});		
-	</script>
     
+    <!-- Stylesheet for impromptu -->
+    <link href="impromptu.css" rel="stylesheet">
+    <!--- Stylesheet for select forms -->
+    <link href="bootstrap-select.css" rel="stylesheet">
+
  </head>
+
     
  <body role="document">
         
@@ -80,7 +54,7 @@
             <div class="col-sm-7">
                 
                 <!-- Reference: view-source:http://labs.abeautifulsite.net/demos/bootstrap-file-inputs/ -->
-                <div class="input-group" style="padding-bottom:2em">
+                <div class="input-group" style="padding-bottom:2em;">
                     <span class="input-group-btn">
                         <span class="btn btn-default btn-file">
                             Add Song<input type="file" multiple>
@@ -125,6 +99,7 @@
                 <div class="panel panel-default">
                   <div class="panel-heading">Moves</div>
                 
+
                   <!-- List group -->
                   <ul class="list-group">
                     <li class="list-group-item">Move 1</li>
@@ -148,31 +123,57 @@
                     
                 </div>
             </div>
-            
-            <!-- Right side of the panel -->
-            <div class="col-sm-5">
-                
-                <!-- Weapons Group Buttons -->
-                <div class="btn-group btn-group-justified">
-                  <div class="btn-group">
-                      <button type="button" class="btn btn-default">Sword</button>
-                  </div>
-                  <div class="btn-group">
-                      <button type="button" class="btn btn-default">Staff</button>
-                  </div>
-                  <div class="btn-group">
-                      <button type="button" class="btn btn-default">Fist</button>
-                  </div>
-                </div>
-                
-                <!-- Add Youtube player here -->
-                <div class="" style="padding-top:2em;">
-                    <div class="vid">
-                        <iframe width="560" height="315" src="http://www.youtube.com/embed/WzUxxqSMpB0?rel=0" frameborder="0" allowfullscreen></iframe>
+
+
+                <!-- Right side of the panel -->
+
+                <div class="col-sm-5">
+                    <!-- Weapons Group Buttons -->
+                    <div class="btn-group btn-group-justified" id = "weaponList">
+		      <div class = "btn-group" id = "edit-weapon-btn">
+
+			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+			  Edit <span class="caret"></span>
+			</button>
+			<ul class="dropdown-menu dropdown-menu-right" role="menu">
+			  <li><a id = "new-weapon-button"> New weapon </a></li>
+			  <li class="divider"></li>
+			  <li><a id = "delete-weapon-button">Delete Weapon</a></li>
+                        </ul> 
+	              </div>
+
                     </div>
-                </div>
                     
-            </div><!-- col-sm-6 -->
+                    <!-- Add Youtube player here -->
+            
+                    <div class="" style="padding-top:2em;">
+                        <div class = "panel panel-primary" id = "selectWeaponPanel">
+			   <div class="panel-heading"></div>
+                           <div class="panel-body">
+                              Add or select a weapon group first, then add a video!
+                           </div>
+			</div>
+
+		        <div class= "panel-primary panel" id = "newDivPanel">
+			  <div class = "panel-heading"> </div>
+                           <div class="panel-body">
+                            <div class= "btn-group btn-group-lg" style="margin: 10px 100px 20px 100px; text-align: center;">
+			        <button type="button" class="btn btn-default" id="linkButton">Insert link to youtube video</button>
+			    </div>
+			    
+                            <div class= "btn-group btn-group-lg" style="left:15%;  text-align:center;">
+			        <button type="button" class="btn btn-default" id="uploadButton">Upload a video from your computer</button>
+			    </div>
+
+                           </div>
+                        </div>
+                        <div class="vid" id = "vidPanel">
+                            <iframe width="560" height="315" id="youtubePlugin" src="http://www.youtube.com/embed/WzUxxqSMpB0?rel=0" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                        
+                </div><!-- col-sm-6 -->
+
             
         </div><!-- row -->
 
@@ -186,7 +187,196 @@
     <script src="bootstrap-3.1.1-dist/js/bootstrap.min.js"></script>
     <script src="bootstrap-3.1.1-dist/assets/js/docs.min.js"></script>
     
- </body>
+    <script src="jquery-1.9.0.min.js"></script>
+    <script src="impromptu.min.js"></script>
+    <script src="bootstrap-select.min.js"></script>
+    <script type = "text/javascript">
+      /*
+      Data model for GR4:
+      Each act has ONE master dictionary that holds all information organized as follows
+      Dict[sectionName] -> MoveDict
+      MoveDict[moveName] -> TextWeaponTuple
+      TextWeaponTuple = [MoveText, WeaponList]
+      WeaponList = [(weapon1, videoURL), ... (weaponX, videoURL)]
+      */
+      var actDictionary = {'section1': {'move1': ['This is the move text to display', {'Sword': "http://www.youtube.com/embed/WzUxxqSMpB0?rel=0", 'Staff': null, 'Fist': null}], 
+                                        'move2': null},
+                           'section2': null};
+      var currentSection = 'section1';
+      var currentMove = 'move1';
+      var currentWeapon = 'sword';
+      var currentVideo = 'null';
+      /*Video section handling */
+
+      var renderVideoPanel = function() {
+        if (currentWeapon == null) {
+          $("#selectWeaponPanel").show();
+          $("#newDivPanel").hide();
+          $("#vidPanel").hide();
+        } else{
+        var videoURL = actDictionary[currentSection][currentMove][1][currentWeapon];
+        if (videoURL == null) {
+          $("#selectWeaponPanel").hide();
+          $("#newDivPanel").show();
+          $("#vidPanel").hide();
+
+
+        } else {
+          $("#selectWeaponPanel").hide();
+          $("#newDivPanel").hide();
+          $("#vidPanel").show();
+
+        }
+        }
+      var addLink = function() {
+        $.prompt("HelloWorld");
+      }
+      
+      };
+      /*Weapons group handling */
+      var populateWeaponList = function(section, move) {
+          $(".weapon-div").remove();
+          $.each(actDictionary[section][move][1], function(key, value) {
+                 var newIDDiv = key + "-weapon-div";
+                 var newIDString = key + "-weapon-btn";
+                 var newButton = jQuery('<div/>', {id: newIDDiv,
+                                        class: 'btn-group weapon-div'}).html('<button type="button" class="btn btn-default weapon-btn" id="'+newIDString + '">'+ 
+                                    key + '</button>');
+                 $('#edit-weapon-btn').before(newButton);
+          }); 
+             $(".weapon-btn").click( function(e) {clickWeaponButton(e.target.id)});
+      };
+       
+      var clickWeaponButton = function(id){
+         console.log(id);
+
+         $(".weapon-btn").removeClass("btn-info");
+         $("#"+id).addClass("btn-info");         
+         currentWeapon = id.split('-')[0];
+         renderVideoPanel();
+         
+      };
+
+      $('#new-weapon-button').click( function(e) {
+
+         var newWeapon = null;
+         var newWeaponPrompt = {
+                state0: {
+		    title: 'New Weapon',
+                    html:'<label>Weapon Name <input type="text" name="fname" value=""></label><br />',
+                    buttons: { Cancel: -1, Done: 1 },
+                    focus: 1,
+                    submit:function(e,v,m,f){ 
+                        var newWeaponID = f.fname+"-weapon-btn";
+                        var newDivID = f.fname+"-weapon-div";
+                        if (f.fname != "") {      
+                            var newButton = jQuery('<div/>', {id: newDivID, 
+                                             class: 'btn-group weapon-div'}).html('<button type="button" class="btn btn-default weapon-btn" id=' + newWeaponID + '>'+
+	                                     f.fname + '</button>');
+                            //click weapon button function by
+
+                            $('#edit-weapon-btn').before(newButton);
+                            newButton.click(function(e) {
+                                 clickWeaponButton(newWeaponID);
+                            });
+                            actDictionary[currentSection][currentMove][1][f.fname]= null;
+                            currentWeapon = f.fname;
+                            clickWeaponButton(newWeaponID);
+                        }
+			e.preventDefault();
+                        if(v==-1) $.prompt.close();
+                        if(v==1) $.prompt.close();
+                    },
+            },
+  	};
+        $.prompt(newWeaponPrompt);
+
+      });
+      
+
+      $('#delete-weapon-button').click( function(e) {
+      var currentWeaponList = Object.keys(actDictionary[currentSection][currentMove][1]);
+      var selectForm = $("<select></select>");
+      $.each(actDictionary[currentSection][currentMove][1], function(key, value) {
+        selectForm.append($("<option></option>").attr("value",key).text(key));
+      });
+
+      var deleteWeaponPrompt = {
+                state0: {
+		    title: 'Delete Weapon',
+                    html: "<select name = 'dname' id = 'delete-weapon-select' class=selectpicker'>" + selectForm.html() + "</select>",
+                    buttons: { Cancel: -1, Done: 1 },
+                    focus: 1,
+                    submit:function(e,v,m,f){ 
+
+                        if(v==1) {
+                            delete actDictionary[currentSection][currentMove][1][f.dname];
+                            $("#"+f.dname + "-weapon-div").remove();
+                            if (f.dname == currentWeapon){
+                                currentWeapon = null;
+                                currentVideo = null;
+                                renderVideoPanel();
+                            };
+                        }
+                        
+			e.preventDefault();
+                        if(v==-1) $.prompt.close();
+                        if(v==1) $.prompt.close();
+                    },
+                   loaded:function(e){
+                    $('select').selectpicker();
+                   },
+            },
+  	};
+        var actualDeletePrompt = $.prompt(deleteWeaponPrompt);
+        actualDeletePrompt.on("impromptu:loaded", function(e){$('select').selectpicker()});
+        $.each(actDictionary[currentSection][currentMove][1], function(key, value) {
+          jQuery('<div/>', {value: key}).html("<option value='"+key+"'>" + key + "</option>").appendTo("#delete-select");
+        });
+      });
+
+
+      $(document).ready(function() {
+          $('select').selectpicker();
+          populateWeaponList(currentSection, currentMove);
+
+          $("#linkButton").click(function() {
+           
+      $.prompt("Hello world");
+          });
+      renderVideoPanel();
+
+      });
+
+    </script>
+
+    <!-- Reference: view-source:http://labs.abeautifulsite.net/demos/bootstrap-file-inputs/ -->
+    <script>
+		$(document)
+			.on('change', '.btn-file :file', function() {
+				var input = $(this),
+				numFiles = input.get(0).files ? input.get(0).files.length : 1,
+				label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+				input.trigger('fileselect', [numFiles, label]);
+		});
+		
+		$(document).ready( function() {
+			$('.btn-file :file').on('fileselect', function(event, numFiles, label) {
+				
+				var input = $(this).parents('.input-group').find(':text'),
+					log = numFiles > 1 ? numFiles + ' files selected' : label;
+				
+				if( input.length ) {
+					input.val(log);
+				} else {
+					if( log ) alert(log);
+				}
+				
+			});
+		});		
+	</script>
+     
+  </body>
     
 </html>
       
