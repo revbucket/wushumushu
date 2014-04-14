@@ -196,9 +196,18 @@
                            'section2': null};
       var currentSection = 'section1';
       var currentMove = 'move1';
-      var currentWeapon = 'sword';
-      var currentVideo = 'null';
+      var currentWeapon = 'Sword';
       /*Video section handling */
+
+      var getId = function(url) {
+         var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+         var match = url.match(regExp);
+         if (match && match[2].length == 11) {
+             return match[2];
+         } else {
+            return 'error';
+         }
+      };
 
       var renderVideoPanel = function() {
         if (currentWeapon == null) {
@@ -306,7 +315,6 @@
                             $("#"+f.dname + "-weapon-div").remove();
                             if (f.dname == currentWeapon){
                                 currentWeapon = null;
-                                currentVideo = null;
                                 renderVideoPanel();
                             };
                         }
@@ -333,11 +341,54 @@
           populateWeaponList(currentSection, currentMove);
 
           $("#linkButton").click(function() {
-           
-      $.prompt("Hello world");
+             var linkPrompt =  {
+                state0: {
+		    title: 'Upload Youtube URL',
+                    html:'<label>YoutubeURL <input type="text" name="fname" value=""></label><br />',
+                    buttons: { Cancel: -1, Done: 1 },
+                    focus: 1,
+                    submit:function(e,v,m,f){ 
+                        if (f.fname != "") {      
+                            embedID = getId(f.fname);
+                            actDictionary[currentSection][currentMove][1][currentWeapon] =f.fname;
+                            $("#youtubePlugin").attr('src',"http://www.youtube.com/embed/"+embedID);
+                            renderVideoPanel();
+                        }
+			e.preventDefault();
+                        if(v==-1) $.prompt.close();
+                        if(v==1) $.prompt.close();
+                    },
+            },
+  	};
+             $.prompt(linkPrompt);
           });
-      renderVideoPanel();
 
+          $("#uploadButton").click(function() {
+             var linkPrompt =  {
+                state0: {
+		    title: 'Upload File To Youtube',
+                    html:'<label>File location <input type="text" name="fname" value=""></label><br />',
+                    buttons: { Cancel: -1, Done: 1 },
+                    focus: 1,
+                    submit:function(e,v,m,f){ 
+                        if (f.fname != "") {      
+                            embedID = getId("https://www.youtube.com/watch?v=sJgDYdA8dio"); //CANNED
+                            actDictionary[currentSection][currentMove][1][currentWeapon] =f.fname;
+                            $("#youtubePlugin").attr('src',"http://www.youtube.com/embed/"+embedID);
+                            renderVideoPanel();
+                        }
+			e.preventDefault();
+                        if(v==-1) $.prompt.close();
+                        if(v==1) $.prompt.close();
+                    },
+            },
+  	};
+             $.prompt(linkPrompt);
+          });
+
+      renderVideoPanel();
+      console.log($("#youtubePlugin").html());
+      $("#Sword-weapon-btn").addClass("btn-info");
       });
 
     </script>
