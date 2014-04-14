@@ -42,7 +42,7 @@
         
                 <ul class="nav navbar-nav navbar-right">
                     <div class="btn-group">
-                      <button type="button" class="btn btn-default">Edit</button>
+                      <button type="button" class="btn btn-default edit">Edit</button>
                       <button type="button" class="btn btn-default">View</button>
                     </div>
                 </ul>
@@ -54,7 +54,7 @@
             <div class="col-sm-7">
                 
                 <!-- Reference: view-source:http://labs.abeautifulsite.net/demos/bootstrap-file-inputs/ -->
-                <div class="input-group" style="padding-bottom:2em;">
+                <div class="input-group edit" style="padding-bottom:2em;">
                     <span class="input-group-btn">
                         <span class="btn btn-default btn-file">
                             Add Song<input type="file" multiple>
@@ -78,21 +78,13 @@
                     <li class="list-group-item">
                         Section 1
                         
-                        <div class="pull-right" style:"padding-right:1em;">
-                            <button type="button" class="btn btn-default btn-xs">
-                              <span class="glyphicon glyphicon-pencil"></span>
-                            </button>
-                            <button type="button" class="btn btn-default btn-xs">
-                              <span class="glyphicon glyphicon-remove"></span>
-                            </button>
-                        </div>
                         
                     </li>
                     <li class="list-group-item">Section 2</li>
                   </ul>
                 
                  
-                  <div class="input-group">
+                  <div class="input-group edit">
                       <input type="text" class="form-control">
                       <span class="input-group-btn">
                         <button class="btn btn-default" type="button">Add</button>
@@ -116,14 +108,14 @@
                   </ul>
                 
                   <form class="form-horizontal" role="form">
-                      <div class="form-group">
+                      <div class="form-group edit">
                         <div class="col-sm-12">
                             <label class="sr-only" for="add-move">Add Move</label>
                             <textarea class="form-control" id="add-move" rows="3"></textarea>
                         </div>
                       </div>
                       
-                      <div class="form-group">
+                      <div class="form-group edit">
                         <div class="col-sm-offset-5">
                             <button type="submit" class="btn btn-default">Add</button>
                         </div>
@@ -357,6 +349,20 @@
 
       });
 
+    </script>
+     
+    <script>
+        /* Add edit and delete buttons to each list element. */  
+        $(".list-group-item").append(
+            '<div class="pull-right" style:"padding-right:1em;">' + 
+                '<button type="button" class="btn btn-default btn-xs">' +
+                  '<span class="glyphicon glyphicon-pencil"></span>' +
+                '</button>' + 
+                '<button type="button" class="btn btn-default btn-xs">' + 
+                  '<span class="glyphicon glyphicon-remove"></span>' + 
+                '</button>' + 
+            '</div>'
+        );
     </script>
 
     <!-- Reference: view-source:http://labs.abeautifulsite.net/demos/bootstrap-file-inputs/ -->
