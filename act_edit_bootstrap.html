@@ -8,7 +8,7 @@
     <meta name="author" content="">
     
     <title>WushuMushu Edit</title>
-    
+      
     <!-- Bootstrap core CSS -->
     <link href="bootstrap-3.1.1-dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap theme -->
@@ -22,103 +22,110 @@
     <!--- Stylesheet for select forms -->
     <link href="bootstrap-select.css" rel="stylesheet">
 
-    </head>
+ </head>
+
     
-    <body role="document">
+ <body role="document">
         
-        <div class="container panel-container" role="main">
-            
-            <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-                <div class="container-fluid">
-                    <!-- Brand and toggle get grouped for better mobile display -->
-                    <ul class="nav navbar-nav navbar-left">
-                        <ol class="breadcrumb list inline">
-                          <li><a href="#">Show</a></li>
-                          <li><a href="#">Act</a></li>
-                          <li class="active">Current Section</li><!-- or could be Edit -->
-                        </ol>
-                    </ul>
-            
-                    <ul class="nav navbar-nav navbar-right">
-                        <div class="btn-group">
-                          <button type="button" class="btn btn-default">Edit</button>
-                          <button type="button" class="btn btn-default">View</button>
-                        </div>
-                    </ul>
-              
-                </div><!--container-fluid -->
-            </nav>
-            
-            <div class="row" id="song-pane">
-                <div class="col-sm-7">
-                    
-                    <!-- Reference: view-source:http://labs.abeautifulsite.net/demos/bootstrap-file-inputs/ -->
-                    <div class="input-group" style="padding-bottom:2em;">
-                        <span class="input-group-btn">
-                            <span class="btn btn-default btn-file">
-                                Add Song<input type="file" multiple>
-                            </span>
-                        </span>
-                        <input type="text" class="form-control" readonly>
+    <div class="container panel-container" role="main">
+        
+        <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <ul class="nav navbar-nav navbar-left">
+                    <ol class="breadcrumb list inline">
+                      <li><a href="#">Show</a></li>
+                      <li><a href="#">Act</a></li>
+                      <li class="active">Current Section</li><!-- or could be Edit -->
+                    </ol>
+                </ul>
+        
+                <ul class="nav navbar-nav navbar-right">
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-default edit">Edit</button>
+                      <button type="button" class="btn btn-default">View</button>
                     </div>
+                </ul>
+          
+            </div><!--container-fluid -->
+        </nav>
+        
+        <div class="row" id="song-pane">
+            <div class="col-sm-7">
+                
+                <!-- Reference: view-source:http://labs.abeautifulsite.net/demos/bootstrap-file-inputs/ -->
+                <div class="input-group edit" style="padding-bottom:2em;">
+                    <span class="input-group-btn">
+                        <span class="btn btn-default btn-file">
+                            Add Song<input type="file" multiple>
+                        </span>
+                    </span>
+                    <input type="text" class="form-control" readonly>
+                </div>
+                
+            </div>
+        </div>
+        
+        <div class="row" id="main-pane">
+
+            <!-- Sections -->
+            <div class="col-sm-3">
+                <div class="panel panel-default">
+                  <div class="panel-heading">Sections</div>
+                
+                  <!-- List group -->
+                  <ul class="list-group">
+                    <li class="list-group-item">
+                        Section 1
+                        
+                        
+                    </li>
+                    <li class="list-group-item">Section 2</li>
+                  </ul>
+                
+                 
+                  <div class="input-group edit">
+                      <input type="text" class="form-control">
+                      <span class="input-group-btn">
+                        <button class="btn btn-default" type="button">Add</button>
+                      </span>      
+                  </div>
+               
                     
                 </div>
             </div>
             
-            <div class="row" id="main-pane">
+            <!-- Moves container -->
+            <div class="col-sm-4">
+                <div class="panel panel-default">
+                  <div class="panel-heading">Moves</div>
+                
 
-                <!-- Sections -->
-                <div class="col-sm-3">
-                    <div class="panel panel-default">
-                      <div class="panel-heading">Sections</div>
-                    
-                      <!-- List group -->
-                      <ul class="list-group">
-                        <li class="list-group-item">Section 1</li>
-                        <li class="list-group-item">Section 2</li>
-                      </ul>
-                    
-                     
-                      <div class="input-group">
-                          <input type="text" class="form-control">
-                          <span class="input-group-btn">
-                            <button class="btn btn-default" type="button">Add</button>
-                          </span>      
+                  <!-- List group -->
+                  <ul class="list-group">
+                    <li class="list-group-item">Move 1</li>
+                    <li class="list-group-item">Move 2</li>
+                  </ul>
+                
+                  <form class="form-horizontal" role="form">
+                      <div class="form-group edit">
+                        <div class="col-sm-12">
+                            <label class="sr-only" for="add-move">Add Move</label>
+                            <textarea class="form-control" id="add-move" rows="3"></textarea>
+                        </div>
                       </div>
-                   
-                        
-                    </div>
-                </div>
-                
-                <!-- Moves container -->
-                <div class="col-sm-4">
-                    <div class="panel panel-default">
-                      <div class="panel-heading">Moves</div>
+                      
+                      <div class="form-group edit">
+                        <div class="col-sm-offset-5">
+                            <button type="submit" class="btn btn-default">Add</button>
+                        </div>
+                      </div>
+                  </form>
                     
-                      <!-- List group -->
-                      <ul class="list-group">
-                        <li class="list-group-item">Move 1</li>
-                        <li class="list-group-item">Move 2</li>
-                      </ul>
-                    
-                      <form class="form-horizontal" role="form">
-                          <div class="form-group">
-                            <div class="col-sm-12">
-                                <label class="sr-only" for="add-move">Add Move</label>
-                                <textarea class="form-control" id="add-move" rows="3"></textarea>
-                            </div>
-                          </div>
-                          
-                          <div class="form-group">
-                            <div class="col-sm-offset-5">
-                                <button type="submit" class="btn btn-default">Add</button>
-                            </div>
-                          </div>
-                      </form>
-                        
-                    </div>
                 </div>
-                
+            </div>
+
+
                 <!-- Right side of the panel -->
 
                 <div class="col-sm-5">
@@ -167,18 +174,20 @@
                     </div>
                         
                 </div><!-- col-sm-6 -->
-                
-            </div><!-- row -->
 
-   
-        </div><!-- panel-container -->
-        
+            
+        </div><!-- row -->
+
+
+    </div><!-- panel-container -->
+    
         <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script src="bootstrap-3.1.1-dist/js/bootstrap.min.js"></script>
     <script src="bootstrap-3.1.1-dist/assets/js/docs.min.js"></script>
+    
     <script src="jquery-1.9.0.min.js"></script>
     <script src="impromptu.min.js"></script>
     <script src="bootstrap-select.min.js"></script>
@@ -392,7 +401,48 @@
       });
 
     </script>
-    </body>
+     
+    <script>
+        /* Add edit and delete buttons to each list element. */  
+        $(".list-group-item").append(
+            '<div class="pull-right" style:"padding-right:1em;">' + 
+                '<button type="button" class="btn btn-default btn-xs">' +
+                  '<span class="glyphicon glyphicon-pencil"></span>' +
+                '</button>' + 
+                '<button type="button" class="btn btn-default btn-xs">' + 
+                  '<span class="glyphicon glyphicon-remove"></span>' + 
+                '</button>' + 
+            '</div>'
+        );
+    </script>
+
+    <!-- Reference: view-source:http://labs.abeautifulsite.net/demos/bootstrap-file-inputs/ -->
+    <script>
+		$(document)
+			.on('change', '.btn-file :file', function() {
+				var input = $(this),
+				numFiles = input.get(0).files ? input.get(0).files.length : 1,
+				label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+				input.trigger('fileselect', [numFiles, label]);
+		});
+		
+		$(document).ready( function() {
+			$('.btn-file :file').on('fileselect', function(event, numFiles, label) {
+				
+				var input = $(this).parents('.input-group').find(':text'),
+					log = numFiles > 1 ? numFiles + ' files selected' : label;
+				
+				if( input.length ) {
+					input.val(log);
+				} else {
+					if( log ) alert(log);
+				}
+				
+			});
+		});		
+	</script>
+     
+  </body>
     
 </html>
       

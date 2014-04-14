@@ -88,8 +88,24 @@ Reference: http://www.abeautifulsite.net/blog/2013/08/whipping-file-inputs-into-
     display: block;
 }
 
+input[readonly] {
+			background-color: white !important;
+			cursor: text !important;
+		}
+
 
 .selectedWeapon {
     font: comic-sans;
     background: black;
 }
+
+
+/* Classes */
+.pull-left {
+  float: left !important;
+}
+.pull-right {
+  float: right !important;
+}
+
+
