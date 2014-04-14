@@ -74,9 +74,8 @@
                   <div class="panel-heading">Sections</div>
                 
                   <!-- List group -->
-                  <div class="list-group">
-                    <a href="#" class="list-group-item">Section 1</a>
-                    <a href="#" class="list-group-item">Section 2</a>
+                  <div class="list-group" id="section-list">
+                    
                   </div>
                 
                  
@@ -98,9 +97,8 @@
                 
 
                   <!-- List group -->
-                  <div class="list-group">
-                    <a href="#" class="list-group-item">Move 1</a>
-                    <a href="#" class="list-group-item">Move 2</a>
+                  <div class="list-group" id="move-list">
+                    
                   </div>
                 
                   <form class="form-horizontal" role="form">
@@ -182,7 +180,6 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script src="bootstrap-3.1.1-dist/js/bootstrap.min.js"></script>
-    <script src="bootstrap-3.1.1-dist/assets/js/docs.min.js"></script>
     
     <script src="jquery-1.9.0.min.js"></script>
     <script src="impromptu.min.js"></script>
@@ -202,6 +199,81 @@
       var currentSection = 'section1';
       var currentMove = 'move1';
       var currentWeapon = 'Sword';
+        
+      /* Add edit and delete buttons to each list element. */  
+        /*$(".list-group-item").append(
+            '<div class="pull-right">' + 
+                '<button type="button" class="btn btn-default btn-xs">' +
+                  '<span class="glyphicon glyphicon-pencil"></span>' +
+                '</button>' + 
+                '<button type="button" class="btn btn-default btn-xs">' + 
+                  '<span class="glyphicon glyphicon-remove"></span>' + 
+                '</button>' + 
+            '</div>'
+        );*/
+        
+        /* Add edit and delete links to each list element. They serve as buttons. */
+        var addListEditing = function(id) {
+            $("#"+id).append(
+            '<div class="pull-right edit">' +
+            '<span class="glyphicon glyphicon-pencil" style="padding-right:0.5em;"></span>' +
+            '<span class="glyphicon glyphicon-remove"></span>' +
+            '</div>'
+            );
+            
+            /*var inverseClass = "";
+            
+            if (isActive) {
+                inverseClass = ".icon-white";
+            } 
+            $("#"+id).append(
+            '<div class="pull-right">' +
+            '<a href="#" style="padding-right:0.5em;">' +
+            '<span class="glyphicon glyphicon-pencil ' + inverseClass + '"></span>' +
+            '</a>' +
+            '<a href="#">' +
+            '<span class="glyphicon glyphicon-remove ' + inverseClass + '"></span>' +
+            '</a>' +
+            '</div>'
+        );*/
+            
+        }
+        
+        /* 
+        List all sections
+        Reference: http://stackoverflow.com/questions/10654992/how-to-get-collection-of-keys-in-javascript-dictionary 
+        */
+        var listSections = function(activeSection) {
+            var n = 0;
+            
+            for(var key in actDictionary) {
+                if(actDictionary.hasOwnProperty(key)){ 
+                    if (n === activeSection) {
+                        $("#section-list").append(
+                            '<a href="#" class="list-group-item active section" id="section_' + 
+                            n + '">' + key + '</a>'
+                        );
+                        
+                    } else {
+                        $("#section-list").append(
+                            '<a href="#" class="list-group-item section" id="section_' +
+                            n + '">' + key + '</a>'
+                        );
+                    }
+                    
+                    addListEditing("section_"+n);
+                    n += 1;
+                    
+                }
+            }
+        }
+        
+        /* Select a section */
+        
+        
+        listSections(0);
+        addListEditing();
+
       /*Video section handling */
 
       var getId = function(url) {
@@ -402,31 +474,6 @@
       $("#Sword-weapon-btn").addClass("btn-info");
       });
 
-    </script>
-     
-    <script>
-        /* Add edit and delete buttons to each list element. */  
-        /*$(".list-group-item").append(
-            '<div class="pull-right">' + 
-                '<button type="button" class="btn btn-default btn-xs">' +
-                  '<span class="glyphicon glyphicon-pencil"></span>' +
-                '</button>' + 
-                '<button type="button" class="btn btn-default btn-xs">' + 
-                  '<span class="glyphicon glyphicon-remove"></span>' + 
-                '</button>' + 
-            '</div>'
-        );*/
-        
-        $(".list-group-item").append(
-            '<div class="pull-right">' +
-            '<a href="#" style="padding-right:0.5em;">' +
-            '<span class="glyphicon glyphicon-pencil"></span>' +
-            '</a>' +
-            '<a href="#">' +
-            '<span class="glyphicon glyphicon-remove"></span>' +
-            '</a>' +
-            '</div>'
-        );
     </script>
 
     <!-- Reference: view-source:http://labs.abeautifulsite.net/demos/bootstrap-file-inputs/ -->
