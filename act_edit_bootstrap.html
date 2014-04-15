@@ -80,9 +80,9 @@
                 
                  
                   <div class="input-group edit">
-                      <input type="text" class="form-control">
+                      <input type="text" id="add-section" class="form-control">
                       <span class="input-group-btn">
-                        <button class="btn btn-default" type="button">Add</button>
+                        <button class="btn btn-default" id="section-btn" type="button">Add</button>
                       </span>      
                   </div>
                
@@ -111,7 +111,7 @@
                       
                       <div class="form-group edit">
                         <div class="col-sm-offset-5">
-                            <button type="submit" class="btn btn-default">Add</button>
+                            <button type="submit" class="btn btn-default" id="move-btn">Add</button>
                         </div>
                       </div>
                   </form>
@@ -258,6 +258,34 @@
         var listMoves = function() {
             var activeSection = $(".section.active").attr('id');
             console.log(activeSection);
+            
+            var useFirst = true;
+            console.log(actDictionary[activeSection]);
+            
+            for(var key in actDictionary[activeSection]) {
+                if(actDictionary[activeSection].hasOwnProperty(key)){
+                    if (actDictionary[activeSection][key] !== null) {
+                        console.log(key);
+                        console.log(actDictionary[activeSection][key][0]);
+                        if (useFirst) {
+                            $("#move-list").append(
+                                '<a href="#" class="list-group-item active move" id="' +
+                                key + '">' + actDictionary[activeSection][key][0] + '</a>'
+                            );
+                            useFirst = false;
+                            
+                        } else {
+                            $("#move-list").append(
+                                '<a href="#" class="list-group-item move" id="' +
+                                key + '">' + actDictionary[activeSection][key][0] + '</a>'
+                            );
+                        }
+                        
+                        addListEditing(key);
+                    }
+
+                }
+            }
         }
                  
         listSections();
@@ -269,11 +297,46 @@
         Reference for using .section: http://stackoverflow.com/questions/12687085/jquery-remove-class-if-other-element-is-clicked
         */
         $('.section').click(function() {
-              $(".section.active").removeClass("active");
-              $(this).addClass('active');
+          $(".section.active").removeClass("active");
+          $(this).addClass('active');
+          $("#move-list").empty();
+          listMoves();
         });
         
+        /*
+        Add a section.
+        */
+        $('#section-btn').click(function () {
+            var newSection = $("#add-section").val();
+            $("#section-list").append(
+                                '<a href="#" class="list-group-item section" id="' +
+                                 newSection + '">' + newSection + '</a>'
+                            );
+            addListEditing(newSection);
+            actDictionary[newSection] = null;
+            $("#add-section").val("");
+        });
         
+        /*
+        Add a move to a section.
+        TODO: Figure out how to name the new move in the dict, given that the content of new
+        move goes inside it. Should I just do move1, move2, etc. and increment the counter?
+        */
+        $('#move-btn').click(function () {
+            var newMove = $("#add-move").val();
+            $("#move-list").append(
+                                '<a href="#" class="list-group-item move" id="' +
+                                newMove + '">' + newMove + '</a>'
+                            );
+            console.log('<a href="#" class="list-group-item move" id="' +
+                                newMove + '">' + newMove + '</a>');
+            addListEditing(newMove);
+            var activeSection = $(".section.active").attr('id');
+            actDictionary[activeSection][newMove] = null;
+            console.log(actDictionary);
+            $("#add-move").val("");
+        });
+     
 
       /*Video section handling */
 
