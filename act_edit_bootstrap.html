@@ -196,6 +196,9 @@
     <script src="impromptu.min.js"></script>
     <script src="bootstrap-select.min.js"></script>
     <script type = "text/javascript">
+        
+    // A $( document ).ready() block.
+    $( document ).ready(function() {
       /*
       Data model for GR4:
       Each act has ONE master dictionary that holds all information organized as follows
@@ -384,9 +387,12 @@
         Select a move.
         */
         $('.move').click(function() {
+            console.log('move clicked');
             $('.move.active').removeClass("active");
             $(this).addClass("active");
         });
+        
+        $('.move').text('hello');
      
 
       /*Video section handling */
@@ -588,6 +594,8 @@
       console.log($("#youtubePlugin").html());
       $("#Sword-weapon-btn").addClass("btn-info");
       });
+        
+    });
 
     </script>
 
