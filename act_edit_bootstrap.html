@@ -80,7 +80,7 @@
                 
                  
                   <div class="input-group edit">
-                      <input type="text" id="add-section" class="form-control">
+                      <input type="text" id="add-section" class="form-control" placeholder="Section">
                       <span class="input-group-btn">
                         <button class="btn btn-default" id="section-btn" type="button">Add</button>
                       </span>      
@@ -101,19 +101,40 @@
                     
                   </div>
                 
+                  <!-- Reference: http://stackoverflow.com/questions/19738807/text-sticking-out-in-bootstrap-3-input-goup-textarea -->
+                    
                   <form class="form-horizontal" role="form">
-                      <div class="form-group edit">
-                        <div class="col-sm-12">
-                            <label class="sr-only" for="add-move">Add Move</label>
-                            <textarea class="form-control" id="add-move" rows="3"></textarea>
+                      <div class="form-group edit" style="padding-top:0.5em;">
+                        <label for="add-move-title" class="col-sm-2 control-label">Title</label>
+                        
+                        <div class="col-sm-10">  
+                          <input class="form-control" id="add-move-title" placeholder="Title" />
                         </div>
                       </div>
                       
                       <div class="form-group edit">
+                        <label for="add-move" class="col-sm-2 control-label">Moves</label>
+                        
+                        <div class="col-sm-10">  
+                          <textarea class="form-control" id="add-move" rows="3" placeholder="Moves"></textarea>
+                        </div>
+                      </div>      
+                            <!--<div class="input-group" style="padding-bottom:0.5em;">
+                                <span class="input-group-addon">Title</span>
+                                <input class="form-control" id="add-move-title" />
+                            </div>
+                            
+                            <div class="input-group"> -->
+                                <!-- <label class="sr-only" for="add-move">Add Move</label> -->
+                                <!--<span class="input-group-addon">Moves</span>
+                                <textarea class="form-control" id="add-move" rows="3"></textarea>
+                            </div>
+                        </div> -->
+                      <div class="form-group edit">
                         <div class="col-sm-offset-5">
                             <button type="submit" class="btn btn-default" id="move-btn">Add</button>
                         </div>
-                      </div>
+                     </div>
                   </form>
                     
                 </div>
@@ -303,17 +324,22 @@
           listMoves();
         });
         
+        var makeKey = function(name) {
+            return name.replace(" ", "-");   
+        }
+        
         /*
         Add a section.
         */
         $('#section-btn').click(function () {
             var newSection = $("#add-section").val();
+            var newSectionKey = makeKey(newSection);
             $("#section-list").append(
                                 '<a href="#" class="list-group-item section" id="' +
-                                 newSection + '">' + newSection + '</a>'
+                                 newSectionKey + '">' + newSection + '</a>'
                             );
-            addListEditing(newSection);
-            actDictionary[newSection] = null;
+            addListEditing(newSectionKey);
+            actDictionary[newSectionKey] = null;
             $("#add-section").val("");
         });
         
@@ -323,16 +349,20 @@
         move goes inside it. Should I just do move1, move2, etc. and increment the counter?
         */
         $('#move-btn').click(function () {
+            var newMoveTitle = $("#add-move-title").val();
+            var newMoveKey = makeKey(newMoveTitle);
+            
             var newMove = $("#add-move").val();
+            
             $("#move-list").append(
                                 '<a href="#" class="list-group-item move" id="' +
-                                newMove + '">' + newMove + '</a>'
+                                newMoveKey + '">' + newMove + '</a>'
                             );
             console.log('<a href="#" class="list-group-item move" id="' +
-                                newMove + '">' + newMove + '</a>');
-            addListEditing(newMove);
+                                newMoveKey + '">' + newMove + '</a>');
+            addListEditing(newMoveKey);
             var activeSection = $(".section.active").attr('id');
-            actDictionary[activeSection][newMove] = null;
+            actDictionary[activeSection][newMoveKey] = newMove;
             console.log(actDictionary);
             $("#add-move").val("");
         });
