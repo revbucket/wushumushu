@@ -216,7 +216,7 @@
       */
       var actDictionary = {'section1': {'move1': ['This is the move text to display', {'Sword': "http://www.youtube.com/embed/WzUxxqSMpB0?rel=0", 'Staff': null, 'Fist': null}], 
                                         'move2': null},
-                           'section2': null};
+                           'section2': null}; 
       var currentSection = 'section1';
       var currentMove = 'move1';
       var currentWeapon = 'Sword';
@@ -247,6 +247,8 @@
         /* 
         List all sections
         Reference: http://stackoverflow.com/questions/10654992/how-to-get-collection-of-keys-in-javascript-dictionary 
+        
+        Reference: http://stackoverflow.com/questions/1414365/how-to-disable-enable-an-input-with-jquery
         */
         var listSections = function() {
             var useFirst = true;
@@ -270,6 +272,11 @@
                     addListEditing(key);
 
                 }
+            }
+            
+            // If there are no keys, then disable the add move button.
+            if (useFirst) {
+                $("#move-btn").prop('disabled', true);  
             }
         }
         
@@ -341,12 +348,12 @@
             addListEditing(newSectionKey);
             actDictionary[newSectionKey] = null;
             $("#add-section").val("");
+            $("#move-btn").prop('disabled', false);
         });
         
         /*
         Add a move to a section.
-        TODO: Figure out how to name the new move in the dict, given that the content of new
-        move goes inside it. Should I just do move1, move2, etc. and increment the counter?
+        TODO: How to display move title?
         */
         $('#move-btn').click(function () {
             var newMoveTitle = $("#add-move-title").val();
@@ -366,6 +373,10 @@
             console.log(actDictionary);
             $("#add-move").val("");
         });
+        
+        /*
+        Pop up a confirm-delete modal whenever the x is pressed for a section/ move.
+        */
      
 
       /*Video section handling */
