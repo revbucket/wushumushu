@@ -74,16 +74,15 @@
                   <div class="panel-heading">Sections</div>
                 
                   <!-- List group -->
-                  <div class="list-group">
-                    <a href="#" class="list-group-item">Section 1</a>
-                    <a href="#" class="list-group-item">Section 2</a>
+                  <div class="list-group" id="section-list">
+                    
                   </div>
                 
                  
                   <div class="input-group edit">
-                      <input type="text" class="form-control">
+                      <input type="text" id="add-section" class="form-control" placeholder="Section">
                       <span class="input-group-btn">
-                        <button class="btn btn-default" type="button">Add</button>
+                        <button class="btn btn-default" id="section-btn" type="button">Add</button>
                       </span>      
                   </div>
                
@@ -98,30 +97,40 @@
                 
 
                   <!-- List group -->
-                  <div class="list-group">
-                    <a href="#" class="list-group-item">Move 1</a>
-                    <a href="#" class="list-group-item">Move 2</a>
+                  <div class="list-group" id="move-list">
+                    
                   </div>
                 
+                  <!-- Reference: http://stackoverflow.com/questions/19738807/text-sticking-out-in-bootstrap-3-input-goup-textarea -->
+                    
                   <form class="form-horizontal" role="form">
-                      <div class="form-group edit">
-                        <div class="col-sm-12">
-                            <label class="sr-only" for="add-move">Add Move</label>
-                            <textarea class="form-control" id="add-move" rows="3"></textarea>
+                      <div class="form-group edit" style="padding-top:0.5em;">
+                        <label for="add-move-title" class="col-sm-2 control-label">Title</label>
+                        
+                        <div class="col-sm-10">  
+                          <input class="form-control" id="add-move-title" placeholder="Title" />
                         </div>
                       </div>
                       
                       <div class="form-group edit">
-                        <div class="col-sm-offset-5">
-                            <button type="submit" class="btn btn-default">Add</button>
+                        <label for="add-move" class="col-sm-2 control-label">Moves</label>
+                        
+                        <div class="col-sm-10">  
+                          <textarea class="form-control" id="add-move" rows="3" placeholder="Moves"></textarea>
                         </div>
-                      </div>
+                      </div>      
+                            
+                      <div class="form-group edit">
+                        <div class="col-sm-offset-5">
+                            <button type="submit" class="btn btn-default" id="move-btn">Add</button>
+                        </div>
+                     </div>
                   </form>
                     
                 </div>
             </div>
-
-
+            
+        
                 <!-- Right side of the panel -->
 
                 <div class="col-sm-5">
@@ -190,12 +199,14 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script src="bootstrap-3.1.1-dist/js/bootstrap.min.js"></script>
-    <script src="bootstrap-3.1.1-dist/assets/js/docs.min.js"></script>
     
     <script src="jquery-1.9.0.min.js"></script>
     <script src="impromptu.min.js"></script>
     <script src="bootstrap-select.min.js"></script>
     <script type = "text/javascript">
+        
+    // A $( document ).ready() block.
+    $( document ).ready(function() {
       /*
       Data model for GR4:
       Each act has ONE master dictionary that holds all information organized as follows
@@ -206,10 +217,11 @@
       */
       var actDictionary = {'section1': {'move1': ['This is the move text to display', {'Sword': "http://www.youtube.com/embed/WzUxxqSMpB0?rel=0", 'Staff': null, 'Fist': null}], 
                                         'move2': null},
-                           'section2': null};
+                           'section2': null}; 
       var currentSection = 'section1';
       var currentMove = 'move1';
       var currentWeapon = 'Sword';
+
       var editMode = true;
 
       /*Edit mode/view mode functionality*/
@@ -229,7 +241,269 @@
               $("#edit-mode-button").removeClass("btn-info");
           }
       };
+        
+      
+        /* Add edit and delete icons for each list element. They serve as buttons. */
+        var addListEditing = function(id) {
+            $("#"+id).append(
+            '<div class="pull-right edit">' +
+            '<span class="glyphicon glyphicon-pencil" id="' + id + '-pencil" style="padding-right:0.5em;"></span>' +
+            '<span class="glyphicon glyphicon-remove" id="' + id + '-remove"></span>' +
+            '</div>'
+            );
+ 
+        }
+        
+        /* 
+        List all sections
+        Reference: http://stackoverflow.com/questions/10654992/how-to-get-collection-of-keys-in-javascript-dictionary 
+        
+        Reference: http://stackoverflow.com/questions/1414365/how-to-disable-enable-an-input-with-jquery
+        */
+        var listSections = function() {
+            var useFirst = true;
+            
+            for(var key in actDictionary) {
+                if(actDictionary.hasOwnProperty(key)){
+                    if (useFirst) {
+                        $("#section-list").append(
+                            '<a href="#" class="list-group-item active section" id="' +
+                            key + '">' + key + '</a>'
+                        );
+                        useFirst = false;
+                        
+                    } else {
+                        $("#section-list").append(
+                            '<a href="#" class="list-group-item section" id="' +
+                            key + '">' + key + '</a>'
+                        );
+                    }
+                    
+                    addListEditing(key);
 
+                }
+            }
+            
+            // If there are no keys, then disable the add move button.
+            if (useFirst) {
+                $("#move-btn").prop('disabled', true);  
+            }
+        }
+        
+        /*
+        List moves for the selected section.
+        */
+        var listMoves = function() {
+            var activeSection = $(".section.active").attr('id');
+            console.log(activeSection);
+            
+            var useFirst = true;
+            console.log(actDictionary[activeSection]);
+            
+            for(var key in actDictionary[activeSection]) {
+                if(actDictionary[activeSection].hasOwnProperty(key)){
+                    if (actDictionary[activeSection][key] !== null) {
+                        console.log(key);
+                        console.log(actDictionary[activeSection][key][0]);
+                        if (useFirst) {
+                            $("#move-list").append(
+                                '<a href="#" class="list-group-item active move" id="' +
+                                key + '">' + actDictionary[activeSection][key][0] + '</a>'
+                            );
+                            useFirst = false;
+                            
+                        } else {
+                            $("#move-list").append(
+                                '<a href="#" class="list-group-item move" id="' +
+                                key + '">' + actDictionary[activeSection][key][0] + '</a>'
+                            );
+                        }
+                        
+                        addListEditing(key);
+                    }
+
+                }
+            }
+        }
+                 
+        listSections();
+        addListEditing();
+        listMoves();
+        
+        /*
+        Add a section.
+        */
+        $('#section-btn').click(function () {
+            var newSection = $("#add-section").val();
+            var newSectionKey = makeKey(newSection);
+            $("#section-list").append(
+                                '<a href="#" class="list-group-item section" id="' +
+                                 newSectionKey + '">' + newSection + '</a>'
+                            );
+            addListEditing(newSectionKey);
+            actDictionary[newSectionKey] = null;
+            $("#add-section").val("Section");
+            $("#move-btn").prop('disabled', false);
+        });
+        
+        /*
+        Add a move to a section.
+        TODO: How to display move title?
+        */
+        $('#move-btn').click(function () {
+            var newMoveTitle = $("#add-move-title").val();
+            var newMoveKey = makeKey(newMoveTitle);
+            
+            var newMove = $("#add-move").val();
+            
+            $("#move-list").append(
+                                '<a href="#" class="list-group-item move" id="' +
+                                newMoveKey + '">' + newMove + '</a>'
+                            );
+            console.log('<a href="#" class="list-group-item move" id="' +
+                                newMoveKey + '">' + newMove + '</a>');
+            addListEditing(newMoveKey);
+            var activeSection = $(".section.active").attr('id');
+            actDictionary[activeSection][newMoveKey] = [newMove];
+            console.log(actDictionary);
+            $("#add-move-title").val("Title");
+            $("#add-move").val("Move");
+        });
+        
+        /*
+        Confirm delete popup whenever the x is pressed for a section/ move.
+        */
+        $(".glyphicon-remove").click(function (e) {
+            // Remove the -remove at the end of the string, to get the ID for this element.
+            var targetID = e.target.id.slice(0, -7);
+            console.log('remove', targetID);
+            $.prompt("Do you want to delete " + targetID + "?", {
+            title: "Confirm Delete",
+            buttons: { "Yes": true, "No": false },
+            submit: function(e,v,m,f){
+                // use e.preventDefault() to prevent closing when needed or return false. 
+                // e.preventDefault(); 
+        
+                console.log("Value clicked was: "+ v);
+                if (v) {
+                    if ($("#"+targetID).hasClass("section")) {
+                        $("#"+targetID).remove();
+                        delete actDictionary[targetID];
+                    } else {
+                        $("#"+targetID).remove();
+                        var activeSection = $(".section.active").attr('id');
+                        delete actDictionary[activeSection][targetID];
+                    }
+                }
+            }  
+            })  
+        });
+        
+        /* 
+        Select a section
+        Reference for using .section: http://stackoverflow.com/questions/12687085/jquery-remove-class-if-other-element-is-clicked
+        */
+        $('.section').click(function() {
+            if (!$(this).hasClass('disabled')) {
+              $(".section.active").removeClass("active");
+              $(this).addClass('active');
+              $("#move-list").empty();
+              listMoves();
+            }
+        });
+        
+        var makeKey = function(name) {
+            return name.replace(" ", "-");   
+        }
+        
+        /*
+        Select a move.
+        */
+        $('.move').click(function() {
+            if (!$(this).hasClass('disabled')) {
+                console.log('move clicked');
+                $('.move.active').removeClass("active");
+                $(this).addClass("active");
+            }
+        });
+        
+        
+        /*
+        Enable update mode for a section or move.
+        */
+        $('.glyphicon-pencil').click(function(e) {
+            // Remove -pencil from the end of the string, to get the ID for this element.
+            var targetID = e.target.id.slice(0, -7);
+            console.log('edit', targetID);
+            
+            if ($("#"+targetID).hasClass("section")) {
+                currentSection = targetID;
+                $("#"+targetID).replaceWith('<div class="input-group edit ' + targetID + '">' +
+                      '<input type="text" id="update-section" class="form-control" placeholder="' +
+                      targetID + '">' +
+                      '<span class="input-group-btn">' +
+                        '<button class="btn btn-default update-btn" id="update-section-btn" type="button">Update</button>' +
+                      '</span>' +      
+                  '</div>'); 
+                
+            } else if ($("#"+targetID).hasClass("move")) {
+                currentMove = targetID;
+                var activeSection = $(".section.active").attr('id');
+                
+                $("#"+targetID).replaceWith(
+                    '<form class="form-horizontal ' + targetID + '" role="form">' +
+                      '<div class="form-group edit" style="padding-top:0.5em;">' +
+                        '<label for="update-move-title" class="col-sm-2 control-label">Title</label>' +
+                        '<div class="col-sm-10">' +  
+                          '<input class="form-control" id="update-move-title" placeholder="' +
+                            targetID + '" />' +
+                        '</div>' +
+                      '</div>' +
+                      '<div class="form-group edit">' +
+                        '<label for="update-move" class="col-sm-2 control-label">Moves</label>' +
+                        '<div class="col-sm-10">' + 
+                          '<textarea class="form-control" id="update-move" rows="3" placeholder="' + 
+                            actDictionary[activeSection][targetID][0] + '"></textarea>' +
+                        '</div>' +
+                      '</div>' +         
+                      '<div class="form-group edit">' +
+                        '<div class="col-sm-offset-5">' +
+                            '<button type="submit" class="btn btn-default update-btn" id="update-move-btn">Update</button>' +
+                        '</div>' +
+                     '</div>' +
+                  '</form>');
+            }
+            $("#section-btn").addClass("disabled");
+            $(".section").addClass("disabled");
+            $(".move").addClass("disabled");
+            $("#move-btn").addClass("disabled");
+        });
+        
+        
+        /*
+        Function to process the updated section data and reset the forms.
+        */
+        $('#update-section-btn').click(function (e) {
+            console.log($("#update-section").val());
+            var newSection = $("#update-section").val();
+            var targetDictionary = actDictionary[currentSection];
+            delete actDictionary[currentSection];
+            actDictionary[newSection] = targetDictionary;
+            
+            var newSectionKey = makeKey(newSection);
+            $("."+targetID).replaceWith(
+                                '<a href="#" class="list-group-item section" id="' +
+                                 newSectionKey + '">' + newSection + '</a>'
+                            );
+            addListEditing(newSectionKey);
+            
+            $("#section-btn").removeClass("disabled");
+            $(".section").removeClass("disabled");
+            $(".move").removeClass("disabled");
+            $("#move-btn").removeClass("disabled");
+        
+        });
+        
 
       /*Video section handling */
   
@@ -442,32 +716,9 @@
       console.log($("#youtubePlugin").html());
       $("#Sword-weapon-btn").addClass("btn-info");
       });
-
-    </script>
-     
-    <script>
-        /* Add edit and delete buttons to each list element. */  
-        /*$(".list-group-item").append(
-            '<div class="pull-right">' + 
-                '<button type="button" class="btn btn-default btn-xs">' +
-                  '<span class="glyphicon glyphicon-pencil"></span>' +
-                '</button>' + 
-                '<button type="button" class="btn btn-default btn-xs">' + 
-                  '<span class="glyphicon glyphicon-remove"></span>' + 
-                '</button>' + 
-            '</div>'
-        );*/
         
-        $(".list-group-item").append(
-            '<div class="pull-right">' +
-            '<a href="#" style="padding-right:0.5em;">' +
-            '<span class="glyphicon glyphicon-pencil"></span>' +
-            '</a>' +
-            '<a href="#">' +
-            '<span class="glyphicon glyphicon-remove"></span>' +
-            '</a>' +
-            '</div>'
-        );
+    });
+
     </script>
 
     <!-- Reference: view-source:http://labs.abeautifulsite.net/demos/bootstrap-file-inputs/ -->
