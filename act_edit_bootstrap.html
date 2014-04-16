@@ -314,7 +314,7 @@
                             );
             addListEditing(newSectionKey);
             actDictionary[newSectionKey] = null;
-            $("#add-section").val("");
+            $("#add-section").val("Section");
             $("#move-btn").prop('disabled', false);
         });
         
@@ -338,14 +338,17 @@
             var activeSection = $(".section.active").attr('id');
             actDictionary[activeSection][newMoveKey] = [newMove];
             console.log(actDictionary);
-            $("#add-move").val("");
+            $("#add-move-title").val("Title");
+            $("#add-move").val("Move");
         });
         
         /*
         Confirm delete popup whenever the x is pressed for a section/ move.
         */
         $(".glyphicon-remove").click(function (e) {
-            var targetID = e.target.id.split('-remove')[0];
+            // Remove the -remove at the end of the string, to get the ID for this element.
+            var targetID = e.target.id.slice(0, -7);
+            console.log('remove', targetID);
             $.prompt("Do you want to delete " + targetID + "?", {
             title: "Confirm Delete",
             buttons: { "Yes": true, "No": false },
@@ -373,10 +376,12 @@
         Reference for using .section: http://stackoverflow.com/questions/12687085/jquery-remove-class-if-other-element-is-clicked
         */
         $('.section').click(function() {
-          $(".section.active").removeClass("active");
-          $(this).addClass('active');
-          $("#move-list").empty();
-          listMoves();
+            if (!$(this).hasClass('disabled')) {
+              $(".section.active").removeClass("active");
+              $(this).addClass('active');
+              $("#move-list").empty();
+              listMoves();
+            }
         });
         
         var makeKey = function(name) {
@@ -387,12 +392,90 @@
         Select a move.
         */
         $('.move').click(function() {
-            console.log('move clicked');
-            $('.move.active').removeClass("active");
-            $(this).addClass("active");
+            if (!$(this).hasClass('disabled')) {
+                console.log('move clicked');
+                $('.move.active').removeClass("active");
+                $(this).addClass("active");
+            }
         });
         
-        $('.move').text('hello');
+        
+        /*
+        Enable update mode for a section or move.
+        */
+        $('.glyphicon-pencil').click(function(e) {
+            // Remove -pencil from the end of the string, to get the ID for this element.
+            var targetID = e.target.id.slice(0, -7);
+            console.log('edit', targetID);
+            
+            if ($("#"+targetID).hasClass("section")) {
+                currentSection = targetID;
+                $("#"+targetID).replaceWith('<div class="input-group edit ' + targetID + '">' +
+                      '<input type="text" id="update-section" class="form-control" placeholder="' +
+                      targetID + '">' +
+                      '<span class="input-group-btn">' +
+                        '<button class="btn btn-default update-btn" id="update-section-btn" type="button">Update</button>' +
+                      '</span>' +      
+                  '</div>'); 
+                
+            } else if ($("#"+targetID).hasClass("move")) {
+                currentMove = targetID;
+                var activeSection = $(".section.active").attr('id');
+                
+                $("#"+targetID).replaceWith(
+                    '<form class="form-horizontal ' + targetID + '" role="form">' +
+                      '<div class="form-group edit" style="padding-top:0.5em;">' +
+                        '<label for="update-move-title" class="col-sm-2 control-label">Title</label>' +
+                        '<div class="col-sm-10">' +  
+                          '<input class="form-control" id="update-move-title" placeholder="' +
+                            targetID + '" />' +
+                        '</div>' +
+                      '</div>' +
+                      '<div class="form-group edit">' +
+                        '<label for="update-move" class="col-sm-2 control-label">Moves</label>' +
+                        '<div class="col-sm-10">' + 
+                          '<textarea class="form-control" id="update-move" rows="3" placeholder="' + 
+                            actDictionary[activeSection][targetID][0] + '"></textarea>' +
+                        '</div>' +
+                      '</div>' +         
+                      '<div class="form-group edit">' +
+                        '<div class="col-sm-offset-5">' +
+                            '<button type="submit" class="btn btn-default update-btn" id="update-move-btn">Update</button>' +
+                        '</div>' +
+                     '</div>' +
+                  '</form>');
+            }
+            $("#section-btn").addClass("disabled");
+            $(".section").addClass("disabled");
+            $(".move").addClass("disabled");
+            $("#move-btn").addClass("disabled");
+        });
+        
+        
+        /*
+        Function to process the updated section data and reset the forms.
+        */
+        $('#update-section-btn').click(function (e) {
+            console.log($("#update-section").val());
+            var newSection = $("#update-section").val();
+            var targetDictionary = actDictionary[currentSection];
+            delete actDictionary[currentSection];
+            actDictionary[newSection] = targetDictionary;
+            
+            var newSectionKey = makeKey(newSection);
+            $("."+targetID).replaceWith(
+                                '<a href="#" class="list-group-item section" id="' +
+                                 newSectionKey + '">' + newSection + '</a>'
+                            );
+            addListEditing(newSectionKey);
+            
+            $("#section-btn").removeClass("disabled");
+            $(".section").removeClass("disabled");
+            $(".move").removeClass("disabled");
+            $("#move-btn").removeClass("disabled");
+        
+        });
+        
      
 
       /*Video section handling */
