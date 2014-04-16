@@ -11,12 +11,12 @@
       
     <!-- Bootstrap core CSS -->
     <link href="bootstrap-3.1.1-dist/css/bootstrap.min.css" rel="stylesheet">
+
     <!-- Bootstrap theme -->
     <link href="bootstrap-3.1.1-dist/css/bootstrap-theme.min.css" rel="stylesheet">
     
     <!-- Custom styles for this template -->
     <link href="theme.css" rel="stylesheet">
-    
     <!-- Stylesheet for impromptu -->
     <link href="impromptu.css" rel="stylesheet">
     <!--- Stylesheet for select forms -->
@@ -42,8 +42,8 @@
         
                 <ul class="nav navbar-nav navbar-right">
                     <div class="btn-group">
-                      <button type="button" class="btn btn-default edit">Edit</button>
-                      <button type="button" class="btn btn-default">View</button>
+                      <button type="button" class="btn btn-default" id="edit-mode-button">Edit</button>
+                      <button type="button" class="btn btn-default" id="view-mode-button">View</button>
                     </div>
                 </ul>
           
@@ -129,7 +129,7 @@
                     <div class="btn-group btn-group-justified" id = "weaponList">
 		      <div class = "btn-group" id = "edit-weapon-btn">
 
-			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+			<button type="button" class="btn btn-default dropdown-toggle edit-disable" data-toggle="dropdown">
 			  Edit <span class="caret"></span>
 			</button>
 			<ul class="dropdown-menu dropdown-menu-right" role="menu">
@@ -146,20 +146,28 @@
                     <div class="" style="padding-top:2em;">
                         <div class = "panel panel-primary" id = "selectWeaponPanel">
 			   <div class="panel-heading"></div>
-                           <div class="panel-body">
+                           <div class="panel-body edit">
                               Add or select a weapon group first, then add a video!
                            </div>
+			   <div class = "panel-body no-edit">
+			     No video has been added for this weapon. 
+			   </div>
+
 			</div>
 
 		        <div class= "panel-primary panel" id = "newDivPanel">
 			  <div class = "panel-heading"> </div>
-                           <div class="panel-body">
+			   <div class = "panel-body no-edit">
+			     No video has been added for this weapon. 
+			   </div>
+
+                           <div class="panel-body edit">
                             <div class= "btn-group btn-group-lg" style="margin: 10px 100px 20px 100px; text-align: center;">
-			        <button type="button" class="btn btn-default" id="linkButton">Insert link to youtube video</button>
+			        <button type="button" class="btn btn-default edit-disable" id="linkButton">Insert link to youtube video</button>
 			    </div>
 			    
                             <div class= "btn-group btn-group-lg" style="left:15%;  text-align:center;">
-			        <button type="button" class="btn btn-default" id="uploadButton">Upload a video from your computer</button>
+			        <button type="button" class="btn btn-default edit-disable" id="uploadButton">Upload a video from your computer</button>
 			    </div>
 
                            </div>
@@ -202,8 +210,29 @@
       var currentSection = 'section1';
       var currentMove = 'move1';
       var currentWeapon = 'Sword';
-      /*Video section handling */
+      var editMode = true;
 
+      /*Edit mode/view mode functionality*/
+      var renderEditViewPanels = function() {
+          if (editMode) {
+              $(".edit").show();
+              $(".edit-disable").removeAttr("disabled");
+              $(".no-edit").hide();
+              $("#view-mode-button").removeClass("btn-info");
+              $("#edit-mode-button").addClass("btn-info");
+
+          } else {
+              $(".edit").hide();
+              $(".edit-disable").attr("disabled","disabled");
+              $(".no-edit").show();
+              $("#view-mode-button").addClass("btn-info");
+              $("#edit-mode-button").removeClass("btn-info");
+          }
+      };
+
+
+      /*Video section handling */
+  
       var getId = function(url) {
          var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
          var match = url.match(regExp);
@@ -398,6 +427,18 @@
           });
 
       renderVideoPanel();
+      renderEditViewPanels();
+
+      $("#edit-mode-button").click(function() {
+         editMode = true;
+         renderEditViewPanels();
+      });
+
+      $("#view-mode-button").click(function(){
+         editMode = false;
+         renderEditViewPanels();
+      });
+  
       console.log($("#youtubePlugin").html());
       $("#Sword-weapon-btn").addClass("btn-info");
       });
