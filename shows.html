@@ -4,39 +4,173 @@
     <link href="bootstrap-3.1.1-dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="bootstrap-3.1.1-dist/css/bootstrap-theme.min.css" rel="stylesheet">
     <link href="theme.css" rel="stylesheet">
+    <link href="impromptu.css" rel="stylesheet">
+    <link href="bootstrap-select.css" rel=stylesheet">
+
+<style>
+/* temporary style elements, move to dedicated CSS file later */
+
+.show-item:hover {
+    background-color: rgba(153,204,248,0.6);
+}
+.show-item:active {
+    background-color: rgba(153,204,248,1);
+}
+
+
 </style>
 
 </HEAD>
 
-<BODY>
+<BODY role="document">
 
     <div class="container panel-container" role="main">
 
         
-        <div id="logo" align="center">
-            <img src="wushumushu_logo.png" style="width:40%;">
-        </div>
+        <div id="logo" align="center"><img src="wushumushu_logo.png" style="width:40%;"></div>
 
 
 
         <div class="col-md-6 col-md-offset-3" style="position: relative; top: 50px;">
             <div class="panel panel-default">
-                <div class="panel-heading">Shows</div>
-
-                <ul class="list-group">
-                    <li class="list-group-item">Show 1</li>
-                    <li class="list-group-item">Show 2</li>
-                </ul>
-            </div>
 
 
-        </div><!-- end shows box -->
+                <div class="panel-heading">
+                    <div class="container-fluid">
+                    <!-- Brand and toggle get grouped for better mobile display -->
+                        <ul class="nav navbar-nav navbar-left" style="font-size:26pt;">Shows</ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default" id="new-show-btn">
+                                    Add New Show
+                                </button>
+                            </div>
+                        </ul>
+                    </div><!--container-fluid -->
+                </div><!-- end panel heading -->
 
 
-    </div><!-- end main container -->
+                <ul class="list-group" id="all-shows"><!-- part of "panel panel-default" class -->
+                    
+                    <!--
+                    <li class="list-group-item show-item">
+
+                        
+                        show 1
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-default btn-xs">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </button>
+                            <button type="button" class="btn btn-default btn-xs">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </button>
+                        </div>
+
+
+                        <span style="float:right;margin-right:0px;">
+                            <div id="date">Date</div>
+                        </span>
+                        <span style="position:relative;margin-right:40px;">
+                            Location
+                        </span>
+                    
+
+                        <table><tr>
+                            <td>Showsfsdfsd 1</td>
+                            <td>Location<br>Datsdfse</td>
+                        </tr></table>
+                    </li>
+                    -->
+
+
+
+                    <!--
+                    <li class="list-group-item show-item">
+                        <table><tr>
+                            <td>Showsfsdfsd 1</td>
+                            <td>Location<br>Datsdfse</td>
+                        </tr></table>
+
+                    </li>
+                    -->
+
+                </ul><!-- end list-group of shows -->
+
+
+            </div><!-- end default panel -->
+
+
+        </div><!-- end col-md-5 col-md-offset-3 shows box -->
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script src="bootstrap-3.1.1-dist/js/bootstrap.min.js"></script>
-    <script src="bootstrap-3.1.1-dist/assets/js/docs.min.js"></script>
+    <!--<script src="bootstrap-3.1.1-dist/assets/js/docs.min.js"></script>-->
+    <script src="jquery-1.9.0.min.js"></script>
+    <script src="impromptu.min.js"></script>
+    <script src="bootstrap-select.min.js"></script>
+
+    <script type="text/javascript">
+        // generates string for a show's view, showName must not be blank
+        function generateShow(showName, showDate, showTimeStart, showTimeEnd, showLocation) {
+            
+            var showTimeSpan = '<i>(No times)</i>';
+            if (showTimeStart != "" && showTimeEnd != "") { showTimeSpan = showTimeStart + ' - ' + showTimeEnd; }
+                
+            if (showDate != "") {
+                showDate = showDate + '<br>';
+            } else {
+                showDate = '<i>(No date)</i><br>';
+            }
+
+            if (showLocation != "") {
+                showLocation = showLocation + '<br>';
+            } else {
+                showLocation = '<i>(No location)</i><br>';
+            }
+
+            return      '<a href="acts.html"><li class="list-group-item show-item"><table style="width:100%;margin0px;"><tr><td style="vertical-align:top;font-size:22pt;"><b>'+showName
+                    +   '</b></td><td style="text-align:right;vertical-align:top;width:40%;">'+showLocation
+                    +   showDate+showTimeSpan+'</td></tr></table></li></a>';
+        }
+
+        var rowSpacing = '<tr style="height:20px;"></tr>'
+        var showDialogFormatOption0 =
+        '<table class="add-show-dialog""><tr><td style="width:45%;"><label>Show name</label></td><td><input type="text" name="showName" value="Elements"></td></tr>' +
+        rowSpacing +
+        '<tr><td><label>Date</label></td><td><input type="text" name="showDate" value="5/1/2014"></td></tr>' +
+        rowSpacing +        
+        '<tr><td><label>Start time</label></td><td><input type="text" name="showTimeStart" value="7 PM">' +
+        rowSpacing +
+        '<tr><td><label>End time</label></td><td><input type="text" name="showTimeEnd" value="9 PM"></td></tr>' +
+        rowSpacing +
+        '<tr><td><label>Location</label</td><td><input type="text" name="showLocation" value="Auditorium X"></td></tr></table>';
+
+        $("#new-show-btn").click(function() {
+            var linkPrompt = {
+                state0: {
+                    title: 'Add new show <b>[USING CANNED INPUTS]</b>',
+                    html: showDialogFormatOption0,
+                    buttons: { Cancel: -1, Done: 1 },
+                    focus: 1,
+                    submit: function(e,v,m,f) {
+                        if (f.showName != "") {
+                            //-------------------------------------------------------
+                            //  create new show directory in the backend model here
+                            //  
+                            //  initialize acts page with proper information if not done so before
+                            //-------------------------------------------------------
+                            $("#all-shows").append(generateShow(f.showName, f.showDate, f.showTimeStart, f.showTimeEnd, f.showLocation));
+                        }
+                        e.preventDefault();
+                        if (v == -1) { $.prompt.close(); }
+                        if (v == 1) { $.prompt.close(); }
+                    }
+                }
+            };
+            $.prompt(linkPrompt);
+        });
+    
+    </script>
+
 </BODY>
 </HTML>

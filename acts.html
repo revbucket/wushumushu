@@ -4,16 +4,31 @@
     <link href="bootstrap-3.1.1-dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="bootstrap-3.1.1-dist/css/bootstrap-theme.min.css" rel="stylesheet">
     <link href="theme.css" rel="stylesheet">
+    <link href="impromptu.css" rel="stylesheet">
+    <link href="bootstrap-select.css" rel=stylesheet">
+
+<style>
+/* temporary style elements, move to dedicated CSS file later */
+
+.act-item:hover {
+    background-color: rgba(153,204,248,0.6);
+}
+.act-item:active {
+    background-color: rgba(153,204,248,1);
+}
+
+
 </style>
 
 </HEAD>
 
-<BODY>
+<BODY role="document">
 
     <div class="container panel-container" role="main">
 
+
         <div id="back-to-all-shows" style="position: relative; bottom: 50px;">
-            <a href="">All Shows</a> &nbsp;&gt;&nbsp; Show name here.
+            <a href="shows.html">All Shows</a> &nbsp;&gt;&nbsp; Show name here.
             <!--
             <ol class="breadcrumb list inline">
                 <li><a href="#">All Shows</a></li>
@@ -21,32 +36,141 @@
             </ol>
             -->
         </div>
+        
 
-        <div id="show-name" align="center">
-            Show name here.
-        </div>
-
+        <div id="show-name" align="center">Show name here.</div>
 
 
         <div class="col-md-6 col-md-offset-3" style="position: relative; top: 50px;">
             <div class="panel panel-default">
-                <div class="panel-heading">Acts</div>
-
-                <ul class="list-group">
-                    <li class="list-group-item">Act 1</li>
-                    <li class="list-group-item">Act 2</li>
-                </ul>
-            </div>
 
 
-        </div><!-- end shows box -->
+                <div class="panel-heading">
+                    <div class="container-fluid">
+                    <!-- Brand and toggle get grouped for better mobile display -->
+                        <ul class="nav navbar-nav navbar-left" style="font-size:26pt;">Acts</ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default" id="new-act-btn">
+                                    Add New Act
+                                </button>
+                            </div>
+                        </ul>
+                    </div><!--container-fluid -->
+                </div><!-- end panel heading -->
 
 
-    </div><!-- end main container -->
+                <ul class="list-group" id="all-acts"><!-- part of "panel panel-default" class -->
+                    
+                    <!--
+                    <li class="list-group-item show-item">
+
+                        
+                        show 1
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-default btn-xs">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </button>
+                            <button type="button" class="btn btn-default btn-xs">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </button>
+                        </div>
+
+
+                        <span style="float:right;margin-right:0px;">
+                            <div id="date">Date</div>
+                        </span>
+                        <span style="position:relative;margin-right:40px;">
+                            Location
+                        </span>
+                    
+
+                        <table><tr>
+                            <td>Showsfsdfsd 1</td>
+                            <td>Location<br>Datsdfse</td>
+                        </tr></table>
+                    </li>
+                    -->
+
+
+
+                    <!--
+                    <li class="list-group-item show-item">
+                        <table><tr>
+                            <td>Showsfsdfsd 1</td>
+                            <td>Location<br>Datsdfse</td>
+                        </tr></table>
+
+                    </li>
+                    -->
+
+                </ul><!-- end list-group of shows -->
+
+
+            </div><!-- end default panel -->
+
+
+        </div><!-- end col-md-5 col-md-offset-3 shows box -->
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script src="bootstrap-3.1.1-dist/js/bootstrap.min.js"></script>
-    <script src="bootstrap-3.1.1-dist/assets/js/docs.min.js"></script>
+    <!--<script src="bootstrap-3.1.1-dist/assets/js/docs.min.js"></script>-->
+    <script src="jquery-1.9.0.min.js"></script>
+    <script src="impromptu.min.js"></script>
+    <script src="bootstrap-select.min.js"></script>
+
+    <script type="text/javascript">
+        // generates string for a act's view, actName must not be blank
+        function generateAct(actName) {
+            return '<a href="act_edit_bootstrap.html"><li class="list-group-item act-item" style="font-size:22pt;"><b>'+actName+'</b></li></a>';
+        }
+        
+        var actDialogFormatOption0 = // 2 options, song upload and skip
+        '<div style="text-align:center;">' +
+        '<label>Act name</label><br><input type="text" name="actName" value="Introduction"><br><br><br>' +
+        '<label>Accompanying song</label><br>' +
+        '<input type="radio" name="selectedUploadFromComputer"> Option 1: Upload song from computer' +
+        '<input type="file" name="uploadedSong"><br>' +
+        '<input type="radio" name="skipSongUpload" checked="true"> Option 2: Skip this step for now' +
+        '' +
+        '' +
+        '<br><br></div>';
+
+        var actDialogFormatOption1 = // 1 option, skip
+        '<div style="text-align:center;">' +
+        '<label>Act name</label><br><input type="text" name="actName" value="Introduction"><br><br><br>' +
+        '<label>Accompanying song</label><br>' +
+        '<input type="radio" name="skipSongUpload" checked="true"> Option 1: Skip this step for now' +
+        '' +
+        '' +
+        '<br><br></div>';
+
+        $("#new-act-btn").click(function() {
+            var linkPrompt = {
+                state0: {
+                    title: 'Add new act <b>[USING CANNED INPUTS]</b>',
+                    html: actDialogFormatOption1,
+                    buttons: { Cancel: -1, Done: 1 },
+                    focus: 1,
+                    submit: function(e,v,m,f) {
+                        if (f.actName != "" && v == 1) {
+                            //-------------------------------------------------------
+                            //  create new act directory in the backend model here
+                            //  
+                            //  initialize sections/moves page with proper information if not done so before
+                            //-------------------------------------------------------
+                            $("#all-acts").append(generateAct(f.actName));
+                        }
+                        e.preventDefault();
+                        $.prompt.close();
+                    }
+                }
+            };
+            $.prompt(linkPrompt);
+        });
+    
+    </script>
+
 </BODY>
 </HTML>
 
