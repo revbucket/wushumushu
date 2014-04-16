@@ -268,18 +268,18 @@
                     if (useFirst) {
                         $("#section-list").append(
                             '<a href="#" class="list-group-item active section" id="' +
-                            key + '">' + key + '</a>'
+                            key + '-s">' + key + '</a>'
                         );
                         useFirst = false;
                         
                     } else {
                         $("#section-list").append(
                             '<a href="#" class="list-group-item section" id="' +
-                            key + '">' + key + '</a>'
+                            key + '-s">' + key + '</a>'
                         );
                     }
                     
-                    addListEditing(key);
+                    addListEditing(key+"-s");
 
                 }
             }
@@ -294,7 +294,7 @@
         List moves for the selected section.
         */
         var listMoves = function() {
-            var activeSection = $(".section.active").attr('id');
+            var activeSection = $(".section.active").attr('id').slice(0, -2);
             console.log(activeSection);
             
             var useFirst = true;
@@ -308,18 +308,18 @@
                         if (useFirst) {
                             $("#move-list").append(
                                 '<a href="#" class="list-group-item active move" id="' +
-                                key + '">' + actDictionary[activeSection][key][0] + '</a>'
+                                key + '-m">' + actDictionary[activeSection][key][0] + '</a>'
                             );
                             useFirst = false;
                             
                         } else {
                             $("#move-list").append(
                                 '<a href="#" class="list-group-item move" id="' +
-                                key + '">' + actDictionary[activeSection][key][0] + '</a>'
+                                key + '-m">' + actDictionary[activeSection][key][0] + '</a>'
                             );
                         }
                         
-                        addListEditing(key);
+                        addListEditing(key+"-m");
                     }
 
                 }
@@ -333,18 +333,19 @@
         /*
         Add a section.
         */
-        $('#section-btn').click(function () {
+        $('#section-btn').on('click', function () {
             var newSection = $("#add-section").val();
             var newSectionKey = makeKey(newSection);
             $("#section-list").append(
                                 '<a href="#" class="list-group-item section" id="' +
-                                 newSectionKey + '">' + newSection + '</a>'
+                                 newSectionKey + '-s">' + newSection + '</a>'
                             );
             addListEditing(newSectionKey);
             actDictionary[newSectionKey] = null;
             $("#add-section").val("Section");
-            $("#move-btn").prop('disabled', false);
+            $("#move-btn").prop('disabled', false);    
         });
+
         
         /*
         Add a move to a section.
@@ -358,12 +359,12 @@
             
             $("#move-list").append(
                                 '<a href="#" class="list-group-item move" id="' +
-                                newMoveKey + '">' + newMove + '</a>'
+                                newMoveKey + '-m">' + newMove + '</a>'
                             );
             console.log('<a href="#" class="list-group-item move" id="' +
-                                newMoveKey + '">' + newMove + '</a>');
-            addListEditing(newMoveKey);
-            var activeSection = $(".section.active").attr('id');
+                                newMoveKey + '-m">' + newMove + '</a>');
+            addListEditing(newMoveKey+'-m');
+            var activeSection = $(".section.active").attr('id').slice(0, -2);
             actDictionary[activeSection][newMoveKey] = [newMove];
             console.log(actDictionary);
             $("#add-move-title").val("Title");
@@ -373,11 +374,12 @@
         /*
         Confirm delete popup whenever the x is pressed for a section/ move.
         */
-        $(".glyphicon-remove").click(function (e) {
+        $('.list-group').on('click', ".glyphicon-remove", function (e) {
             // Remove the -remove at the end of the string, to get the ID for this element.
             var targetID = e.target.id.slice(0, -7);
+            var target = targetID.slice(0, -2);
             console.log('remove', targetID);
-            $.prompt("Do you want to delete " + targetID + "?", {
+            $.prompt("Do you want to delete " + target + "?", {
             title: "Confirm Delete",
             buttons: { "Yes": true, "No": false },
             submit: function(e,v,m,f){
@@ -388,11 +390,11 @@
                 if (v) {
                     if ($("#"+targetID).hasClass("section")) {
                         $("#"+targetID).remove();
-                        delete actDictionary[targetID];
+                        delete actDictionary[target];
                     } else {
                         $("#"+targetID).remove();
-                        var activeSection = $(".section.active").attr('id');
-                        delete actDictionary[activeSection][targetID];
+                        var activeSection = $(".section.active").attr('id').slice(0, -2);
+                        delete actDictionary[activeSection][target];
                     }
                 }
             }  
@@ -403,7 +405,7 @@
         Select a section
         Reference for using .section: http://stackoverflow.com/questions/12687085/jquery-remove-class-if-other-element-is-clicked
         */
-        $('.section').click(function() {
+        $('#section-list').on('click', '.section', function() {
             if (!$(this).hasClass('disabled')) {
               $(".section.active").removeClass("active");
               $(this).addClass('active');
@@ -419,7 +421,7 @@
         /*
         Select a move.
         */
-        $('.move').click(function() {
+        $('#move-list').on('click', '.move', function() {
             if (!$(this).hasClass('disabled')) {
                 console.log('move clicked');
                 $('.move.active').removeClass("active");
@@ -431,24 +433,25 @@
         /*
         Enable update mode for a section or move.
         */
-        $('.glyphicon-pencil').click(function(e) {
+        $('.list-group').on('click', '.glyphicon-pencil', function(e) {
             // Remove -pencil from the end of the string, to get the ID for this element.
             var targetID = e.target.id.slice(0, -7);
+            var target = targetID.slice(0,-2);
             console.log('edit', targetID);
             
             if ($("#"+targetID).hasClass("section")) {
-                currentSection = targetID;
+                currentSection = target;
                 $("#"+targetID).replaceWith('<div class="input-group edit ' + targetID + '">' +
                       '<input type="text" id="update-section" class="form-control" placeholder="' +
-                      targetID + '">' +
+                      target + '">' +
                       '<span class="input-group-btn">' +
                         '<button class="btn btn-default update-btn" id="update-section-btn" type="button">Update</button>' +
                       '</span>' +      
                   '</div>'); 
                 
             } else if ($("#"+targetID).hasClass("move")) {
-                currentMove = targetID;
-                var activeSection = $(".section.active").attr('id');
+                currentMove = target;
+                var activeSection = $(".section.active").attr('id').slice(0,-2);
                 
                 $("#"+targetID).replaceWith(
                     '<form class="form-horizontal ' + targetID + '" role="form">' +
@@ -456,7 +459,7 @@
                         '<label for="update-move-title" class="col-sm-2 control-label">Title</label>' +
                         '<div class="col-sm-10">' +  
                           '<input class="form-control" id="update-move-title" placeholder="' +
-                            targetID + '" />' +
+                            target + '" />' +
                         '</div>' +
                       '</div>' +
                       '<div class="form-group edit">' +
@@ -483,15 +486,15 @@
         /*
         Function to process the updated section data and reset the forms.
         */
-        $('#update-section-btn').click(function (e) {
+        $('#section-list').on('click', '#update-section-btn', function (e) {
             console.log($("#update-section").val());
             var newSection = $("#update-section").val();
             var targetDictionary = actDictionary[currentSection];
             delete actDictionary[currentSection];
             actDictionary[newSection] = targetDictionary;
             
-            var newSectionKey = makeKey(newSection);
-            $("."+targetID).replaceWith(
+            var newSectionKey = makeKey(newSection)+"-s";
+            $("#"+currentSection+"-s").replaceWith(
                                 '<a href="#" class="list-group-item section" id="' +
                                  newSectionKey + '">' + newSection + '</a>'
                             );
