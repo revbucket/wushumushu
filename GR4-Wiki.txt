@@ -1,0 +1,14 @@
+PLATFORM DETAILS
+
+Operating System: Mac OS X 10.7+
+Browser: Google Chrome (ver. 34 with Javascript enabled)
+
+INSTRUCTIONS
+
+1. Go to [website here]
+
+SHALLOW PARTS
+
+Describe which parts of the prototype are shallow (incompletely implemented or canned, so that your evaluators know what should work and what shouldn't.
+
+Note that your prototype must remain frozen (no changes) and accessible at the supplied URL provided two weeks after the due date.
