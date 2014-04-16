@@ -378,8 +378,13 @@
             // Remove the -remove at the end of the string, to get the ID for this element.
             var targetID = e.target.id.slice(0, -7);
             var target = targetID.slice(0, -2);
+            var message = target;
+            if ($("#"+targetID).hasClass("move")) {
+                var activeSection = $(".section.active").attr('id').slice(0, -2);
+                message = actDictionary[activeSection][target][0];
+            }
             console.log('remove', targetID);
-            $.prompt("Do you want to delete " + target + "?", {
+            $.prompt("Do you want to delete " + message + "?", {
             title: "Confirm Delete",
             buttons: { "Yes": true, "No": false },
             submit: function(e,v,m,f){
@@ -406,6 +411,7 @@
         Reference for using .section: http://stackoverflow.com/questions/12687085/jquery-remove-class-if-other-element-is-clicked
         */
         $('#section-list').on('click', '.section', function() {
+            console.log($(this) + ' pressed!');
             if (!$(this).hasClass('disabled')) {
               $(".section.active").removeClass("active");
               $(this).addClass('active');
@@ -437,7 +443,7 @@
             // Remove -pencil from the end of the string, to get the ID for this element.
             var targetID = e.target.id.slice(0, -7);
             var target = targetID.slice(0,-2);
-            console.log('edit', targetID);
+            console.log('edit', target);
             
             if ($("#"+targetID).hasClass("section")) {
                 currentSection = target;
@@ -452,6 +458,7 @@
             } else if ($("#"+targetID).hasClass("move")) {
                 currentMove = target;
                 var activeSection = $(".section.active").attr('id').slice(0,-2);
+                currentSection = activeSection;
                 
                 $("#"+targetID).replaceWith(
                     '<form class="form-horizontal ' + targetID + '" role="form">' +
@@ -466,7 +473,7 @@
                         '<label for="update-move" class="col-sm-2 control-label">Moves</label>' +
                         '<div class="col-sm-10">' + 
                           '<textarea class="form-control" id="update-move" rows="3" placeholder="' + 
-                            actDictionary[activeSection][targetID][0] + '"></textarea>' +
+                            actDictionary[activeSection][target][0] + '"></textarea>' +
                         '</div>' +
                       '</div>' +         
                       '<div class="form-group edit">' +
@@ -490,21 +497,46 @@
             console.log($("#update-section").val());
             var newSection = $("#update-section").val();
             var targetDictionary = actDictionary[currentSection];
+            console.log(targetDictionary);
             delete actDictionary[currentSection];
             actDictionary[newSection] = targetDictionary;
             
             var newSectionKey = makeKey(newSection)+"-s";
-            $("#"+currentSection+"-s").replaceWith(
-                                '<a href="#" class="list-group-item section" id="' +
+            $("."+currentSection+"-s").replaceWith(
+                                '<a href="#" class="list-group-item section active" id="' +
                                  newSectionKey + '">' + newSection + '</a>'
                             );
             addListEditing(newSectionKey);
+            listMoves();
             
             $("#section-btn").removeClass("disabled");
             $(".section").removeClass("disabled");
             $(".move").removeClass("disabled");
             $("#move-btn").removeClass("disabled");
+        });
         
+        /*
+        Function to process the updated move data and reset the forms.
+        */
+        $("#move-list").on('click', '#update-move-btn', function() {
+            var newMoveName = $("#update-move-title").val();
+            var newMoveData = $("#update-move").val();
+            var targetList = actDictionary[currentSection][currentMove];
+            console.log('target list', targetList);
+            delete actDictionary[currentSection][currentMove];
+            actDictionary[currentSection][newMoveName] = targetList.slice(1);
+            actDictionary[currentSection][newMoveName].unshift(newMoveData);
+            console.log('new data', actDictionary[currentSection][newMoveName]);
+            
+            var newMoveKey = makeKey(newMoveName)+"-m";
+            $("."+currentMove+"-m").replaceWith('<a href="#" class="list-group-item active move" id="' +
+                                newMoveKey + '">' + newMoveData + '</a>');
+            addListEditing(newMoveKey);
+            
+            $("#section-btn").removeClass("disabled");
+            $(".section").removeClass("disabled");
+            $(".move").removeClass("disabled");
+            $("#move-btn").removeClass("disabled");
         });
         
 
