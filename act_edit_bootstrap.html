@@ -426,6 +426,7 @@
               listMoves();
               currentSection = e.target.id.slice(0, -2);
               var movesData = actDictionary[currentSection];
+              console.log('moves data', movesData);
               if (movesData !== null) {
                 var keys = Object.keys(actDictionary[currentSection]);
                 currentMove = keys[0];
@@ -446,7 +447,7 @@
         /*
         Select a move.
         */
-        $('#move-list').on('click', '.move', function() {
+        $('#move-list').on('click', '.move', function(e) {
             if (!$(this).hasClass('disabled')) {
                 console.log('move clicked');
                 $('.move.active').removeClass("active");
