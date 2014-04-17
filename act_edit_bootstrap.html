@@ -343,7 +343,8 @@
                             );
             addListEditing(newSectionKey);
             actDictionary[newSectionKey] = null;
-            $("#add-section").val("Section");
+            $("#add-section").val("");
+            $("#add-section").attr('placeholder', "Section");
             $("#move-btn").prop('disabled', false);
             $("#move-list").empty();
             currentSection = newSection;
@@ -372,8 +373,10 @@
             var activeSection = $(".section.active").attr('id').slice(0, -2);
             actDictionary[activeSection][newMoveKey] = [newMove];
             console.log(actDictionary);
-            $("#add-move-title").val("Title");
-            $("#add-move").val("Move");
+            $("#add-move-title").val("");
+            $("#add-move").val("");
+            $("#add-move-title").attr('placeholder', "Title");
+            $("#add-move").attr('placeholder', "Move");
             currentMove = newMoveTitle;
             populateWeaponList(currentSection, currentMove);
         });
