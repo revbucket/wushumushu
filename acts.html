@@ -28,7 +28,7 @@
 
 
         <div id="back-to-all-shows" style="position: relative; bottom: 50px;">
-            <a href="shows.html">All Shows</a> &nbsp;&gt;&nbsp; Show name here.
+            <a href="shows.html">All Shows</a> &nbsp;&gt;&nbsp; Elements
             <!--
             <ol class="breadcrumb list inline">
                 <li><a href="#">All Shows</a></li>
@@ -38,8 +38,8 @@
         </div>
         
 
-        <div id="show-name" align="center">Show name here.</div>
-
+        <div id="show-name" align="center" style="font-size:34pt;">Elements</div>
+        <div id="instructions" align="center" style="position: relative; top: 20px; color: red;"></div>
 
         <div class="col-md-6 col-md-offset-3" style="position: relative; top: 50px;">
             <div class="panel panel-default">
@@ -53,6 +53,9 @@
                             <div class="btn-group">
                                 <button type="button" class="btn btn-default" id="new-act-btn">
                                     Add New Act
+                                </button>
+                                <button type="button" class="btn btn-default" id="edit-acts-btn">
+                                    Delete an Act
                                 </button>
                             </div>
                         </ul>
@@ -110,7 +113,7 @@
             </div><!-- end default panel -->
 
 
-        </div><!-- end col-md-5 col-md-offset-3 shows box -->
+        </div><!-- end col-md-6 col-md-offset-3 shows box -->
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script src="bootstrap-3.1.1-dist/js/bootstrap.min.js"></script>
@@ -120,14 +123,21 @@
     <script src="bootstrap-select.min.js"></script>
 
     <script type="text/javascript">
+
+        // global variable for generating UIDs
+        var ticket = 0;
+
+        // global variable to activate edit/delete mode
+        var editing = false;
+
         // generates string for a act's view, actName must not be blank
-        function generateAct(actName) {
-            return '<a href="act_edit_bootstrap.html"><li class="list-group-item act-item" style="font-size:22pt;"><b>'+actName+'</b></li></a>';
+        function generateAct(UID, actName) {
+            return '<div id="'+UID+'"><li class="list-group-item act-item" style="font-size:22pt;"><table><tr><td><b>'+actName+'</b></td></tr></table></li></a>';
         }
         
         var actDialogFormatOption0 = // 2 options, song upload and skip
         '<div style="text-align:center;">' +
-        '<label>Act name</label><br><input type="text" name="actName" value="Introduction"><br><br><br>' +
+        '<label>Act name</label><br><input type="text" name="actName" value="Avatar"><br><br><br>' +
         '<label>Accompanying song</label><br>' +
         '<input type="radio" name="selectedUploadFromComputer"> Option 1: Upload song from computer' +
         '<input type="file" name="uploadedSong"><br>' +
@@ -136,14 +146,27 @@
         '' +
         '<br><br></div>';
 
-        var actDialogFormatOption1 = // 1 option, skip
+        var actDialogFormatOption1 = // 1 option, skip (for canned frontend)
         '<div style="text-align:center;">' +
-        '<label>Act name</label><br><input type="text" name="actName" value="Introduction"><br><br><br>' +
+        '<label>Act name</label><br><input type="text" name="actName" value="Avatar"><br><br><br>' +
         '<label>Accompanying song</label><br>' +
         '<input type="radio" name="skipSongUpload" checked="true"> Option 1: Skip this step for now' +
         '' +
         '' +
         '<br><br></div>';
+
+        $("#edit-acts-btn").click(function() {
+            // toggle the global flag
+            if (editing) {
+                editing = false;
+                $("#edit-acts-btn").html('Delete an Act');
+                $("#instructions").html('');
+            } else {
+                editing = true;
+                $("#edit-acts-btn").html('<div style="color:red;">Turn off deletion</div>');
+                $("#instructions").html('Click on an act to delete it');
+            }
+        });
 
         $("#new-act-btn").click(function() {
             var linkPrompt = {
@@ -159,7 +182,20 @@
                             //  
                             //  initialize sections/moves page with proper information if not done so before
                             //-------------------------------------------------------
-                            $("#all-acts").append(generateAct(f.actName));
+                            
+                            // give the act a UID, which is an integer string right now, may be changed during backend implementation
+                            var UID = (ticket++).toString();
+
+                            $("#all-acts").append(generateAct(UID, f.actName));                            
+
+                            $("#"+UID).click(function() {
+                                if (editing) {
+                                    $("#"+UID).remove();
+                                } else {
+                                    window.location.href = "act_edit_bootstrap.html";
+                                }
+                            });
+
                         }
                         e.preventDefault();
                         $.prompt.close();
