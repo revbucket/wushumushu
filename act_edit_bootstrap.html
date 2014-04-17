@@ -656,7 +656,7 @@
                     submit:function(e,v,m,f){ 
                         var newWeaponID = f.fname+"-weapon-btn";
                         var newDivID = f.fname+"-weapon-div";
-                        if (f.fname != "") {      
+                        if (f.fname != "" && v==1) {      
                             var newButton = jQuery('<div/>', {id: newDivID, 
                                              class: 'btn-group weapon-div'}).html('<button type="button" class="btn btn-default weapon-btn" id=' + newWeaponID + '>'+
 	                                     f.fname + '</button>');
