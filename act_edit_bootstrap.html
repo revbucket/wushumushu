@@ -344,7 +344,10 @@
             addListEditing(newSectionKey);
             actDictionary[newSectionKey] = null;
             $("#add-section").val("Section");
-            $("#move-btn").prop('disabled', false);    
+            $("#move-btn").prop('disabled', false);
+            $("#move-list").empty();
+            currentSection = newSection;
+            populateWeaponList(currentSection, null);
         });
 
         
@@ -371,6 +374,8 @@
             console.log(actDictionary);
             $("#add-move-title").val("Title");
             $("#add-move").val("Move");
+            currentMove = newMoveTitle;
+            populateWeaponList(currentSection, currentMove);
         });
         
         /*
@@ -412,13 +417,20 @@
         Select a section
         Reference for using .section: http://stackoverflow.com/questions/12687085/jquery-remove-class-if-other-element-is-clicked
         */
-        $('#section-list').on('click', '.section', function() {
+        $('#section-list').on('click', '.section', function(e) {
             console.log($(this) + ' pressed!');
             if (!$(this).hasClass('disabled')) {
               $(".section.active").removeClass("active");
               $(this).addClass('active');
               $("#move-list").empty();
               listMoves();
+              currentSection = e.target.id.slice(0, -2);
+              if ($("#move-list").first() !== null) {
+                    currentMove = $("#move-list").first().slice(0,-2);  
+              } else {
+                  currentMove = null;
+            }
+                populateWeaponList(currentSection, currentMove);
             }
         });
         
@@ -434,6 +446,8 @@
                 console.log('move clicked');
                 $('.move.active').removeClass("active");
                 $(this).addClass("active");
+                currentMove = e.target.id.slice(0, -2);
+                populateWeaponList(currentSection, currentMove);
             }
         });
         
@@ -515,6 +529,13 @@
             $(".section").removeClass("disabled");
             $(".move").removeClass("disabled");
             $("#move-btn").removeClass("disabled");
+            currentSection = newSection;
+            if (!jQuery.isEmptyObject(actDictionary[currentSection])) {
+                var keys = Object.keys(actDictionary[currentSection]);
+                currentMove = keys[0];
+                console.log(currentMove);
+                populateWeaponList(currentSection, currentMove);
+            }
         });
         
         /*
@@ -539,6 +560,8 @@
             $(".section").removeClass("disabled");
             $(".move").removeClass("disabled");
             $("#move-btn").removeClass("disabled");
+            currentMove = newMove;
+            populateWeaponList(currentSection, currentMove);
         });
         
 
@@ -583,6 +606,7 @@
       };
       /*Weapons group handling */
       var populateWeaponList = function(section, move) {
+          console.log('current section: ', currentSection, ' and move: ', currentMove);
           $(".weapon-div").remove();
           $.each(actDictionary[section][move][1], function(key, value) {
                  var newIDDiv = key + "-weapon-div";
