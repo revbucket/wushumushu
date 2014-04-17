@@ -425,11 +425,16 @@
               $("#move-list").empty();
               listMoves();
               currentSection = e.target.id.slice(0, -2);
-              if ($("#move-list").first() !== null) {
-                    currentMove = $("#move-list").first().slice(0,-2);  
+              var movesData = actDictionary[currentSection];
+              if (movesData !== null) {
+                var keys = Object.keys(actDictionary[currentSection]);
+                currentMove = keys[0];
+                console.log(currentMove);
               } else {
                   currentMove = null;
-            }
+              }
+                console.log('section dict', actDictionary[currentSection]);
+                // console.log('weapons dict', actDictionary[currentSection][currentMove]);
                 populateWeaponList(currentSection, currentMove);
             }
         });
@@ -530,12 +535,16 @@
             $(".move").removeClass("disabled");
             $("#move-btn").removeClass("disabled");
             currentSection = newSection;
-            if (!jQuery.isEmptyObject(actDictionary[currentSection])) {
+            var movesData = actDictionary[currentSection];
+              if (movesData !== null) {
                 var keys = Object.keys(actDictionary[currentSection]);
                 currentMove = keys[0];
                 console.log(currentMove);
+              } else {
+                  currentMove = null;
+              }
                 populateWeaponList(currentSection, currentMove);
-            }
+
         });
         
         /*
