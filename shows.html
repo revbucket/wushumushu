@@ -48,7 +48,7 @@
                                     Add New Show
                                 </button>
                                 <button type="button" class="btn btn-default" id="edit-shows-btn">
-                                    Delete a Show
+                                    Edit Shows
                                 </button>
                             </div>
                         </ul>
@@ -123,28 +123,68 @@
         // global variable to activate edit/delete mode
         var editing = false;
 
-        // generates string for a show's view, showName must not be blank
-        function generateShow(UID, showName, showDate, showTimeStart, showTimeEnd, showLocation) {
+        // global storage for shows and their information
+        // this may be replaced by a backend database later
+        //
+        // keys (string type) in show_data are the UIDs
+        // values (dict type) are another dictionary with the following properties (example below)
+        // * note that UID is replicated in the inner dictionary as well
+        //      keys (string type)      values (string type)
+        //      ------------------      --------------------
+        //      UID                     0
+        //      name                    Elements
+        //      date                    Sat 4/19/2014
+        //      timeStart               7 PM
+        //      timeEnd                 9 PM
+        //      location                Jewett Auditorium
+        var show_data = {};
+
+        // generates the show dictionary data structure
+        function generateShowDS(UID, showName, showDate, showTimeStart, showTimeEnd, showLocation) {
+            var DS = {};
+            DS['UID'] = UID;
+            DS['name'] = showName;
+            DS['date'] = showDate;
+            DS['timeStart'] = showTimeStart;
+            DS['timeEnd'] = showTimeEnd;
+            DS['location'] = showLocation;
+            return DS;
+        }
+
+        // modifies a show based on new properties (UID cannot be changed)
+        // changes the local storage properties and the div view
+        function modifyShow(new_showName, new_showDate, new_showTimeStart, new_showTimeEnd, new_showLocation) {
+
+        }
+
+        // generates a string for the div visually depicting the show item
+        function generateShowDiv(showDS) {
+            var UID = showDS['UID'];
+            var showName = showDS['name'];
+            var showDate = showDS['date'];
+            var showTimeStart = showDS['timeStart'];
+            var showTimeEnd = showDS['timeEnd'];
+            var showLocation = showDS['location'];
             
             var showTimeSpan = '<i>(No times)</i>';
             if (showTimeStart != "" && showTimeEnd != "") { showTimeSpan = showTimeStart + ' - ' + showTimeEnd; }
             if (showTimeStart != "" && showTimeEnd == "") { showTimeSpan = showTimeStart; }
                 
-            if (showDate != "") {
-                showDate = showDate + '<br>';
-            } else {
-                showDate = '<i>(No date)</i><br>';
-            }
+            if (showDate != "") { showDate = showDate + '<br>'; }
+            else { showDate = '<i>(No date)</i><br>'; }
 
-            if (showLocation != "") {
-                showLocation = showLocation + '<br>';
-            } else {
-                showLocation = '<i>(No location)</i><br>';
-            }
+            if (showLocation != "") { showLocation = showLocation + '<br>'; }
+            else { showLocation = '<i>(No location)</i><br>'; }
 
-            return      '<div id="'+UID+'"><li class="list-group-item show-item"><table style="width:100%;margin0px;"><tr><td style="vertical-align:top;font-size:22pt;"><b>'+showName
-                    +   '</b></td><td style="text-align:right;vertical-align:top;width:40%;">'+showLocation
-                    +   showDate+showTimeSpan+'</td></tr></table></li></div>';
+            return      '<div id="'+UID+'"><li class="list-group-item show-item">'
+                    +   '<table style="width:100%;margin0px;"><tr>'
+                    +   '<td style="vertical-align:top;font-size:22pt;">'
+                    +   '<b><div id="'+UID+'-name">'+showName+'</div></b>'
+                    +   '</td><td style="text-align:right;vertical-align:top;width:40%;">'
+                    +   '<div id="'+UID+'-location">'+showLocation+'</div>'
+                    +   '<div id="'+UID+'-date">'+showDate+'</div>'
+                    +   '<div id="'+UID+'-timespan">'+showTimeSpan+'</div>'
+                    +   '</td></tr></table></li></div>';
         }
 
         var rowSpacing = '<tr style="height:20px;"></tr>'
@@ -163,12 +203,12 @@
             // toggle the global flag
             if (editing) {
                 editing = false;
-                $("#edit-shows-btn").html('Delete a Show');
+                $("#edit-shows-btn").html('Edit Shows');
                 $("#instructions").html('');
             } else {
                 editing = true;
-                $("#edit-shows-btn").html('<div style="color:red;">Turn off deletion</div>');
-                $("#instructions").html('Click on a show to delete it');
+                $("#edit-shows-btn").html('<div style="color:red;">Turn off editing</div>');
+                $("#instructions").html('Click on a show to edit it');
             }
 
         });
@@ -192,22 +232,85 @@
                             // The UID implementation may be changed when building the backend
                             var UID = (ticket++).toString();
 
-                            $("#all-shows").append(generateShow(UID, f.showName, f.showDate, f.showTimeStart, f.showTimeEnd, f.showLocation));
+                            var showDS = generateShowDS(UID, f.showName, f.showDate, f.showTimeStart, f.showTimeEnd, f.showLocation);
+                            
+                            // add the show data structure to the global log
+                            show_data[UID] = showDS;
+
+                            $("#all-shows").append(generateShowDiv(showDS));
                             $("#"+UID).click(function() {
                                 if (editing) {
-                                    $("#"+UID).remove();
+                                    
+                                    // currently using local javascript storage show_data
+                                    // think of a switch to database during backend implementation
+                                    var initShowDS = show_data[UID];
+                                    var initShowName = initShowDS['name'];
+                                    var initShowDate = initShowDS['date'];
+                                    var initShowTimeStart = initShowDS['timeStart'];
+                                    var initShowTimeEnd = initShowDS['timeEnd'];
+                                    var initShowLocation = initShowDS['location'];
+
+                                    var editPrompt = {
+                                        state0: {
+                                            title: 'Currently editing show: ' + initShowName,
+                                            html: showDialogFormatOption0,
+                                            buttons: { 'Delete this show': -10, 'Cancel': -1, 'Save changes': 1 },
+                                            focus: 1,
+                                            submit: function(e1,v1,m1,f1) {
+                                                if (v1 == 1) {
+                                                    //$("#"+UID+'-name').html('hi');
+                                                    e1.preventDefault();
+                                                    $.prompt.close();
+                                                }
+                                                else if (v1 == -1) {
+                                                    e1.preventDefault();
+                                                    $.prompt.close();
+                                                }
+                                                else if (v1 == -10) {
+                                                    e1.preventDefault();
+                                                    $.prompt.goToState('deleteState',false,e1); // goto state1
+                                                }
+
+                                            }
+                                        }, // end state0 (default edit panel)
+
+                                        'deleteState': {
+                                            title: 'Delete show',
+                                            html: 'Are you sure you want to delete the show: <span style="color:red;">'
+                                                  +initShowName+'</span><br><br>This action cannot be undone<br><br>',
+                                            buttons: { 'Yes, delete this show' : -1, 'No, keep this show' : 1 },
+                                            focus: 1,
+                                            submit: function(e1,v1,m1,f1) {
+                                                if (v1 == -1) {
+                                                    $("#"+UID).remove(); // remove the div view
+                                                    delete show_data['UID']; // remove data structure from storage
+                                                }
+                                            }
+
+
+                                        } // end deleteSlate
+
+                                    }; // end editPrompt
+
+                                    $.prompt(editPrompt);
+
                                 } else {
                                     window.location.href = "acts.html";
                                 }
-                            });
-                        }
+                            }); // end #+UID click function (def depends on if edit mode on or off)
+
+
+                        } // end if block checking f.showName != "" && v==1
                         e.preventDefault();
                         $.prompt.close();
-                    }
-                }
-            };
+
+                    } // end outer submit function
+                } // end outer state0
+            }; // end outer linkPrompt definition
             $.prompt(linkPrompt);
-        });
+
+
+        }); // end #new-show-btn click function
     
     </script>
 
