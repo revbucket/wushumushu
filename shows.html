@@ -29,12 +29,35 @@
 
     <div class="container panel-container" role="main">
 
+      
+        <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <ul class="nav navbar-nav navbar-left">
+                    <ol class="breadcrumb list inline">
+                      <li class="active">All Shows</li>
+                    </ol>
+                </ul>
+
+                <ul class="nav navbar-nav navbar-right">
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-default" id="edit-mode-button">Edit</button>
+                      <button type="button" class="btn btn-default" id="view-mode-button">View</button>
+                    </div>
+                </ul>
+          
+            </div><!--container-fluid -->
+        </nav>
+
         
-        <div id="logo" align="center"><img src="wushumushu_logo.png" style="width:40%;"></div>
+        <div id="instructions" align="right" style="position: absolute; margin-top: 0px; right: 10px; color: red; clear: both;" hidden="true">
+            Click on a show to edit it
+        </div>
+        
+        <div id="logo" align="center"><img src="wushumushu_logo.png" style="position: relative; top: 40px; width:40%;"></div>
 
-        <div id="instructions" align="center" style="position:relative; top: 20px; color: red;"></div>
 
-        <div class="col-md-6 col-md-offset-3" style="position: relative; top: 50px;">
+        <div class="col-md-6 col-md-offset-3" style="position: relative; top: 100px;">
             <div class="panel panel-default">
 
 
@@ -44,11 +67,8 @@
                         <ul class="nav navbar-nav navbar-left" style="font-size:26pt;">Shows</ul>
                         <ul class="nav navbar-nav navbar-right">
                             <div class="btn-group">
-                                <button type="button" class="btn btn-default" id="new-show-btn">
+                                <button type="button" class="btn btn-default" id="new-show-btn" hidden="true">
                                     Add New Show
-                                </button>
-                                <button type="button" class="btn btn-default" id="edit-shows-btn">
-                                    Edit Shows
                                 </button>
                             </div>
                         </ul>
@@ -57,49 +77,6 @@
 
 
                 <ul class="list-group" id="all-shows"><!-- part of "panel panel-default" class -->
-                    
-                    <!--
-                    <li class="list-group-item show-item">
-
-                        
-                        show 1
-                        <div class="pull-right">
-                            <button type="button" class="btn btn-default btn-xs">
-                                <span class="glyphicon glyphicon-pencil"></span>
-                            </button>
-                            <button type="button" class="btn btn-default btn-xs">
-                                <span class="glyphicon glyphicon-remove"></span>
-                            </button>
-                        </div>
-
-
-                        <span style="float:right;margin-right:0px;">
-                            <div id="date">Date</div>
-                        </span>
-                        <span style="position:relative;margin-right:40px;">
-                            Location
-                        </span>
-                    
-
-                        <table><tr>
-                            <td>Showsfsdfsd 1</td>
-                            <td>Location<br>Datsdfse</td>
-                        </tr></table>
-                    </li>
-                    -->
-
-
-
-                    <!--
-                    <li class="list-group-item show-item">
-                        <table><tr>
-                            <td>Showsfsdfsd 1</td>
-                            <td>Location<br>Datsdfse</td>
-                        </tr></table>
-
-                    </li>
-                    -->
-
                 </ul><!-- end list-group of shows -->
 
 
@@ -116,7 +93,7 @@
     <script src="bootstrap-select.min.js"></script>
 
     <script type="text/javascript">
-
+        // ----------------------------------------------------------------------------------------------
         // global variable for generating UIDs
         var ticket = 0;
 
@@ -151,10 +128,40 @@
             return DS;
         }
 
-        // modifies a show based on new properties (UID cannot be changed)
-        // changes the local storage properties and the div view
-        function modifyShow(new_showName, new_showDate, new_showTimeStart, new_showTimeEnd, new_showLocation) {
+        // adds the show data to a database
+        // without backend, currently adding to local javascript dictionary show_data
+        function addToDatabase(UID, showDS) {
+            if (UID in show_data) { console.log("FATAL ERROR: Adding to database -- UID already exists"); }
+            show_data[UID] = showDS;
+        }
 
+        // updates the show data from a database
+        // without backend, currently modifying local javascript dictionary show_data
+        // implemented by a remove followed by an add ---> beware of possible concurrency if no atomicity
+        function modifyDatabase(UID, newShowDS) {
+            removeFromDatabase(UID);
+            addToDatabase(UID, newShowDS);
+        }
+
+        // fetches the show data from a database
+        function fetchFromDatabase(UID) {
+            return show_data[UID];
+        }
+
+        // removes show data from a database
+        // without backend, currently removing from local javascript dictionary show_data
+        function removeFromDatabase(UID) {
+            delete show_data[UID];
+        }
+
+        // modifies a show based on new properties
+        // assumes that newShowDS['name'] is not blank
+        // changes the local storage properties and the div view
+        function updateShowView(UID, newShowDS) {
+            $("#"+UID+"-name").html(newShowDS['name']);
+            $("#"+UID+"-location").html(newShowDS['location'] != "" ? newShowDS['location'] : "<i>(No Location)</i>");
+            $("#"+UID+"-date").html(newShowDS['date'] != "" ? newShowDS['date'] : "<i>(No date)</i>");
+            $("#"+UID+"timespan").html(generateTimeSpan(newShowDS['timeStart'],newShowDS['timeEnd']));
         }
 
         // generates a string for the div visually depicting the show item
@@ -166,10 +173,8 @@
             var showTimeEnd = showDS['timeEnd'];
             var showLocation = showDS['location'];
             
-            var showTimeSpan = '<i>(No times)</i>';
-            if (showTimeStart != "" && showTimeEnd != "") { showTimeSpan = showTimeStart + ' - ' + showTimeEnd; }
-            if (showTimeStart != "" && showTimeEnd == "") { showTimeSpan = showTimeStart; }
-                
+            var showTimeSpan = generateTimeSpan(showTimeStart, showTimeEnd);
+                            
             if (showDate != "") { showDate = showDate + '<br>'; }
             else { showDate = '<i>(No date)</i><br>'; }
 
@@ -177,7 +182,7 @@
             else { showLocation = '<i>(No location)</i><br>'; }
 
             return      '<div id="'+UID+'"><li class="list-group-item show-item">'
-                    +   '<table style="width:100%;margin0px;"><tr>'
+                    +   '<table style="width:100%;margin:0px;"><tr>'
                     +   '<td style="vertical-align:top;font-size:22pt;">'
                     +   '<b><div id="'+UID+'-name">'+showName+'</div></b>'
                     +   '</td><td style="text-align:right;vertical-align:top;width:40%;">'
@@ -187,38 +192,79 @@
                     +   '</td></tr></table></li></div>';
         }
 
-        var rowSpacing = '<tr style="height:20px;"></tr>'
-        var showDialogFormatOption0 =
-        '<table class="add-show-dialog""><tr><td style="width:45%;"><label>Show name</label></td><td><input type="text" name="showName" value="Elements"></td></tr>' +
-        rowSpacing +
-        '<tr><td><label>Date</label></td><td><input type="text" name="showDate" value="Sat 4/19/2014"></td></tr>' +
-        rowSpacing +        
-        '<tr><td><label>Start time</label></td><td><input type="text" name="showTimeStart" value="7 PM">' +
-        rowSpacing +
-        '<tr><td><label>End time</label></td><td><input type="text" name="showTimeEnd" value="9 PM"></td></tr>' +
-        rowSpacing +
-        '<tr><td><label>Location</label</td><td><input type="text" name="showLocation" value="Jewett Auditorium"></td></tr></table>';
+        // generates the string representation of what timespan looks like using two arguments
+        // can be used for updating timespan component when editing existing show
+        function generateTimeSpan(timeStart, timeEnd) {
+            var showTimeSpan = '<i>(No times)</i>';
+            if (timeStart != "" && timeEnd != "") { showTimeSpan = timeStart + ' - ' + timeEnd; }
+            if (timeStart != "" && timeEnd == "") { showTimeSpan = timeStart; }
+            return showTimeSpan;
+        }
 
-        $("#edit-shows-btn").click(function() {
-            // toggle the global flag
-            if (editing) {
-                editing = false;
-                $("#edit-shows-btn").html('Edit Shows');
-                $("#instructions").html('');
-            } else {
-                editing = true;
-                $("#edit-shows-btn").html('<div style="color:red;">Turn off editing</div>');
-                $("#instructions").html('Click on a show to edit it');
+        // returns a string representing the div that will show up in the show dialog panel
+        // defaultDS (data structure of existing show) should be given to prepopulate field values for editing a show
+        //     if adding new show use null
+        function showDialogPanel(defaultDS) {
+
+            // default field values
+            var showNameDV = '';
+            var showDateDV = '';
+            var showTimeStartDV = '';
+            var showTimeEndDV = '';
+            var showLocationDV = '';
+
+            var rowSpacing = '<tr style="height:20px;"></tr>';
+
+            if (defaultDS != null) {
+                showNameDV = defaultDS['name'];
+                showDateDV = defaultDS['date'];
+                showTimeStartDV = defaultDS['timeStart'];
+                showTimeEndDV = defaultDS['timeEnd'];
+                showLocationDV = defaultDS['location'];
             }
 
+            var st =
+            '<table class="add-show-dialog"><tr><td style="width:45%;"><label>Show name*</label></td>' +
+            '<td><input type="text" name="showName" value="' + showNameDV + '"></td></tr>' +
+            rowSpacing + '<tr><td><label>Date</label></td>' +
+            '<td><input type="text" name="showDate" value="' + showDateDV + '"></td></tr>' +
+            rowSpacing + '<tr><td><label>Start time</label></td>' +
+            '<td><input type="text" name="showTimeStart" value="' + showTimeStartDV + '"></td></tr>' +
+            rowSpacing + '<tr><td><label>End time</label></td>' +
+            '<td><input type="text" name="showTimeEnd" value="' + showTimeEndDV + '"></td></tr>' +
+            rowSpacing + '<tr><td><label>Location</label></td>' +
+            '<td><input type="text" name="showLocation" value="' + showLocationDV + '"></td></tr></table>' +
+            '<br>Fields marked * are required<br><br>';
+
+            return st;
+
+        }
+
+
+        $("#edit-mode-button").click(function() {
+            editing = true;
+            $("#new-show-btn").show();
+            $("#instructions").fadeIn("slow");
+            $("#edit-mode-button").addClass("btn-info");
+            $("#view-mode-button").removeClass("btn-info");
         });
+
+        $("#view-mode-button").click(function() {
+            editing = false;
+            $("#new-show-btn").hide();
+            $("#instructions").fadeOut("slow");
+            $("#view-mode-button").addClass("btn-info");
+            $("#edit-mode-button").removeClass("btn-info");
+        });
+
+        $("#view-mode-button").click();
 
         $("#new-show-btn").click(function() {
             var linkPrompt = {
                 state0: {
-                    title: 'Add new show <b>[USING CANNED INPUTS]</b>',
-                    html: showDialogFormatOption0,
-                    buttons: { Cancel: -1, Done: 1 },
+                    title: 'Add new show',
+                    html: showDialogPanel(null),
+                    buttons: { 'Cancel': -1, 'Done': 1 },
                     focus: 1,
                     submit: function(e,v,m,f) {
                         if (f.showName != "" && v == 1) {
@@ -235,30 +281,33 @@
                             var showDS = generateShowDS(UID, f.showName, f.showDate, f.showTimeStart, f.showTimeEnd, f.showLocation);
                             
                             // add the show data structure to the global log
-                            show_data[UID] = showDS;
+                            addToDatabase(UID, showDS);
 
                             $("#all-shows").append(generateShowDiv(showDS));
                             $("#"+UID).click(function() {
                                 if (editing) {
                                     
-                                    // currently using local javascript storage show_data
-                                    // think of a switch to database during backend implementation
-                                    var initShowDS = show_data[UID];
-                                    var initShowName = initShowDS['name'];
-                                    var initShowDate = initShowDS['date'];
-                                    var initShowTimeStart = initShowDS['timeStart'];
-                                    var initShowTimeEnd = initShowDS['timeEnd'];
-                                    var initShowLocation = initShowDS['location'];
+                                    // get the original data
+                                    var initShowDS = fetchFromDatabase(UID);
 
                                     var editPrompt = {
                                         state0: {
-                                            title: 'Currently editing show: ' + initShowName,
-                                            html: showDialogFormatOption0,
+                                            title: 'Currently editing show: ' + initShowDS['name'],
+                                            html: showDialogPanel(initShowDS), // prepopulate with original values
                                             buttons: { 'Delete this show': -10, 'Cancel': -1, 'Save changes': 1 },
                                             focus: 1,
                                             submit: function(e1,v1,m1,f1) {
-                                                if (v1 == 1) {
-                                                    //$("#"+UID+'-name').html('hi');
+                                                if (v1 == 1 && f1.showName != "") {
+                                                    var updatedShowDS = generateShowDS(UID,
+                                                        f1.showName, f1.showDate, f1.showTimeStart, f1.showTimeEnd, f1.showLocation);
+
+
+                                                    // update the database
+                                                    modifyDatabase(UID, updatedShowDS);
+
+                                                    // update the values in the view
+                                                    updateShowView(UID, updatedShowDS);
+
                                                     e1.preventDefault();
                                                     $.prompt.close();
                                                 }
@@ -270,6 +319,8 @@
                                                     e1.preventDefault();
                                                     $.prompt.goToState('deleteState',false,e1); // goto state1
                                                 }
+                                                e1.preventDefault();
+                                                e.preventDefault();
 
                                             }
                                         }, // end state0 (default edit panel)
@@ -277,13 +328,13 @@
                                         'deleteState': {
                                             title: 'Delete show',
                                             html: 'Are you sure you want to delete the show: <span style="color:red;">'
-                                                  +initShowName+'</span><br><br>This action cannot be undone<br><br>',
+                                                  +initShowDS['name']+'</span><br><br>This action cannot be undone<br><br>',
                                             buttons: { 'Yes, delete this show' : -1, 'No, keep this show' : 1 },
                                             focus: 1,
                                             submit: function(e1,v1,m1,f1) {
                                                 if (v1 == -1) {
                                                     $("#"+UID).remove(); // remove the div view
-                                                    delete show_data['UID']; // remove data structure from storage
+                                                    removeFromDatabase(show_data['UID']); // remove data structure from database
                                                 }
                                             }
 
@@ -299,11 +350,11 @@
                                 }
                             }); // end #+UID click function (def depends on if edit mode on or off)
 
-
-                        } // end if block checking f.showName != "" && v==1
                         e.preventDefault();
                         $.prompt.close();
-
+                        } // end if block checking f.showName != "" && v==1
+                        e.preventDefault();
+                        if (v==-1) { $.prompt.close(); }
                     } // end outer submit function
                 } // end outer state0
             }; // end outer linkPrompt definition
