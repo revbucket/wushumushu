@@ -16,10 +16,6 @@
 .show-item:active {
     background-color: rgba(153,204,248,1);
 }
-.modification-tool:hover {
-}
-.modification-tool:active {
-}
 
 </style>
 
@@ -132,12 +128,16 @@
         // without backend, currently adding to local javascript dictionary show_data
         function addToDatabase(UID, showDS) {
             if (UID in show_data) { console.log("FATAL ERROR: Adding to database -- UID already exists"); }
+            $.get("shows_data.php", function(data) {
+                //alert("Data loaded: " + data);
+                console.log("incoming data below...");
+                console.log(data);
+            });
             show_data[UID] = showDS;
         }
 
         // updates the show data from a database
         // without backend, currently modifying local javascript dictionary show_data
-        // implemented by a remove followed by an add ---> beware of possible concurrency if no atomicity
         function modifyDatabase(UID, newShowDS) {
             removeFromDatabase(UID);
             addToDatabase(UID, newShowDS);
@@ -156,7 +156,7 @@
 
         // modifies a show based on new properties
         // assumes that newShowDS['name'] is not blank
-        // changes the local storage properties and the div view
+        // changes the div view only, not the data model
         function updateShowView(UID, newShowDS) {
             $("#"+UID+"-name").html(newShowDS['name']);
             $("#"+UID+"-location").html(newShowDS['location'] != "" ? newShowDS['location'] : "<i>(No Location)</i>");
@@ -267,6 +267,7 @@
                     buttons: { 'Cancel': -1, 'Done': 1 },
                     focus: 1,
                     submit: function(e,v,m,f) {
+                        if (f.showName == "" && v == 1) { alert('The show name cannot be left blank'); }
                         if (f.showName != "" && v == 1) {
                             //-------------------------------------------------------
                             //  create new show directory in the backend model here
@@ -297,6 +298,7 @@
                                             buttons: { 'Delete this show': -10, 'Cancel': -1, 'Save changes': 1 },
                                             focus: 1,
                                             submit: function(e1,v1,m1,f1) {
+                                                if (v1 == 1 && f1.showName == "") { alert('The show name cannot be left blank'); }
                                                 if (v1 == 1 && f1.showName != "") {
                                                     var updatedShowDS = generateShowDS(UID,
                                                         f1.showName, f1.showDate, f1.showTimeStart, f1.showTimeEnd, f1.showLocation);
@@ -334,7 +336,7 @@
                                             submit: function(e1,v1,m1,f1) {
                                                 if (v1 == -1) {
                                                     $("#"+UID).remove(); // remove the div view
-                                                    removeFromDatabase(show_data['UID']); // remove data structure from database
+                                                    removeFromDatabase(UID); // remove data structure from database
                                                 }
                                             }
 

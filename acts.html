@@ -27,19 +27,33 @@
     <div class="container panel-container" role="main">
 
 
-        <div id="back-to-all-shows" style="position: relative; bottom: 50px;">
-            <a href="shows.html">All Shows</a> &nbsp;&gt;&nbsp; Elements
-            <!--
-            <ol class="breadcrumb list inline">
-                <li><a href="#">All Shows</a></li>
-                <li class="active">Current show here.</li>
-            </ol>
-            -->
-        </div>
+        <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <ul class="nav navbar-nav navbar-left">
+                    <ol class="breadcrumb list inline">
+                      <li><a href="shows.html">All Shows</a></li>
+                      <li class="active">Elements</li>
+                    </ol>
+                </ul>
+
+                <ul class="nav navbar-nav navbar-right">
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-default" id="edit-mode-button">Edit</button>
+                      <button type="button" class="btn btn-default" id="view-mode-button">View</button>
+                    </div>
+                </ul>
+          
+            </div><!--container-fluid -->
+        </nav>
         
 
+        <div id="instructions" align="right" style="position: absolute; margin-top: 0px; right: 10px; color: red; clear: both;" hidden="true">
+            Click on an act to edit it
+        </div>
+
+
         <div id="show-name" align="center" style="font-size:34pt;">Elements</div>
-        <div id="instructions" align="center" style="position: relative; top: 20px; color: red;"></div>
 
         <div class="col-md-6 col-md-offset-3" style="position: relative; top: 50px;">
             <div class="panel panel-default">
@@ -51,11 +65,8 @@
                         <ul class="nav navbar-nav navbar-left" style="font-size:26pt;">Acts</ul>
                         <ul class="nav navbar-nav navbar-right">
                             <div class="btn-group">
-                                <button type="button" class="btn btn-default" id="new-act-btn">
+                                <button type="button" class="btn btn-default" id="new-act-btn" hidden="true">
                                     Add New Act
-                                </button>
-                                <button type="button" class="btn btn-default" id="edit-acts-btn">
-                                    Delete an Act
                                 </button>
                             </div>
                         </ul>
@@ -64,50 +75,7 @@
 
 
                 <ul class="list-group" id="all-acts"><!-- part of "panel panel-default" class -->
-                    
-                    <!--
-                    <li class="list-group-item show-item">
-
-                        
-                        show 1
-                        <div class="pull-right">
-                            <button type="button" class="btn btn-default btn-xs">
-                                <span class="glyphicon glyphicon-pencil"></span>
-                            </button>
-                            <button type="button" class="btn btn-default btn-xs">
-                                <span class="glyphicon glyphicon-remove"></span>
-                            </button>
-                        </div>
-
-
-                        <span style="float:right;margin-right:0px;">
-                            <div id="date">Date</div>
-                        </span>
-                        <span style="position:relative;margin-right:40px;">
-                            Location
-                        </span>
-                    
-
-                        <table><tr>
-                            <td>Showsfsdfsd 1</td>
-                            <td>Location<br>Datsdfse</td>
-                        </tr></table>
-                    </li>
-                    -->
-
-
-
-                    <!--
-                    <li class="list-group-item show-item">
-                        <table><tr>
-                            <td>Showsfsdfsd 1</td>
-                            <td>Location<br>Datsdfse</td>
-                        </tr></table>
-
-                    </li>
-                    -->
-
-                </ul><!-- end list-group of shows -->
+                </ul><!-- end list-group of acts -->
 
 
             </div><!-- end default panel -->
@@ -130,45 +98,243 @@
         // global variable to activate edit/delete mode
         var editing = false;
 
-        // generates string for a act's view, actName must not be blank
-        function generateAct(UID, actName) {
-            return '<div id="'+UID+'"><li class="list-group-item act-item" style="font-size:22pt;"><table><tr><td><b>'+actName+'</b></td></tr></table></li></a>';
+        // global storage for acts and their information
+        // this may be replaced by a backend database later
+        //
+        // keys (string type) in act_data are the UIDs
+        // values (dict type) are another dictionary with the following properties (example below)
+        // * note that the UID is replicated in the inner dictionary as well
+        //      keys (string type)      values (string type)
+        //      ------------------      --------------------
+        //      UID                     0
+        //      name                    Avatar
+        var act_data = {};
+
+        // generates the act dictionary data structure
+        function generateActDS(UID, actName) {
+            var DS = {};
+            DS['UID'] = UID;
+            DS['name'] = actName;
+            return DS;
         }
-        
-        var actDialogFormatOption0 = // 2 options, song upload and skip
-        '<div style="text-align:center;">' +
-        '<label>Act name</label><br><input type="text" name="actName" value="Avatar"><br><br><br>' +
-        '<label>Accompanying song</label><br>' +
-        '<input type="radio" name="selectedUploadFromComputer"> Option 1: Upload song from computer' +
-        '<input type="file" name="uploadedSong"><br>' +
-        '<input type="radio" name="skipSongUpload" checked="true"> Option 2: Skip this step for now' +
-        '' +
-        '' +
-        '<br><br></div>';
 
-        var actDialogFormatOption1 = // 1 option, skip (for canned frontend)
-        '<div style="text-align:center;">' +
-        '<label>Act name</label><br><input type="text" name="actName" value="Avatar"><br><br><br>' +
-        '<label>Accompanying song</label><br>' +
-        '<input type="radio" name="skipSongUpload" checked="true"> Option 1: Skip this step for now' +
-        '' +
-        '' +
-        '<br><br></div>';
+        // adds the act data to a database
+        // without backend, currently adding to local javascript dictionary act_data
+        function addToDatabase(UID, actDS) {
+            if (UID in act_data) { console.log("FATAL ERROR: Adding to database -- UID already exists"); }
+            act_data[UID] = actDS;
+        }
 
-        $("#edit-acts-btn").click(function() {
-            // toggle the global flag
-            if (editing) {
-                editing = false;
-                $("#edit-acts-btn").html('Delete an Act');
-                $("#instructions").html('');
-            } else {
-                editing = true;
-                $("#edit-acts-btn").html('<div style="color:red;">Turn off deletion</div>');
-                $("#instructions").html('Click on an act to delete it');
+        // updates the act data from a database
+        // without backened, currently modifying local javascript dictionary act_data
+        function modifyDatabase(UID, newActDS) {
+            removeFromDatabase(UID);
+            addToDatabase(UID, newActDS);
+        }
+
+        // fetches the act data from a database
+        function fetchFromDatabase(UID) {
+            return act_data[UID];
+        }
+
+        // removes act data from a database
+        // without backened, currently removing from local javascript dictionary act_data
+        function removeFromDatabase(UID) {
+            delete act_data[UID];
+        }
+
+        // modifies an act based on new properties
+        // assumes that newActDS['name'] is not blank
+        // changes the div view only, not the data model
+        function updateActView(UID, newActDS) {
+            $("#"+UID+"-name").html(newActDS['name']);
+        }
+
+        // generates a string for the div visually depicting the act item
+        function generateActDiv(actDS) {
+            var UID = actDS['UID'];
+            var actName = actDS['name'];
+
+            return      '<div id="'+UID+'"><li class="list-group-item act-item">'
+                    +   '<table style="width:100%; margin:0px;"><tr>'
+                    +   '<td style="vertical-align:top;font-size:22pt;">'
+                    +   '<b><div id="'+UID+'-name">'+actName+'</div></b>'
+                    +   '</td></tr></table></li></div>';
+        }
+
+        // returns a string representing the div that will show up in the act dialog panel
+        // defaultDS (data structure of existing act) should be given to prepopulate field values like name
+        function actDialogPanel(defaultDS) {
+            // default field values
+            var actNameDV = '';
+
+            var rowSpacing = '<tr style="height:20px;"></tr>';
+
+            if (defaultDS != null) {
+                actNameDV = defaultDS['name'];
             }
+
+            // option 1 gridded
+            var st1 =
+            '<table class="add-act-dialog"><tr><td style="width:45%;"><label>Act name*</label></td>' +
+            '<td><input type="text" name="actName" value="' + actNameDV + '"></td></tr></table>' +
+            '<br>Fields marked * are required<br><br>';
+
+            // option 2 centered
+            var st2 = 
+            '<div style="text-align:center;">' +
+            '<label>Act name</label><br><input type="text" name="actName" value="'+actNameDV+'"><br><br><br>' +
+            '<label>Accompanying song</label><br>' +
+            '<input type="radio" name="selectedUploadFromComputer"> Option 1: Upload song from computer' +
+            '<input type="file" name="uploadedSong"><br>' +
+            '<input type="radio" name="skipSongUpload" checked="true"> Option 2: Skip this step for now' +
+            '' +
+            '' +
+            '<br><br></div>';
+
+            // option 3 no song
+            var st3 = 
+            '<div style="text-align:center;">' +
+            '<label>Act name</label><br><input type="text" name="actName" value="'+actNameDV+'"><br><br><br>' +
+            '<label>Accompanying song</label><br>' +
+            '<input type="radio" name="skipSongUpload" checked="true"> Option 1: Skip this step for now' +
+            '' +
+            '' +
+            '<br><br></div>';
+
+        
+            return st2;
+        }
+
+        $("#edit-mode-button").click(function() {
+            editing = true;
+            $("#new-act-btn").show();
+            $("#instructions").fadeIn("slow");
+            $("#edit-mode-button").addClass("btn-info");
+            $("#view-mode-button").removeClass("btn-info");
         });
 
+        $("#view-mode-button").click(function() {
+            editing = false;
+            $("#new-act-btn").hide();
+            $("#instructions").fadeOut("slow");
+            $("#view-mode-button").addClass("btn-info");
+            $("#edit-mode-button").removeClass("btn-info");
+        });
+
+        $("#view-mode-button").click();
+        
+
         $("#new-act-btn").click(function() {
+            var linkPrompt = {
+                state0: {
+                    title: 'Add new act',
+                    html: actDialogPanel(null),
+                    buttons: { 'Cancel': -1, 'Done': 1 },
+                    focus: 1,
+                    submit: function(e,v,m,f) {
+                        if (f.actName == "" && v == 1) { alert('The show name cannot be left blank'); }
+                        if (f.actName != "" && v == 1) {
+                            //-------------------------------------------------------
+                            //  create new act directory in the backend model here
+                            //  
+                            //  initialize sections/moves page with proper information if not done so before
+                            //-------------------------------------------------------
+                            
+                            // UID is a unique integer string representing each show item
+                            // The UID implementation may be changed when building the backend
+                            var UID = (ticket++).toString();
+
+                            var actDS = generateActDS(UID, f.actName);
+                            
+                            // add the act data structure to the global log
+                            addToDatabase(UID, actDS);
+
+                            $("#all-acts").append(generateActDiv(actDS));
+                            $("#"+UID).click(function() {
+                                if (editing) {
+                                    
+                                    // get the original data
+                                    var initActDS = fetchFromDatabase(UID);
+
+                                    var editPrompt = {
+                                        state0: {
+                                            title: 'Currently editing act: ' + initActDS['name'],
+                                            html: actDialogPanel(initActDS), // prepopulate with original values
+                                            buttons: { 'Delete this act': -10, 'Cancel': -1, 'Save changes': 1 },
+                                            focus: 1,
+                                            submit: function(e1,v1,m1,f1) {
+                                                if (v1 == 1 && f1.actName == "") { alert('The act name cannot be left blank'); }
+                                                if (v1 == 1 && f1.actName != "") {
+                                                    var updatedActDS = generateActDS(UID, f1.actName);
+
+                                                    // update the database
+                                                    modifyDatabase(UID, updatedActDS);
+
+                                                    // update the values in the view
+                                                    updateActView(UID, updatedActDS);
+
+                                                    e1.preventDefault();
+                                                    $.prompt.close();
+                                                }
+                                                else if (v1 == -1) {
+                                                    e1.preventDefault();
+                                                    $.prompt.close();
+                                                }
+                                                else if (v1 == -10) {
+                                                    e1.preventDefault();
+                                                    $.prompt.goToState('deleteState',false,e1); // goto state1
+                                                }
+                                                e1.preventDefault();
+                                                e.preventDefault();
+
+                                            }
+                                        }, // end state0 (default edit panel)
+
+                                        'deleteState': {
+                                            title: 'Delete act',
+                                            html: 'Are you sure you want to delete the act: <span style="color:red;">'
+                                                  +initActDS['name']+'</span><br><br>This action cannot be undone<br><br>',
+                                            buttons: { 'Yes, delete this act' : -1, 'No, keep this act' : 1 },
+                                            focus: 1,
+                                            submit: function(e1,v1,m1,f1) {
+                                                if (v1 == -1) {
+                                                    $("#"+UID).remove(); // remove the div view
+                                                    removeFromDatabase(UID); // remove data structure from database
+                                                }
+                                            }
+
+
+                                        } // end deleteSlate
+
+                                    }; // end editPrompt
+
+                                    $.prompt(editPrompt);
+
+                                } else {
+                                    window.location.href = "act_edit_bootstrap.html";
+                                }
+                            }); // end #+UID click function (def depends on if edit mode on or off)
+
+                        e.preventDefault();
+                        $.prompt.close();
+                        } // end if block checking f.actName != "" && v==1
+                        e.preventDefault();
+                        if (v==-1) { $.prompt.close(); }
+                    } // end outer submit function
+                } // end outer state0
+            }; // end outer linkPrompt definition
+            $.prompt(linkPrompt);
+
+
+        }); // end #new-act-btn click function
+
+
+
+
+
+
+        $("#new-acdt-btn").click(function() {
             var linkPrompt = {
                 state0: {
                     title: 'Add new act <b>[USING CANNED INPUTS]</b>',
