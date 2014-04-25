@@ -251,7 +251,7 @@
                             // The UID implementation may be changed when building the backend
                             var UID = (ticket++).toString();
 
-                            var actDS = generateActDS(UID, f.actName, "act_edit_bootstrap.html?#");
+                            var actDS = generateActDS(UID, f.actName, "act_edit_bootstrap.html#?");
                             
                             // add the act data structure to the global log
                             addToDatabase(UID, actDS);
