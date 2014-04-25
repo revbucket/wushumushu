@@ -53,7 +53,7 @@
         </div>
 
 
-        <div id="show-name" align="center" style="font-size:34pt;">Elements</div>
+        <div id="show-name" align="center" style="font-size:34pt;">Show: <b>Elements</b></div>
 
         <div class="col-md-6 col-md-offset-3" style="position: relative; top: 50px;">
             <div class="panel panel-default">
@@ -111,10 +111,11 @@
         var act_data = {};
 
         // generates the act dictionary data structure
-        function generateActDS(UID, actName) {
+        function generateActDS(UID, actName, linkToSectionsAndMoves) {
             var DS = {};
             DS['UID'] = UID;
             DS['name'] = actName;
+            DS['link'] = linkToSectionsAndMoves;
             return DS;
         }
 
@@ -202,8 +203,13 @@
             '' +
             '<br><br></div>';
 
-        
-            return st2;
+            // option 4 name seen only
+            var st4 =
+            '<div style="text-align: center;">' +
+            '<label>Act name*</label><br><input type="text" id="foc" name="actName" value="'+actNameDV+'"><br><br>' +
+            '<br>Fields marked * are required<br><br></div>';
+
+            return st4;
         }
 
         $("#edit-mode-button").click(function() {
@@ -233,7 +239,7 @@
                     buttons: { 'Cancel': -1, 'Done': 1 },
                     focus: 1,
                     submit: function(e,v,m,f) {
-                        if (f.actName == "" && v == 1) { alert('The show name cannot be left blank'); }
+                        if (f.actName == "" && v == 1) { alert('The act name cannot be left blank'); }
                         if (f.actName != "" && v == 1) {
                             //-------------------------------------------------------
                             //  create new act directory in the backend model here
@@ -245,7 +251,7 @@
                             // The UID implementation may be changed when building the backend
                             var UID = (ticket++).toString();
 
-                            var actDS = generateActDS(UID, f.actName);
+                            var actDS = generateActDS(UID, f.actName, "act_edit_bootstrap.html?#");
                             
                             // add the act data structure to the global log
                             addToDatabase(UID, actDS);
@@ -266,7 +272,7 @@
                                             submit: function(e1,v1,m1,f1) {
                                                 if (v1 == 1 && f1.actName == "") { alert('The act name cannot be left blank'); }
                                                 if (v1 == 1 && f1.actName != "") {
-                                                    var updatedActDS = generateActDS(UID, f1.actName);
+                                                    var updatedActDS = generateActDS(UID, f1.actName, initActDS['link']);
 
                                                     // update the database
                                                     modifyDatabase(UID, updatedActDS);
@@ -309,10 +315,10 @@
 
                                     }; // end editPrompt
 
-                                    $.prompt(editPrompt);
+                                    $.prompt(editPrompt, {loaded: function() {$("#foc").focus();}});
 
                                 } else {
-                                    window.location.href = "act_edit_bootstrap.html";
+                                    window.location.href = fetchFromDatabase(UID)['link'];
                                 }
                             }); // end #+UID click function (def depends on if edit mode on or off)
 
@@ -324,53 +330,12 @@
                     } // end outer submit function
                 } // end outer state0
             }; // end outer linkPrompt definition
-            $.prompt(linkPrompt);
+            $.prompt(linkPrompt, {loaded: function() {$("#foc").focus();}});
 
 
         }); // end #new-act-btn click function
 
 
-
-
-
-
-        $("#new-acdt-btn").click(function() {
-            var linkPrompt = {
-                state0: {
-                    title: 'Add new act <b>[USING CANNED INPUTS]</b>',
-                    html: actDialogFormatOption1,
-                    buttons: { Cancel: -1, Done: 1 },
-                    focus: 1,
-                    submit: function(e,v,m,f) {
-                        if (f.actName != "" && v == 1) {
-                            //-------------------------------------------------------
-                            //  create new act directory in the backend model here
-                            //  
-                            //  initialize sections/moves page with proper information if not done so before
-                            //-------------------------------------------------------
-                            
-                            // give the act a UID, which is an integer string right now, may be changed during backend implementation
-                            var UID = (ticket++).toString();
-
-                            $("#all-acts").append(generateAct(UID, f.actName));                            
-
-                            $("#"+UID).click(function() {
-                                if (editing) {
-                                    $("#"+UID).remove();
-                                } else {
-                                    window.location.href = "act_edit_bootstrap.html?#";
-                                }
-                            });
-
-                        }
-                        e.preventDefault();
-                        $.prompt.close();
-                    }
-                }
-            };
-            $.prompt(linkPrompt);
-        });
-    
     </script>
 
 </BODY>

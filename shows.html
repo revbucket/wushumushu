@@ -16,7 +16,29 @@
 .show-item:active {
     background-color: rgba(153,204,248,1);
 }
-
+.ui-datepicker {
+    border: 2px solid black;
+    padding: 7px;
+    background-color: #f0ffff;
+}
+.ui-datepicker-year {
+    position: relative;
+    float: left;
+    margin-left: 3px;
+    left: 50%;
+}
+.ui-datepicker-month {
+    position: relative;
+    float: right;
+    margin-right: 3px;
+    right: 50%;
+}
+.ui-datepicker-next {
+    float:right;
+}
+.ui-datepicker td {
+    padding: 5px;
+}
 </style>
 
 </HEAD>
@@ -87,6 +109,10 @@
     <script src="jquery-1.9.0.min.js"></script>
     <script src="impromptu.min.js"></script>
     <script src="bootstrap-select.min.js"></script>
+    <script src="jquery-ui-1.10.4/js/jquery-ui-1.10.4.js"></script>
+    <!-- credit to trent richardson -->
+    <script src="jQuery-Timepicker-Addon-master/src/jquery-ui-timepicker-addon.js"></script>
+    <script src="jQuery-Timepicker-Addon-master/src/jquery-ui-sliderAccess.js"></script>
 
     <script type="text/javascript">
         // ----------------------------------------------------------------------------------------------
@@ -113,7 +139,7 @@
         var show_data = {};
 
         // generates the show dictionary data structure
-        function generateShowDS(UID, showName, showDate, showTimeStart, showTimeEnd, showLocation) {
+        function generateShowDS(UID, showName, showDate, showTimeStart, showTimeEnd, showLocation, linkToActs) {
             var DS = {};
             DS['UID'] = UID;
             DS['name'] = showName;
@@ -121,6 +147,7 @@
             DS['timeStart'] = showTimeStart;
             DS['timeEnd'] = showTimeEnd;
             DS['location'] = showLocation;
+            DS['link'] = linkToActs;
             return DS;
         }
 
@@ -196,7 +223,7 @@
         // can be used for updating timespan component when editing existing show
         function generateTimeSpan(timeStart, timeEnd) {
             var showTimeSpan = '<i>(No times)</i>';
-            if (timeStart != "" && timeEnd != "") { showTimeSpan = timeStart + ' - ' + timeEnd; }
+            if (timeStart != "" && timeEnd != "") { showTimeSpan = timeStart + ' &#8212; ' + timeEnd; }
             if (timeStart != "" && timeEnd == "") { showTimeSpan = timeStart; }
             return showTimeSpan;
         }
@@ -225,13 +252,13 @@
 
             var st =
             '<table class="add-show-dialog"><tr><td style="width:45%;"><label>Show name*</label></td>' +
-            '<td><input type="text" name="showName" value="' + showNameDV + '"></td></tr>' +
+            '<td><input type="text" name="showName" id="foc" value="' + showNameDV + '"></td></tr>' +
             rowSpacing + '<tr><td><label>Date</label></td>' +
-            '<td><input type="text" name="showDate" value="' + showDateDV + '"></td></tr>' +
+            '<td><input type="text" name="showDate" class="date_picker" value="' + showDateDV + '"></td></tr>' +
             rowSpacing + '<tr><td><label>Start time</label></td>' +
-            '<td><input type="text" name="showTimeStart" value="' + showTimeStartDV + '"></td></tr>' +
+            '<td><input type="text" name="showTimeStart" class="time_picker" value="' + showTimeStartDV + '"></td></tr>' +
             rowSpacing + '<tr><td><label>End time</label></td>' +
-            '<td><input type="text" name="showTimeEnd" value="' + showTimeEndDV + '"></td></tr>' +
+            '<td><input type="text" name="showTimeEnd" class="time_picker" value="' + showTimeEndDV + '"></td></tr>' +
             rowSpacing + '<tr><td><label>Location</label></td>' +
             '<td><input type="text" name="showLocation" value="' + showLocationDV + '"></td></tr></table>' +
             '<br>Fields marked * are required<br><br>';
@@ -259,6 +286,16 @@
 
         $("#view-mode-button").click();
 
+        // loads the date and time pickers into the appropriate input fields
+        function loadDatetimePickers() {
+            $("#foc").focus();
+            $(".date_picker").datepicker();
+            $(".time_picker").timepicker({
+                controlType: 'select',
+                timeFormat: 'hh:mm tt'
+            });
+        }
+
         $("#new-show-btn").click(function() {
             var linkPrompt = {
                 state0: {
@@ -279,7 +316,7 @@
                             // The UID implementation may be changed when building the backend
                             var UID = (ticket++).toString();
 
-                            var showDS = generateShowDS(UID, f.showName, f.showDate, f.showTimeStart, f.showTimeEnd, f.showLocation);
+                            var showDS = generateShowDS(UID, f.showName, f.showDate, f.showTimeStart, f.showTimeEnd, f.showLocation, "acts.html");
                             
                             // add the show data structure to the global log
                             addToDatabase(UID, showDS);
@@ -301,7 +338,7 @@
                                                 if (v1 == 1 && f1.showName == "") { alert('The show name cannot be left blank'); }
                                                 if (v1 == 1 && f1.showName != "") {
                                                     var updatedShowDS = generateShowDS(UID,
-                                                        f1.showName, f1.showDate, f1.showTimeStart, f1.showTimeEnd, f1.showLocation);
+                                                        f1.showName, f1.showDate, f1.showTimeStart, f1.showTimeEnd, f1.showLocation, initShowDS['link']);
 
 
                                                     // update the database
@@ -345,10 +382,10 @@
 
                                     }; // end editPrompt
 
-                                    $.prompt(editPrompt);
+                                    $.prompt(editPrompt, { loaded: function() {loadDatetimePickers();} });
 
                                 } else {
-                                    window.location.href = "acts.html";
+                                    window.location.href = fetchFromDatabase(UID)['link'];
                                 }
                             }); // end #+UID click function (def depends on if edit mode on or off)
 
@@ -360,8 +397,7 @@
                     } // end outer submit function
                 } // end outer state0
             }; // end outer linkPrompt definition
-            $.prompt(linkPrompt);
-
+            $.prompt(linkPrompt, { loaded: function() {loadDatetimePickers();} });
 
         }); // end #new-show-btn click function
     
