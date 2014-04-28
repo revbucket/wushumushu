@@ -228,11 +228,19 @@
       */
       var actDictionary = {'section1': {'move1': ['This is the move text to display', {'Sword': "http://www.youtube.com/embed/WzUxxqSMpB0?rel=0", 'Staff': null, 'Fist': null}], 'move2': ['This is the second move text', {}]}, 'section2': {}}; 
       var currentSection = 'section1';//'section1';
+      var weaponDict1 = {'Sword': ['Sword', null], 'Staff':['staff', null], 'fist': ['fist', null]};
+      var moveList1 = [['move-key', 'move key', 'move text to display', weaponDict1 ]]
+      var actData = [['section-1','section 1', moveList1], 
+                    ['section-2','section 2', null]]
       var currentMove = 'move1';//'move1';
       var currentWeapon = 'Sword';//'sword';
 
       var editMode = true;
 
+
+      var makeKey = function(name) {
+          return name.replace(" ", "-");   
+      }
       /*Edit mode/view mode functionality*/
 	  // function that corrects the view given the editMode variable is set appropriately
       var renderEditViewPanels = function() {
@@ -253,7 +261,8 @@
       };
         
       
-        /* Add edit and delete icons for each list element. They serve as buttons. */
+        /* Add edit and delete icons for each list element. They serve as buttons.
+        id argument here is string with no spaces, and no '#' identifier at the front */
         var addListEditing = function(id) {
           var pencilID = id+"-pencil";
           var removeID = id+"-remove";
@@ -309,6 +318,7 @@
         }*/
         
         var addSection = function(key) {
+          //key here is the keyified name of the section (e.g, 'section-1')
           $("#section-list").append('<a class="list-group-item section" id="' + key + '-s"> <b>' +
                                   key + '</a>');
           if (editMode) {
@@ -320,7 +330,6 @@
           var selectFirst = true;
           for (var key in actDictionary) {
             if (key != null) {
-              console.log(key);
               //Change the display of this to be prettier later
               addSection(key);
               if (selectFirst) { 
@@ -333,19 +342,15 @@
         //click section
         
         var clickSection = function(id) {
+          // ID is id of <a> element in the #section-list div
           if (!$(this).hasClass('disabled')) {
             
             var thisID = "#"+id; //
-            console.log(thisID);
             if ($(thisID).hasClass("section")){
-              console.log('section clicked');
-              console.log(id);
               $('.section.active').removeClass("active");
               $(thisID).addClass("active");
               currentSection = id.slice(0, -2); 
               listMoves(); 
-              console.log("ACTDICT")
-              console.log(actDictionary[currentSection])
               if (Object.keys(actDictionary[currentSection]).length == 0) {
                 currentMove = null;
                 currentWeapon = null;
@@ -374,14 +379,11 @@
                 
  
         
-          var makeKey = function(name) {
-              return name.replace(" ", "-");   
-          }
+
           
           
           
           $('#section-btn').click(function () {
-            console.log("ADDED SECTION")
               $('.section.active').removeClass("active");
               var newSection = $("#add-section").val();
               if (newSection != "") {
@@ -390,7 +392,6 @@
                 } else{
                   actDictionary[newSection] ={};
                   addSection(newSection);
-                  console.log(actDictionary);
                   $("#add-section").val("");
                   $("#add-section").attr('placeholder', "Section");
                   currentSection = newSection;
@@ -430,7 +431,6 @@
               // Remove -pencil from the end of the string, to get the ID for this element.
               var targetID = e.target.id.slice(0, -7);
               var target = targetID.slice(0,-2);
-              console.log('edit', target);
               
               if ($("#"+targetID).hasClass("section")) {
                   currentSection = target;
@@ -460,7 +460,6 @@
                 actDictionary[newSectionName] = jQuery.extend({},actDictionary[currentSection]);
                 delete actDictionary[currentSection]; 
               }
-              console.log("#"+ oldSectionName+ "-form");
               $("#"+oldSectionName+"-s-form").replaceWith('<a class="list-group-item active section" id="' + newSectionName+ '-s' + '">' +newSectionName +'</a>');
               addListEditing(newSectionName+'-s');
               clickSection(newSectionName+"-s");
@@ -560,10 +559,8 @@
         */
         
         $('#section-list').on('click', '#update-section-btn', function (e) {
-            console.log($("#update-section").val());
             var newSection = $("#update-section").val();
             var targetDictionary = actDictionary[currentSection];
-            console.log(targetDictionary);
             delete actDictionary[currentSection];
             actDictionary[newSection] = targetDictionary;
             
@@ -584,7 +581,6 @@
               if (movesData !== null) {
                 var keys = Object.keys(actDictionary[currentSection]);
                 currentMove = keys[0];
-                console.log(currentMove);
               } else {
                   currentMove = null;
               }
@@ -605,7 +601,6 @@
                                   key + '</b><br>' +
                                   actDictionary[currentSection][key][0] + '</a>');
           if (editMode) {
-            console.log("NTHASNTHA");
             addListEditing(key + "-m");
             
           }
@@ -618,7 +613,6 @@
           var selectFirst = true;
           for (var key in actDictionary[currentSection]) {
             if (key != null) {
-              console.log(key);
               //Change the display of this to be prettier later
               addMove(key);
               if (selectFirst) { 
@@ -637,8 +631,6 @@
             
             var thisID = "#"+id; //
             if ($(thisID).hasClass("move")){
-              console.log('move clicked');
-              console.log(id);
               $('.move.active').removeClass("active");
               $(thisID).addClass("active");
               currentMove = id.slice(0, -2);  
@@ -675,7 +667,6 @@
               } else{
                 actDictionary[currentSection][newMoveTitle] = [newMove, {}]
                 addMove(newMoveTitle);
-                console.log(actDictionary);
                 $("#add-move-title").val("");
                 $("#add-move").val("");
                 $("#add-move-title").attr('placeholder', "Title");
@@ -707,7 +698,6 @@
 	          buttons: { "No": false, "Yes": true },
             submit: function(e,v,m,f){
               if (v) {
-                console.log(actDictionary[currentSection])
                 delete actDictionary[currentSection][target];
                 $("#"+targetID).remove()
                 if($("#move-list").children().length >0){
@@ -730,7 +720,6 @@
             // Remove -pencil from the end of the string, to get the ID for this element.
             var targetID = e.target.id.slice(0, -7);
             var target = targetID.slice(0,-2);
-            console.log('edit', target);
               
                 
             if ($("#"+targetID).hasClass("move")) {
@@ -785,7 +774,6 @@
             delete actDictionary[currentSection][oldMoveName]; 
           }
           actDictionary[currentSection][newMoveName][0] = newMoveData;
-          console.log("#"+ oldMoveName+ "-form");
 
           $("#"+oldMoveName+"-m-form").replaceWith('<a class="list-group-item active move" id="' + newMoveName+ '-m' + '"> <b>' 
             +newMoveName + '</b><br>' + newMoveData + '</a>');
@@ -841,7 +829,6 @@
       var populateWeaponList = function(section, move) {
         $(".weapon-div").remove();
         
-          console.log('current section: ', currentSection, ' and move: ', currentMove);
           if (currentMove == null) {return;}
           $.each(actDictionary[section][move][1], function(key, value) {
                  var newIDDiv = key + "-weapon-div";
@@ -855,13 +842,10 @@
       };
        
       var clickWeaponButton = function(id){
-         console.log(id);
 
          $(".weapon-btn").removeClass("btn-info");
          $("#"+id).addClass("btn-info");         
          currentWeapon = id.split('-')[0];
-         console.log(currentWeapon);
-         console.log(actDictionary);
          renderVideoPanel();
          
       };
@@ -893,7 +877,6 @@
                             clickWeaponButton(newWeaponID);
                         }
 			                  e.preventDefault();
-                        console.log("Close");
                         $.prompt.close();
                     },
               },
@@ -993,10 +976,6 @@
 	      $("#edit-mode-button").click(function() {
 	         editMode = true;
 	         renderEditViewPanels();
-           console.log(actDictionary);
-           console.log(currentSection);
-           console.log(currentMove);
-           console.log(currentWeapon);
 	      });
 
 	      $("#view-mode-button").click(function(){

@@ -1,0 +1,43 @@
+<head>
+  <title>wushumushu</title>
+</head>
+
+
+<!--- Home page templates [shows] -->
+<template name="shows_page">
+	<h1> Shows go here </h1>
+     {{#each shows}}
+    <div class="show">
+    	<a href="{{ pathFor 'actsShow' }}">Show name: {{name}} // Show id:  {{ _id}}</a>
+    </div>
+  {{/each}}
+</template>
+
+
+
+
+<!--- actS page templates [all acts for given show] -->
+<template name="acts_page">
+	<h1> Show name: {{#with show}} {{name}} {{/with}}</h1>
+	{{#each acts}}
+	<a href="{{ pathFor 'actEdit'}}">{{name}}</a> 
+	{{/each}}
+</template>
+
+
+<!--- single act page templates -->
+<template name="act_edit_page">
+	<h1> Individual act goes here </h1>
+	{{#each sections}}
+	Section name {{name}}
+	{{/each}}
+
+	{{#with act}}
+	Act name {{name}}
+	{{/with}}
+
+	{{#with show}}
+	Show name {{name}}
+	{{/with}}
+
+</template>
