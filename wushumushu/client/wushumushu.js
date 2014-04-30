@@ -10,7 +10,9 @@ Weapons = new Meteor.Collection("weapons");
 
 // ID of current show, act, section, move, weapon
 Session.setDefault('current_show_id', null);
+Session.setDefault('current_show_name', null); //name for breadcrumb purposes
 Session.setDefault('current_act_id', null);
+Session.setDefault('current_act_name', null);  //name for breadcrumb purposes
 Session.setDefault('current_section_id', null);
 Session.setDefault('current_move_id', null);
 Session.setDefault('current_weapon_id', null);
@@ -18,13 +20,67 @@ Session.setDefault('current_weapon_id', null);
 // Edit mode: true if editing, false otherwise
 Session.setDefault('edit_mode', false);
 
+
+
+
+///////////DEBUGGING METHODS /////////////
+var setSessionVars = function() {
+  pickedSection = Sections.findOne({act_id: Session.get("current_act_id")});
+  if (pickedSection) {
+    console.log("SECTION NOT NULL");
+    Session.set('current_section_id', pickedSection['_id']);
+  }
+
+  pickedMove = Moves.findOne({section_id: Session.get("current_section_id")});
+  if (pickedMove) {
+    console.log("MOVE NOT NULL");
+    Session.set('current_move_id', pickedMove['_id']);
+  }
+};
+
+
+
 // Subscriptions go here (when I figure out how to do that...)
 
+var showsHandle = null;
+var actsHandle = null;
+var sectionsHandle = null;
+var movesHandle = null;
+var weaponsHandle = null;
+// Always be subscribed to shows, and only subscribe to acts for current show
+// Always be subscribed to the sections, moves and weapons for the selected act.
+Deps.autorun(function () {
 
-var todosHandle = null;
+  showsHandle = Meteor.subscribe('shows');
+
+  var show_id = Session.get('current_show_id');
+  if (show_id) {
+    actsHandle = Meteor.subscribe('acts', show_id)
+  }
+  else {
+    actsHandle = null;
+  }
+
+  var act_id = Session.get('current_act_id');
+  if (act_id) {
+    sectionsHandle = Meteor.subscribe('sections', act_id)
+    movesHandle = Meteor.subscribe('moves', act_id);
+    weaponsHandle = Meteor.subscribe('weapons', act_id);
+  }
+  else {
+    sectionsHandle = null;
+    movesHandle = null;
+    weaponsHandle = null;
+  }
+});
+
 
 
 ////////// Helpers for shows /////////////
+
+Template.shows_page.loading = function() {
+  return !showsHandle.ready();
+}
 
 Template.shows_page.shows = function () {
   return Shows.find({}, {sort: {name: 1}});
@@ -33,14 +89,53 @@ Template.shows_page.shows = function () {
 
 ////////// Helpers for Acts //////////////
 
+Template.acts_page.loading = function() {
+  return !actsHandle.ready();
+}
 
-
+Template.acts_page.acts_list= function() {
+  return Shows.find({show_id: Session.get("current_show_id")})
+}
 
 
 ////////// Helper for act_edit ////////////
 
 
 
+////////// Helper for sections_pane //////////
+
+Template.sections_pane.loading = function() {
+  return !sectionsHandle.ready();
+}
+
+Template.sections_pane.sections = function() {
+  console.log("Sections rendering");
+  return Sections.find({act_id: Session.get("current_act_id")});
+}
+
+
+////////// Helper for moves_pane /////////////
+
+Template.moves_pane.loading = function() {
+  return !movesHandle.ready();
+}
+
+Template.moves_pane.moves = function() {
+  return Moves.find({section_id: Session.get("current_section_id")});
+}
+
+////////// Helper for weapons_pane //////////
+Template.weapons_pane.loading = function() {
+  return !weaponsHandle.ready();
+}
+
+Template.weapons_pane.weapons = function() {
+  setSessionVars(); //THIS IS FOR DEBUGGING PURPOSES ONLY @JORDANM
+  return Weapons.find({move_id: Session.get("current_move_id")});
+}
+
+Template.weapons_pane.rendered = function() {
+}
 
 
 /*

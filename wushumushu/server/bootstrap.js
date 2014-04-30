@@ -1,5 +1,12 @@
 // if the database is empty on server start, create some sample data.
 Meteor.startup(function () {
+  if (true) {
+    Shows.remove({})
+    Acts.remove({})
+    Sections.remove({})
+    Moves.remove({})
+    Weapons.remove({})
+  }
   if (Shows.find().count() === 0) {
   	var new_shows = [{name: "Show1",
                      date: "5/5/2014",
@@ -31,15 +38,15 @@ Meteor.startup(function () {
     };                
 
     move_ids = [];
-    var new_moves = [{name: "Move 1", section_id: section_ids[0]},
-                        {name: "Move 2", section_id: section_ids[0]}];
+    var new_moves = [{title: "Move 1", description: "DESCRIPTION 1", section_id: section_ids[0], act_id: act_ids[0]},
+                        {title: "Move 2", description: "Description 2", section_id: section_ids[0], act_id: act_ids[0]}];
     for (var i = 0; i<=new_moves.length - 1; i++) {
         move_ids.push(Moves.insert(new_moves[i]));
     };                
 
     weapon_ids = [];
-    var new_weapons = [{name: "Weapon 1", move_id: move_ids[0]},
-                        {name: "Move 2", move_id: move_ids[0]}];
+    var new_weapons = [{name: "Weapon 1", move_id: move_ids[0], act_id: act_ids[0]},
+                        {name: "Weapon 2", move_id: move_ids[0], act_id: act_ids[0]}];
     for (var i = 0; i<=new_weapons.length - 1; i++) {
         weapon_ids.push(Weapons.insert(new_weapons[i]));
     };

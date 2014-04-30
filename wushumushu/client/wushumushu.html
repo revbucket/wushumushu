@@ -22,22 +22,61 @@
 	{{#each acts}}
 	<a href="{{ pathFor 'actEdit'}}">{{name}}</a> 
 	{{/each}}
+
+	{{#each acts_list}}
+	asnotheusneuht
+	{{/each}}
 </template>
 
 
 <!--- single act page templates -->
 <template name="act_edit_page">
 	<h1> Individual act goes here </h1>
-	{{#each sections}}
-	Section name {{name}}
-	{{/each}}
+	{{> sections_pane}}
+	{{> moves_pane}}
+	{{> weapons_pane}}
 
-	{{#with act}}
-	Act name {{name}}
-	{{/with}}
+</template>
 
-	{{#with show}}
-	Show name {{name}}
-	{{/with}}
+
+
+
+<template name="sections_pane" >
+{{#if loading}}
+    Loading Sections pane...
+{{else}}
+
+    <h1>Sections go here</h1>
+    {{#each sections}}
+        {{name}}
+    {{/each}}
+
+{{/if}}
+</template>
+
+
+<template name = "moves_pane" >
+{{#if loading}}
+    Loading moves pane...
+{{else}}
+    <h1>Moves go here</h1>
+    {{#each moves}}
+        {{title}}
+    {{/each}}
+{{/if}}
+
+</template>
+
+
+<template name="weapons_pane">
+{{#if loading}}
+  Loading...
+{{else}}
+  <h1> Weapons go here </h1>
+
+  {{#each weapons}}
+       {{name}}
+   {{/each}}
+{{/if}}
 
 </template>

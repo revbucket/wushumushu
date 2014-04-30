@@ -27,31 +27,34 @@ Meteor.publish('acts', function (show_id) {
 */
 Sections = new Meteor.Collection("sections");
 // Publish only the sections with the requested act_id
-Meteor.publish('sections', function (act_id) {
-  check(act_id, String);
+Meteor.publish('sections', function(act_id) {
+	check(act_id, String);
   return Sections.find({act_id: act_id});
 });
 
 /*Moves -- {title: String, 
 	        description: String, 
-	        section_id: String}
+	        section_id: String,
+	        act_id: String}
 */
 Moves = new Meteor.Collection("moves");
-// Publish only the moves with the requested section_id
-Meteor.publish('moves', function (section_id) {
-  check(section_id, String);
-  return Moves.find({section_id: section_id});
+// Publish only the moves with the requested act_id
+Meteor.publish('moves', function (act_id) {
+
+  	check(act_id, String);
+  return Moves.find({act_id: act_id});
 });
 
 
 /*Weapons -- {name: String, 
 	          video_url: String, 
-	          move_id: String}
+	          move_id: String
+	          act_id: String}
 */	      
 Weapons = new Meteor.Collection("weapons");
-// Publish only the weapons with the requested move_id
-Meteor.publish('weapons', function (move_id) {
-  check(move_id, String);
-  return Weapons.find({move_id: move_id});
+// Publish only the weapons with the requested act_id
+Meteor.publish('weapons', function (act_id) {
+	check(act_id, String);
+	return Weapons.find({act_id: act_id});
 });
 

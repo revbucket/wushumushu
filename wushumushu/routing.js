@@ -6,7 +6,13 @@ Router.map(function() {
     path: '/', 
     template: "shows_page",
     onRun: function() {
-    	console.log("NEED TO RESET ALL current_x SESSION VARIABLES HERE");
+    	Session.set('current_show_id', null);
+    	Session.set('current_show_name', null);
+    	Session.set('current_act_id', null);
+    	Session.set('current_act_name', null);
+    	Session.set('current_section_id', null);
+    	Session.set('current_move_id', null);
+    	Session.set('current_weapon_id', null);
     }
   });
 
@@ -21,7 +27,13 @@ Router.map(function() {
   	            show: Shows.findOne({_id: this.params._id} )};
   	},
   	onRun: function() {
-  		console.log("SET THE CURRENT SHOW HERE, RESET EVERYTHING ELSE");
+  		Session.set('current_show_id', this.params._id);
+  		Session.set('current_show_name', null);
+    	Session.set('current_act_id', null);
+    	Session.set('current_act_name', null);
+    	Session.set('current_section_id', null);
+    	Session.set('current_move_id', null);
+    	Session.set('current_weapon_id', null);
   	}
     
   });
@@ -31,11 +43,17 @@ Router.map(function() {
   this.route('actEdit', {
   	path: '/act/:_id',
   	template: 'act_edit_page',
-  	data: function(){
-  		act = Acts.findOne({_id: this.params._id});
-  		return {sections: Sections.find({act_id: this.params._id}),
-  	            act: act, 
-  	            show: Shows.findOne({_id: act['show_id']})};
-  	}
+  	waitOn: function() {
+  		return [Meteor.subscribe('Acts'), Meteor.subscribe('Shows')];
+  	},
+  	onRun: function() {
+  		Session.set('current_show_id', null);
+  		Session.set('current_show_name', null);
+    	Session.set('current_act_name', null);
+    	Session.set('current_section_id', null);
+    	Session.set('current_move_id', null);
+    	Session.set('current_weapon_id', null);
+  		Session.set('current_act_id', this.params._id);
+    }
   });
 });
