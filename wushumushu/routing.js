@@ -1,4 +1,4 @@
-//////// Routing stuff goes here//////
+  //////// Routing stuff goes here//////
 Router.map(function() {
 
   //Routing function for the shows page
