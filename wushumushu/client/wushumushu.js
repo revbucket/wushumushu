@@ -105,6 +105,7 @@ Template.acts_page.acts_list= function() {
 ////////// Helper for sections_pane //////////
 
 Template.sections_pane.loading = function() {
+  setSessionVars(); //THIS IS FOR DEBUGGING PURPOSES ONLY @JORDANM
   return !sectionsHandle.ready();
 }
 
@@ -130,7 +131,6 @@ Template.weapons_pane.loading = function() {
 }
 
 Template.weapons_pane.weapons = function() {
-  setSessionVars(); //THIS IS FOR DEBUGGING PURPOSES ONLY @JORDANM
   return Weapons.find({move_id: Session.get("current_move_id")});
 }
 
