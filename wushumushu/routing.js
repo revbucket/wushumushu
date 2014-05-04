@@ -41,13 +41,13 @@ Router.map(function() {
 
   // Routing function for the act_edit page
   this.route('actEdit', {
-  	path: '/act/:_id',
+  	path: '/shows/:_show/:_id',
   	template: 'act_edit_page',
   	waitOn: function() {
   		return [Meteor.subscribe('Acts'), Meteor.subscribe('Shows')];
   	},
   	onRun: function() {
-  		Session.set('current_show_id', null);
+  		Session.set('current_show_id', this.params._show);
   		Session.set('current_show_name', null);
     	Session.set('current_act_name', null);
     	Session.set('current_section_id', null);

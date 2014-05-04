@@ -6,6 +6,6 @@
 standard-app-packages
 insecure
 iron-router
-bootstrap
 jquery
 autopublish
+jquery-ui

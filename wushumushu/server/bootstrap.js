@@ -1,6 +1,6 @@
 // if the database is empty on server start, create some sample data.
 Meteor.startup(function () {
-  if (true) {
+  if (false) {
     Shows.remove({})
     Acts.remove({})
     Sections.remove({})

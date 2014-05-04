@@ -18,7 +18,7 @@ Session.setDefault('current_move_id', null);
 Session.setDefault('current_weapon_id', null);
 
 // Edit mode: true if editing, false otherwise
-Session.setDefault('edit_mode', false);
+  Session.setDefault('edit_mode',  false);
 
 
 
@@ -75,6 +75,68 @@ Deps.autorun(function () {
 });
 
 
+////////// Helpers for navbar ////////////
+Template.nav_bar.loading = function() {
+  return !showsHandle.ready();
+}
+
+Template.nav_bar.show_selected = function() {
+  console.log("SHOW SELETED");
+  console.log(Session.equals('current_show_id', null))
+  return !Session.equals('current_show_id', null);
+}
+
+Template.nav_bar.current_show_name = function() {
+  if (!Session.equals('current_show_id', null)) {
+    return Shows.findOne({_id: Session.get('current_show_id')}).name;
+  }
+}
+
+Template.nav_bar.current_show_id = function() {
+  return Session.get('current_show_id');
+}
+
+Template.nav_bar.act_selected = function() {
+  return !Session.equals('current_act_id', null);
+}
+
+Template.nav_bar.current_act_name = function() {
+  if (!Session.equals('current_act_id', null)) {
+    return Acts.findOne({_id: Session.get('current_act_id')}).name;
+  }
+}
+
+Template.nav_bar.section_selected = function() {
+  return !Session.equals('current_section_id', null);
+}
+
+Template.nav_bar.current_section_name = function() {
+  if (!Session.equals('current_section_id', null)) {
+    return Sections.findOne({_id: Session.get('current_section_id')}).name;
+  }
+}
+
+Template.nav_bar.edit_class =  function() {
+  if (Session.equals('edit_mode',true)) {
+    return 'btn-info';
+  }
+}
+
+Template.nav_bar.view_class = function() {
+  if (Session.equals('edit_mode', false)) {
+    return 'btn-info'
+  }
+}
+
+Template.nav_bar.events({
+  'click #edit-mode-button': function() {
+    Session.set('edit_mode',true);
+  },
+  'click #view-mode-button': function() {
+    Session.set('edit_mode',false);
+  }
+})
+
 
 ////////// Helpers for shows /////////////
 
@@ -130,12 +192,170 @@ Template.weapons_pane.loading = function() {
   return !weaponsHandle.ready();
 }
 
+Template.weapons_pane.edit_mode = function() {
+  return Session.equals('edit_mode', true);
+}
+
+Template.weapons_pane.no_weapons = function() {
+  return Weapons.find({move_id: Session.get("current_move_id")}).count() == 0;
+}
+
+Template.weapons_pane.edit_and_weapons = function() {
+  return ((Weapons.find({move_id: Session.get("current_move_id")}).count() != 0) && (Session.equals('edit_mode', true)) );
+
+}
+
 Template.weapons_pane.weapons = function() {
   return Weapons.find({move_id: Session.get("current_move_id")});
 }
 
-Template.weapons_pane.rendered = function() {
+
+var num_weapons = function() {
+  return Weapons.find({move_id: Session.get("current_move_id")}).count()
 }
+
+Template.weapons_pane.zero_edit_unselect = function() {
+  return ((Session.equals('edit_mode', true)) && (num_weapons() == 0) && (Session.equals('current_weapon_id',null)))
+};
+
+Template.weapons_pane.plural_edit_unselect = function() {
+  return ((Session.equals('edit_mode', true)) && (num_weapons() > 0) && (Session.equals('current_weapon_id',null)))
+}
+
+Template.weapons_pane.plural_edit_select = function() {
+  return ((Session.equals('edit_mode', true)) && (num_weapons() > 0) && (!Session.equals('current_weapon_id',null)))
+}
+
+Template.weapons_pane.zero_view_unselect = function() {
+  return ((Session.equals('edit_mode', false)) && (num_weapons() == 0) && (Session.equals('current_weapon_id',null)))
+}
+
+Template.weapons_pane.plural_view_unselect = function() {
+  return ((Session.equals('edit_mode', false)) && (num_weapons() > 0) && (Session.equals('current_weapon_id',null)))
+}
+
+Template.weapons_pane.plural_view_select = function() {
+  return ((Session.equals('edit_mode', false)) && (num_weapons() > 0) && (!Session.equals('current_weapon_id',null)))
+}
+
+Template.weapons_pane.video_and_selected = function() {
+  var currentWeapon = Weapons.findOne({_id: Session.get('current_weapon_id')})
+  if (currentWeapon) {
+    console.log(currentWeapon.video_url)
+    return ((currentWeapon.video_url != null) && (currentWeapon.video_url != undefined));
+  }
+  return false;
+}
+
+Template.weapons_pane.embed_url = function() {
+  var getId = function(url) {
+    var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    var match = url.match(regExp);
+    if (match && match[2].length == 11) {
+      return match[2];
+    } else {
+      return 'error';
+    }
+  };
+  var embedID = getId(Weapons.findOne({_id: Session.get('current_weapon_id')}).video_url);
+  return "http://www.youtube.com/embed/"+embedID;
+}
+
+Template.weapons_pane.rendered = function() {
+  setSessionVars();
+}
+
+
+
+Template.weapons_pane.events({
+  'click #new_weapon_btn': function() {
+
+    var newWeaponHTML = 
+            '<div style="text-align:center;">' +
+            '<label>Weapon name \*</label><br><input type="text" name="fname" value=""><br><br><br>' +
+            '<label> Youtube URL (or leave blank)</label><br><input type="text" name="furl" value="">' +
+            '' +
+            '' +
+            '<br>' +
+            '<br>Fields marked \* are required<br></div>'
+    var newWeaponPrompt = {
+      state0: {
+        title: 'New Weapon',
+        html: newWeaponHTML,
+        buttons: { Cancel: -1, Done: 1 },
+        focus: 1,
+        submit:function(e,v,m,f){ 
+          if (f.fname != "" && v==1) {   
+            var youtube_url = (f.furl == "")?  null: f.furl;
+            var new_weapon_id = Weapons.insert({name: f.fname, video_url: youtube_url, move_id: Session.get('current_move_id'), 
+                                                act_id: Session.get('current_act_id')});
+            e.preventDefault();
+            $.prompt.close();
+          }
+        },
+      },
+    };
+    $.prompt(newWeaponPrompt);
+
+  },
+  'click .weapon-btn': function() {
+      var weaponID = $(event.target).attr("id").split("-")[1];
+      if (Session.equals('edit_mode', true)) {
+      var weaponCursor = Weapons.findOne({_id: weaponID})
+      var predefined_URL = ((weaponCursor.video_url == null )|| (weaponCursor.video_url == undefined))? "" : weaponCursor.video_url;
+      var editHTML =
+              '<div style="text-align:center;">' +
+              '<label>Weapon name \*</label><br><input type="text" name="fname" value="' + weaponCursor.name + '"><br><br><br>' +
+              '<label> Youtube URL (or leave blank)</label><br><input type="text" name="furl" value="' + predefined_URL+'">' +
+              '' +
+              '' +
+              '<br>' +
+              '<br>Fields marked \* are required<br></div>'
+      var editPrompt = {
+        state0: {
+            title: 'Currently editing weapon: ' +  weaponCursor.name,
+            html: editHTML,
+            buttons: { 'Delete this weapon': -10, 'Cancel': -1, 'Save changes': 1 },
+            focus: 1,
+            submit: function(e1,v1,m1,f1) {
+                if (v1 == 1 && f1.actName == "") { alert('The weapon name cannot be left blank'); }
+                if (v1 == 1 && f1.actName != "") {
+                  Weapons.update({_id: weaponID}, {name: f1.fname, video_url: f1.furl, move_id: Session.get('current_move_id'),
+                                                   act_id: Session.get('current_act_id')})
+                    e1.preventDefault();
+                    $.prompt.close();
+                }
+                else if (v1 == -1) {
+                    e1.preventDefault();
+                    $.prompt.close();
+                }
+                else if (v1 == -10) {
+                    e1.preventDefault();
+                    $.prompt.goToState('deleteState',false,e1); // goto state1
+                }
+                e1.preventDefault();
+
+            }
+        }, // end state0 (default edit panel)
+
+        'deleteState': {
+            title: 'Delete weapon',
+            html: 'Are you sure you want to delete the weapon: <span style="color:red;">' + 
+                  weaponCursor.name+'</span><br><br>This action cannot be undone<br><br>',
+            buttons: { 'Yes, delete this weapon' : -1, 'No, keep this weapon' : 1 },
+            focus: 1,
+            submit: function(e1,v1,m1,f1) {
+                if (v1 == -1) {
+                  Weapons.remove({_id: weaponID});
+                }
+            }
+          } // end deleteSlate
+        }; // end editPrompt
+      $.prompt(editPrompt);
+    }
+    Session.set('current_weapon_id', weaponID)
+  }
+})
 
 
 /*
