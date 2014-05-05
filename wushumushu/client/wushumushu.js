@@ -173,6 +173,7 @@ Template.sections_pane.loading = function() {
 
 Template.sections_pane.sections = function() {
   console.log("Sections rendering");
+  console.log(Sections.find({act_id: Session.get("current_act_id")}));
   return Sections.find({act_id: Session.get("current_act_id")});
 }
 
@@ -181,7 +182,7 @@ Template.sections_pane.edit_mode = function() {
 }
 
 Template.sections_pane.editing_section = function() {
-  return Sessions.equals('editing_section', true);
+  return Session.equals('editing_section', true);
 }
 
 
@@ -192,6 +193,7 @@ Template.moves_pane.loading = function() {
 }
 
 Template.moves_pane.moves = function() {
+  console.log(Moves.find({section_id: Session.get("current_section_id")}));
   return Moves.find({section_id: Session.get("current_section_id")});
 }
 
@@ -200,7 +202,7 @@ Template.moves_pane.edit_mode = function() {
 }
 
 Template.moves_pane.editing_move = function() {
-  return Sessions.equals('editing_move', true);
+  return Session.equals('editing_move', true);
 }
 
 
