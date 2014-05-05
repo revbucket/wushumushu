@@ -213,6 +213,17 @@ Template.display_move.edit_mode = function() {
   return Session.equals('edit_mode', true);
 }
 
+Template.display_move.maybe_active = function() {
+  return Session.equals("current_move_id", this._id) ? "active" : "";
+};
+
+Template.display_move.events({
+    'click': function() {
+      console.log(this._id + ' move clicked')
+      Session.set("current_move_id", this._id);
+    }
+})
+
 
 ////////// Helper for weapons_pane //////////
 Template.weapons_pane.loading = function() {
