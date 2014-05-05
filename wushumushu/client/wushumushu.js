@@ -176,6 +176,14 @@ Template.sections_pane.sections = function() {
   return Sections.find({act_id: Session.get("current_act_id")});
 }
 
+Template.sections_pane.edit_mode = function() {
+  return Session.equals('edit_mode', true);
+}
+
+Template.sections_pane.editing_section = function() {
+  return Sessions.equals('editing_section', true);
+}
+
 
 ////////// Helper for moves_pane /////////////
 
@@ -186,6 +194,15 @@ Template.moves_pane.loading = function() {
 Template.moves_pane.moves = function() {
   return Moves.find({section_id: Session.get("current_section_id")});
 }
+
+Template.moves_pane.edit_mode = function() {
+  return Session.equals('edit_mode', true);
+}
+
+Template.moves_pane.editing_move = function() {
+  return Sessions.equals('editing_move', true);
+}
+
 
 ////////// Helper for weapons_pane //////////
 Template.weapons_pane.loading = function() {
