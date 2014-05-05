@@ -167,7 +167,7 @@ Template.acts_page.acts_list= function() {
 ////////// Helper for sections_pane //////////
 
 Template.sections_pane.loading = function() {
-  setSessionVars(); //THIS IS FOR DEBUGGING PURPOSES ONLY @JORDANM
+  //setSessionVars(); //THIS IS FOR DEBUGGING PURPOSES ONLY @JORDANM
   return !sectionsHandle.ready();
 }
 
@@ -188,6 +188,17 @@ Template.sections_pane.editing_section = function() {
 Template.display_section.edit_mode = function() {
   return Session.equals('edit_mode', true);
 }
+
+Template.display_section.maybe_active = function() {
+  return Session.equals("current_section_id", this._id) ? "active" : "";
+};
+
+Template.display_section.events({
+    'click': function() {
+      console.log(this._id + ' section clicked');
+      Session.set("current_section_id", this._id);
+    }
+})
 
 
 ////////// Helper for moves_pane /////////////
@@ -219,7 +230,7 @@ Template.display_move.maybe_active = function() {
 
 Template.display_move.events({
     'click': function() {
-      console.log(this._id + ' move clicked')
+      console.log(this._id + ' move clicked');
       Session.set("current_move_id", this._id);
     }
 })

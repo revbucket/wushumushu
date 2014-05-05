@@ -158,7 +158,7 @@
 
 
 <template name="display_section">
-  <a class="list-group-item section" id="{{name}}-s"> {{name}}
+  <a class="list-group-item section {{maybe_active}}" id="{{name}}-s"> {{name}}
   {{#if edit_mode}}
     <div class="pull-right edit">
       <span class="glyphicon glyphicon-pencil" id="{{name}}-s-pencil" style="padding-right:0.5em;"></span>
