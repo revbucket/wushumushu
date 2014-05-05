@@ -132,7 +132,7 @@
             {{#if editing_section}}
 
             {{else}}
-              <a class="list-group-item section" id="{{name}}-s"> {{name}} </a>
+              {{>display_section}}
             {{/if}}
           {{/each}}
         {{/unless}}
@@ -157,6 +157,23 @@
 </template>
 
 
+<template name="display_section">
+  <a class="list-group-item section" id="{{name}}-s"> {{name}}
+  {{#if edit_mode}}
+    <div class="pull-right edit">
+      <span class="glyphicon glyphicon-pencil" id="{{name}}-s-pencil" style="padding-right:0.5em;"></span>
+      <span class="glyphicon glyphicon-remove" id="{{name}}-s-remove" ></span>
+    </div>
+  {{/if}}
+  </a>
+</template>
+
+
+<template name="update_section">
+
+</template>
+
+
 <template name = "moves_pane" >
 {{#if loading}}
     Loading moves pane...
@@ -174,27 +191,9 @@
       {{#unless no_moves}}
         {{#each moves}}
           {{#if editing_move}}
-            <form class="form-horizontal" id ="{{name}}-form" role="form">
-                <div class="form-group edit" style="padding-top:0.5em;">
-                  <label for="update-move-title" class="col-sm-2 control-label">Title</label>
-                   <div class="col-sm-10"> 
-                    <input class="form-control" id="update-move-title"/>    
-                   </div>
-                </div>
-                <div class="form-group edit">
-                  <label for="update-move" class="col-sm-2 control-label">Moves</label>
-                   <div class="col-sm-10"> 
-                    <textarea class="form-control" id="update-move" rows="3"> {{info}} </textarea>
-                   </div>
-                </div>         
-                <div class="form-group edit">
-                  <div class="col-sm-offset-5">
-                      <button type="submit" class="btn btn-default update-btn update-move-btn" id="{{name}}"> Update</button>
-                  </div>
-               </div>
-            </form>
+            {{>update_move}}
           {{else}}
-            <a class="list-group-item move" id="{{name}}-m"> {{name}} </a>
+            {{>display_move}}
           {{/if}}
         {{/each}}
       {{/unless}}
@@ -204,36 +203,75 @@
       <!-- Reference: http://stackoverflow.com/questions/19738807/text-sticking-out-in-bootstrap-3-input-goup-textarea -->
         
       {{#if edit_mode}}
-      <form class="form-horizontal" role="form" id="new-move-form">
-          <div class="form-group edit" style="padding-top:0.5em;">
-            <label for="add-move-title" class="col-sm-2 control-label">Title</label>
-            
-            <div class="col-sm-10">  
-              <input class="form-control" id="add-move-title" placeholder="Title" />
-            </div>
-          </div>
-          
-          <div class="form-group edit">
-            <label for="add-move" class="col-sm-2 control-label">Moves</label>
-            
-            <div class="col-sm-10">  
-              <textarea class="form-control" id="add-move" rows="3" placeholder="Moves"></textarea>
-            </div>
-          </div>      
-                
-          <div class="form-group edit">
-            <div class="col-sm-offset-5">
-                <button type="submit" class="btn btn-default" id="move-btn">Add</button>
-            </div>
-         </div>
-      </form>
+        {{>add_move}}
       {{/if}}
         
     </div>
 </div>
 {{/if}}
 
+</template>
+  
 
+<template name="display_move">
+  <a class="list-group-item move" id="{{name}}-m"> {{name}}
+  {{#if edit_mode}}
+    <div class="pull-right edit">
+      <span class="glyphicon glyphicon-pencil" id="{{name}}-m-pencil" style="padding-right:0.5em;"></span>
+      <span class="glyphicon glyphicon-remove" id="{{name}}-m-remove" ></span>
+    </div>
+  {{/if}}
+  </a>
+</template>
+
+
+<template name="update_move">
+  <form class="form-horizontal" id ="{{name}}-form" role="form">
+    <div class="form-group edit" style="padding-top:0.5em;">
+      <label for="update-move-title" class="col-sm-2 control-label">Title</label>
+       <div class="col-sm-10"> 
+        <input class="form-control" id="update-move-title"/>    
+       </div>
+    </div>
+    <div class="form-group edit">
+      <label for="update-move" class="col-sm-2 control-label">Moves</label>
+       <div class="col-sm-10"> 
+        <textarea class="form-control" id="update-move" rows="3"> {{info}} </textarea>
+       </div>
+    </div>         
+    <div class="form-group edit">
+      <div class="col-sm-offset-5">
+          <button type="submit" class="btn btn-default update-btn update-move-btn" id="{{name}}"> Update</button>
+      </div>
+   </div>
+  </form>
+</template>
+
+
+<template name="add_move">
+  <form class="form-horizontal" role="form" id="new-move-form">
+    <div class="form-group edit" style="padding-top:0.5em;">
+      <label for="add-move-title" class="col-sm-2 control-label">Title</label>
+      
+      <div class="col-sm-10">  
+        <input class="form-control" id="add-move-title" placeholder="Title" />
+      </div>
+    </div>
+    
+    <div class="form-group edit">
+      <label for="add-move" class="col-sm-2 control-label">Moves</label>
+      
+      <div class="col-sm-10">  
+        <textarea class="form-control" id="add-move" rows="3" placeholder="Moves"></textarea>
+      </div>
+    </div>      
+          
+    <div class="form-group edit">
+      <div class="col-sm-offset-5">
+          <button type="submit" class="btn btn-default" id="move-btn">Add</button>
+      </div>
+   </div>
+  </form>
 </template>
 
 

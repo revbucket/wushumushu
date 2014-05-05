@@ -185,6 +185,10 @@ Template.sections_pane.editing_section = function() {
   return Session.equals('editing_section', true);
 }
 
+Template.display_section.edit_mode = function() {
+  return Session.equals('edit_mode', true);
+}
+
 
 ////////// Helper for moves_pane /////////////
 
@@ -203,6 +207,10 @@ Template.moves_pane.edit_mode = function() {
 
 Template.moves_pane.editing_move = function() {
   return Session.equals('editing_move', true);
+}
+
+Template.display_move.edit_mode = function() {
+  return Session.equals('edit_mode', true);
 }
 
 
