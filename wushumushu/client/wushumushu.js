@@ -20,7 +20,9 @@ Session.setDefault('current_weapon_id', null);
 // Edit mode: true if editing, false otherwise
   Session.setDefault('edit_mode',  false);
 
-
+// Vars for editing section and move
+  Session.setDefault('editing_section', null);
+  Session.setDefault('editing_move', null);
 
 
 ///////////DEBUGGING METHODS /////////////
@@ -177,12 +179,12 @@ Template.sections_pane.sections = function() {
   return Sections.find({act_id: Session.get("current_act_id")});
 }
 
-Template.sections_pane.edit_mode = function() {
-  return Session.equals('edit_mode', true);
+Template.sections_pane.editing_section = function() {
+  return Session.equals("editing_section", this._id);
 }
 
-Template.sections_pane.editing_section = function() {
-  return Session.equals('editing_section', true);
+Template.sections_pane.edit_mode = function() {
+  return Session.equals('edit_mode', true);
 }
 
 Template.display_section.edit_mode = function() {
@@ -194,9 +196,14 @@ Template.display_section.maybe_active = function() {
 };
 
 Template.display_section.events({
-    'click': function() {
+    'click .section': function() {
       console.log(this._id + ' section clicked');
       Session.set("current_section_id", this._id);
+    },
+
+    'click .glyphicon-pencil': function() {
+      console.log(this._id + ' glyphicon-pencil clicked');
+      Session.set("editing_section", this._id);
     }
 })
 
@@ -214,10 +221,6 @@ Template.moves_pane.moves = function() {
 
 Template.moves_pane.edit_mode = function() {
   return Session.equals('edit_mode', true);
-}
-
-Template.moves_pane.editing_move = function() {
-  return Session.equals('editing_move', true);
 }
 
 Template.display_move.edit_mode = function() {
