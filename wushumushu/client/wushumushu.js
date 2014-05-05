@@ -208,8 +208,9 @@ Template.display_section.events({
 })
 
 Template.update_section.events({
-  'click .update-section-btn': function() {
-    Sections.update(Session.get("editing_section"), {$set: {name: "test"}});
+  'click .update-section-btn': function(evt, template) {
+    var newName = template.find("#update-section").value;
+    Sections.update(Session.get("editing_section"), {$set: {name: newName}});
     Session.set("editing_section", null);
   }
 })
