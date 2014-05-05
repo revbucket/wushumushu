@@ -207,6 +207,13 @@ Template.display_section.events({
     }
 })
 
+Template.update_section.events({
+  'click .update-section-btn': function() {
+    Sections.update(Session.get("editing_section"), {$set: {name: "test"}});
+    Session.set("editing_section", null);
+  }
+})
+
 
 ////////// Helper for moves_pane /////////////
 
