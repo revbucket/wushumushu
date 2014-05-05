@@ -130,7 +130,7 @@
         {{#unless no_sections}}
           {{#each sections}}
             {{#if editing_section}}
-
+              {{>update_section}}
             {{else}}
               {{>display_section}}
             {{/if}}
@@ -170,7 +170,12 @@
 
 
 <template name="update_section">
-
+  <div class="input-group edit" id="{{name}}-form">
+    <input type="text" id="update-section" class="form-control">
+     <span class="input-group-btn">
+      <button class="btn btn-default update-btn update-section-btn" id = "{{name}}" type="button">Update</button>
+    </span>      
+  </div>
 </template>
 
 
@@ -214,13 +219,14 @@
   
 
 <template name="display_move">
-  <a class="list-group-item move" id="{{name}}-m"> {{name}}
+  <a class="list-group-item move" id="{{name}}-m"> <b>{{name}}</b> 
   {{#if edit_mode}}
     <div class="pull-right edit">
       <span class="glyphicon glyphicon-pencil" id="{{name}}-m-pencil" style="padding-right:0.5em;"></span>
       <span class="glyphicon glyphicon-remove" id="{{name}}-m-remove" ></span>
     </div>
   {{/if}}
+  <br> {{info}}
   </a>
 </template>
 
