@@ -146,6 +146,129 @@ Template.shows_page.loading = function() {
   return !showsHandle.ready();
 }
 
+Template.shows_page.edit_mode = function() {
+  return Session.equals('edit_mode', true);
+}
+
+Template.shows_page.events({
+  'click #new-show-btn': function() {
+    var rowSpacing = '<tr style="height:20px;"></tr>';
+    var newShowDialogHTML =
+    '<table class="add-show-dialog"><tr><td style="width:45%;"><label>Show name \*</label>'+
+    '</td><td><input type="text" name="showName" value=""></td></tr>'+rowSpacing+
+    '<tr><td><label>Date</label></td><td><input type="text" name="showDate" '+
+    'class="date_picker" value=""></td></tr>'+rowSpacing+
+    '<tr><td><label>Start time</label></td><td><input type="text" name="showTimeStart" '+
+    'class="time_picker" value=""></td></tr>'+rowSpacing+
+    '<tr><td><label>End time</label></td><td><input type="text" name="showTimeEnd" '+
+    'class="time_picker" value=""></td></tr>'+rowSpacing+
+    '<tr><td><label>Location</label></td><td><input type="text" name="showLocation" '+
+    'value=""></td></tr></table><br>Fields marked \* are required<br><br>';
+    var newShowPrompt = {
+      state0: {
+        title: 'Add new show',
+        html: newShowDialogHTML,
+        buttons: { 'Cancel': -1, 'Done': 1 },
+        focus: 1,
+        submit: function(e,v,m,f) {
+          if (f.showName == "" && v == 1) { alert('The show name cannot be left blank'); }
+          if (f.showName != "" && v == 1) {
+            var new_show_id = Shows.insert({
+              name: f.showName,
+              date: f.showDate,
+              timeStart: f.showTimeStart,
+              timeEnd: f.showTimeEnd,
+              loc: f.showLocation,
+            });
+            e.preventDefault();
+            $.prompt.close();
+          } // end if block processing inputs
+        } // end submit function of state0
+      } // end state0 of newShowPrompt
+    }; // end newShowPrompt
+    $.prompt(newShowPrompt);
+    $(".date_picker").datepicker();
+  }, // end click #new-show-btn
+  
+  'click .show-item': function() {
+    var showID = $(event.target).attr("id").split("-")[1];
+    if (Session.equals('edit_mode', true)) {
+      var showCursor = Shows.findOne({_id: showID});
+      var rowSpacing = '<tr style="height:20px;"></tr>';
+      var editShowDialogHTML =
+      '<table class="add-show-dialog"><tr><td style="width:45%;"><label>Show name \*</label>'+
+      '</td><td><input type="text" name="showName" value="'+ showCursor.name +
+      '"></td></tr>'+rowSpacing+
+      '<tr><td><label>Date</label></td><td><input type="text" name="showDate" '+
+      'class="date_picker" value="'+ showCursor.date +
+      '"></td></tr>'+rowSpacing+
+      '<tr><td><label>Start time</label></td><td><input type="text" name="showTimeStart" '+
+      'class="time_picker" value="'+ showCursor.timeStart +
+      '"></td></tr>'+rowSpacing+
+      '<tr><td><label>End time</label></td><td><input type="text" name="showTimeEnd" '+
+      'class="time_picker" value="'+ showCursor.timeEnd +
+      '"></td></tr>'+rowSpacing+
+      '<tr><td><label>Location</label></td><td><input type="text" name="showLocation" '+
+      'value="'+ showCursor.loc +
+      '"></td></tr></table><br>Fields marked \* are required<br><br>';
+      var editShowPrompt = {
+        state0: {
+          title: 'Currently editing show: ' + showCursor.name,
+          html: editShowDialogHTML,
+          buttons: { 'Delete this show': -10, 'Cancel': -1, 'Save changes': 1 },
+          focus: 1,
+          submit: function(e,v,m,f) {
+            if (v == 1 && f.showName == "") { alert('The show name cannot be left blank'); }
+            if (v == 1 && f.showName != "") {
+              Shows.update({ _id: showID }, {
+                name: f.showName,
+                date: f.showDate,
+                timeStart: f.showTimeStart,
+                timeEnd: f.showTimeEnd,
+                loc: f.showLocation,
+                show_id: Session.get('current_show_id')
+              });
+              e.preventDefault();
+              $.prompt.close();
+            }
+            else if (v == -1) {
+              e.preventDefault();
+              $.prompt.close();
+            }
+            else if (v == -10) {
+              e.preventDefault();
+              $.prompt.goToState('deleteState', false, e); // goto deleteState
+            }
+            e.preventDefault();
+          } //end submit function of state0
+        }, // end state0 of editShowPrompt
+        
+        'deleteState': {
+          title: 'Delete show',
+          html: 'Are you sure you want to delete the show: <span style="color: red;">'+
+                showCursor.name+'</span><br><br>This action cannot be undone<br><br>',
+          buttons: { 'Yes, delete this show' : -1, 'No, keep this show': 1 },
+          focus: 1,
+          submit: function(e,v,m,f) {
+            if (v == -1) {
+              Shows.remove({_id: showID});
+            }
+          }
+        } // end deleteState of editShowPrompt
+
+      }; // end editShowPrompt
+      $.prompt(editShowPrompt);
+      $(".date_picker").datepicker();      
+    } // end if block checking if edit mode on
+
+    else { // execute when edit_mode is off, should direct link to acts
+      Session.set('current_show_id', showID);
+      window.location.href = 'shows/' + showID;
+    }
+    Session.set('current_show_id', showID);
+  } // end click .show-item
+});
+
 Template.shows_page.shows = function () {
   return Shows.find({}, {sort: {name: 1}});
 };
@@ -158,7 +281,108 @@ Template.acts_page.loading = function() {
 }
 
 Template.acts_page.acts_list= function() {
-  return Shows.find({show_id: Session.get("current_show_id")})
+  return Shows.find({show_id: Session.get("current_show_id")});
+}
+
+Template.acts_page.edit_mode = function() {
+  return Session.equals('edit_mode', true);
+}
+
+Template.acts_page.events({
+  'click #new-act-btn': function() {
+    var rowSpacing = '<tr style="height:20px;"></tr>';
+    var newActDialogHTML =
+    '<div style="text-align: center;">'+
+    '<label>Act name \*</label><br><input type="text" name="actName" value=""><br><br>'+
+    '<br>Fields marked \* are required<br><br></div>';
+    var newActPrompt = {
+      state0: {
+        title: 'Add new act',
+        html: newActDialogHTML,
+        buttons: { 'Cancel': -1, 'Done': 1 },
+        focus: 1,
+        submit: function(e,v,m,f) {
+          if (f.actName == "" && v == 1) { alert('The act name cannot be left blank'); }
+          if (f.actName != "" && v == 1) {
+            var new_act_id = Acts.insert({
+              name: f.actName,
+              show_id: Session.get('current_show_id')
+            });
+            e.preventDefault();
+            $.prompt.close();
+          } // end if block processing inputs
+        } // end submit function of state0
+      } // end state0 of newActPrompt
+    }; // end newActPrompt
+    $.prompt(newActPrompt);
+
+  }, // end click #new-act-btn
+  
+  'click .act-item': function() {
+    var actID = $(event.target).attr("id").split("-")[1];
+    if (Session.equals('edit_mode', true)) {
+      var actCursor = Acts.findOne({_id: actID});
+      var rowSpacing = '<tr style="height:20px;"></tr>';
+      var editActDialogHTML =
+      '<div style="text-align: center;">'+
+      '<label>Act name \*</label><br><input type="text" name="actName" value="'+ actCursor.name +
+      '"><br><br>'+
+      '<br>Fields marked \* are required<br><br></div>';
+      var editActPrompt = {
+        state0: {
+          title: 'Currently editing act: ' + actCursor.name,
+          html: editActDialogHTML,
+          buttons: { 'Delete this act': -10, 'Cancel': -1, 'Save changes': 1 },
+          focus: 1,
+          submit: function(e,v,m,f) {
+            if (v == 1 && f.actName == "") { alert('The act name cannot be left blank'); }
+            if (v == 1 && f.actName != "") {
+              Acts.update({ _id: actID }, {
+                name: f.actName,
+                show_id: Session.get('current_show_id')
+              });
+              e.preventDefault();
+              $.prompt.close();
+            }
+            else if (v == -1) {
+              e.preventDefault();
+              $.prompt.close();
+            }
+            else if (v == -10) {
+              e.preventDefault();
+              $.prompt.goToState('deleteState', false, e); // goto deleteState
+            }
+            e.preventDefault();
+          } //end submit function of state0
+        }, // end state0 of editActPrompt
+        
+        'deleteState': {
+          title: 'Delete act',
+          html: 'Are you sure you want to delete the act: <span style="color: red;">'+
+                actCursor.name+'</span><br><br>This action cannot be undone<br><br>',
+          buttons: { 'Yes, delete this act' : -1, 'No, keep this act': 1 },
+          focus: 1,
+          submit: function(e,v,m,f) {
+            if (v == -1) {
+              Acts.remove({_id: actID});
+            }
+          }
+        } // end deleteState of editActPrompt
+
+      }; // end editActPrompt
+      $.prompt(editActPrompt);
+    } // end if block checking if edit mode on
+
+    else { // execute when edit_mode is off, should direct link to acts
+      Session.set('current_act_id', actID);
+      window.location.href = Session.get('current_show_id') + '/' + actID;
+    }
+    Session.set('current_act_id', actID);
+  } // end click .act-item
+});
+
+Template.acts_page.acts = function() {
+  return Acts.find({show_id : Session.get('current_show_id')});
 }
 
 
@@ -463,7 +687,7 @@ Template.weapons_pane.events({
   'click .weapon-btn': function() {
       var weaponID = $(event.target).attr("id").split("-")[1];
       if (Session.equals('edit_mode', true)) {
-      var weaponCursor = Weapons.findOne({_id: weaponID})
+      var weaponCursor = Weapons.findOne({_id: weaponID});
       var predefined_URL = ((weaponCursor.video_url == null )|| (weaponCursor.video_url == undefined))? "" : weaponCursor.video_url;
       var editHTML =
               '<div style="text-align:center;">' +
@@ -515,9 +739,9 @@ Template.weapons_pane.events({
         }; // end editPrompt
       $.prompt(editPrompt);
     }
-    Session.set('current_weapon_id', weaponID)
+    Session.set('current_weapon_id', weaponID);
   }
-})
+});
 
 
 /*

@@ -1,1 +1,47 @@
 /* CSS declarations go here */
+
+.show-item:hover {
+  background-color: rgba(153,204,248,0.6);
+}
+.show-item:active {
+  background-color: rgba(153,204,248,1);
+}
+.show-item * {
+  /* prevents other items like date container from capturing
+   * the click when clicking on a show item
+   */
+  pointer-events: none;
+}
+.act-item:hover {
+  background-color: rgba(153,204,248,0.6);
+}
+.act-item:active {
+  background-color: rgba(153,204,248,1);
+}
+.act-item * {
+  /* analogous to show-item */
+  pointer-events: none;
+}
+.ui-datepicker {
+  border: 2px solid black;
+  padding: 7px;
+  background-color: #f0ffff;
+}
+.ui-datepicker-year {
+  position: relative;
+  float: left;
+  margin-left: 3px;
+  left: 50%;
+}
+.ui-datepicker-monrth {
+  position: relative;
+  float: right;
+  margin-right: 3px;
+  right: 50%;
+}
+.ui-datepicker-next {
+  float: right;
+}
+.ui-datepicker td {
+  padding: 5px;
+}

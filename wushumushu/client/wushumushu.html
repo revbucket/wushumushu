@@ -1,28 +1,131 @@
 <head>
   <title>WushuMushu</title>
+  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Julee">  
 </head>
 
 
 <!--- Home page templates [shows] -->
 <template name="shows_page">
-<div class='container panel-container'>
-  {{>nav_bar}}
-	<h1> Shows go here </h1>
-     {{#each shows}}
-    <div class="show">
-    	<a href="{{ pathFor 'actsShow' }}">Show name: {{name}} // Show id:  {{ _id}}</a>
+  <div class='container panel-container'>
+    {{>nav_bar}}
+    
+    {{#if edit_mode}}
+    <div id="instructions" align="right"
+    style="position: absolute; margin-top: 0px; right: 10px; color: red; clear: both;">
+      Click on a show to edit it
     </div>
-  {{/each}}
-</div>
+    {{/if}}
+
+    <div id="logo" align="center"
+    style="font-family: 'Julee'; font-size: 55pt; position: relative; top: 40px;">
+      WushuMushu
+    </div>
+
+    <div class="col-md-6 col-md-offset-3" style="position: relative; top: 90px">
+      <div class="panel panel-default">
+
+        <div class="panel-heading">
+          <div class="container-fluid">
+            
+            <ul class="nav navbar-nav navbar-left" style="font-size: 26pt;">Shows</ul>
+            <ul class="nav navbar-nav navbar-right">
+              {{#if edit_mode}}
+              <div class="btn-group">
+                <button type="button" class="btn btn-default" id="new-show-btn">
+                  Add New Show
+                </button>
+              </div>
+              {{/if}}
+            </ul>
+          </div><!-- end container-fluid -->
+        </div><!-- end panel-heading -->
+
+        <ul class="list-group" id="all-shows">
+          {{#each shows}}
+          <li class="list-group-item show-item" id="show-{{_id}}" style="pointer-events: all;">
+          <table style="width: 100%; margin: 0px;"><tr>
+          <td style="vertical-align: top; font-size: 22pt;">
+          <b><div> {{name}} </div></b>
+          </td><td style="text-align: right; vertical-align: top; width: 40%;">
+          <div> {{loc}} </div>
+          <div> {{date}} </div>
+          <div>
+            <span> {{timeStart}} </span> &#8212; <span> {{timeEnd}} </span>
+          </div>
+          </td></tr></table></li>
+          {{/each}}
+        </ul><!-- end list-group of shows -->
+
+
+      </div><!-- end default panel -->
+    </div><!-- end col-md-6 col-md-offset-3 shows box -->
+
+    <!--
+	  <h1> Shows go here </h1>
+      {{#each shows}}
+        <div class="show">
+    	  <a href="{{ pathFor 'actsShow' }}">Show name: {{name}} // Show id:  {{ _id}}</a>
+        </div>
+      {{/each}}
+    -->
+
+
+  </div><!-- end container -->
 </template>
 
 
 
 
-<!--- actS page templates [all acts for given show] -->
+<!--- acts page templates [all acts for given show] -->
 <template name="acts_page">
-<div class='container panel-container'>
-  {{>nav_bar}}
+  <div class='container panel-container'>
+    {{>nav_bar}}
+    
+    {{#if edit_mode}}
+    <div id="instructions" align="right"
+    style="position: absolute; margin-top: 0px; right: 10px; color: red; clear: both;">
+      Click on an act to edit it
+    </div>
+    {{/if}}
+
+    <div id="show-name" align="center" style="font-size: 34pt;">
+      Show:<b> {{#with show}} {{name}} {{/with}} </b>
+    </div>
+
+    <div class="col-md-6 col-md-offset-3" style="position: relative; top: 60px">
+      <div class="panel panel-default">
+
+        <div class="panel-heading">
+          <div class="container-fluid">
+            
+            <ul class="nav navbar-nav navbar-left" style="font-size: 26pt;">Acts</ul>
+            <ul class="nav navbar-nav navbar-right">
+              {{#if edit_mode}}
+              <div class="btn-group">
+                <button type="button" class="btn btn-default" id="new-act-btn">
+                  Add New Act
+                </button>
+              </div>
+              {{/if}}
+            </ul>
+          </div><!-- end container-fluid -->
+        </div><!-- end panel-heading -->
+
+        <ul class="list-group" id="all-acts">
+          {{#each acts}}
+          <li class="list-group-item act-item" id="act-{{_id}}" style="pointer-events: all;">
+          <table style="width: 100%; margin: 0px;"><tr>
+          <td style="vertical-align: top; font-size: 22pt;">
+          <b><div> {{name}} </div></b>
+          </td></tr></table></li>
+          {{/each}}
+        </ul><!-- end list-group of acts -->
+
+      </div><!-- end default panel -->
+    </div><!-- end col-md-6 col-md-offset-3 shows box -->
+
+
+<!--
 	<h1> Show name: {{#with show}} {{name}} {{/with}}</h1>
 	{{#each acts}}
 	<a href="{{ pathFor 'actEdit' _show=this.show_id _id=this._id}}">{{name}}</a> 
@@ -31,7 +134,10 @@
 	{{#each acts_list}}
 	asnotheusneuht
 	{{/each}}
-  </div>
+-->
+
+  </div><!-- end container -->
+
 </template>
 
 
