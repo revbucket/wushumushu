@@ -574,7 +574,11 @@ Template.add_move.events({
         })
       $("#add-move-title").val("");
       $("#add-move").val("");
+
     }
+  },
+  'submit #new-move-form': function() {
+    return false;
   }
 })
 
@@ -708,7 +712,13 @@ Template.weapons_pane.events({
     $.prompt(newWeaponPrompt);
 
   },
-  'click .weapon-list-item': function() {
+  'click .weapon-list-item' : function() {
+      var weaponID = $(event.target).attr("id").split("-")[1];
+      console.log("EVENT TARGET " + weaponID);
+      Session.set('current_weapon_id', weaponID)
+
+  },
+  'click .glyphicon-pencil': function() {
       console.log($(event.target).attr("id"))
       var weaponID = $(event.target).attr("id").split("-")[1];
       if (Session.equals('edit_mode', true)) {
@@ -768,8 +778,25 @@ Template.weapons_pane.events({
 
     }
       Session.set('current_weapon_id', weaponID)
-  }
+  },
+      'click .glyphicon-remove': function() {
+      console.log(this._id + ' glyphicon-remove clicked');
+
+      $.prompt("Are you sure you want to delete this weapon?", {
+            title: "Delete Section",
+            buttons: { "No": false, "Yes": true },
+            submit: function(e,v,m,f){
+              if (v) {
+                Weapons.remove(Session.get('current_weapon_id'));
+              }
+            }
+          });
+    }
+
 });
+
+
+
 
 
 /*

@@ -398,9 +398,32 @@
 </template>
 
 
-<template name="video_pane">
-
+<template name="add_weapon_form">
+  <form class="form-horizontal" role="form" id="new-weapon-form">
+    <div class="form-group edit" style="padding-top:0.5em;">
+      <label for="add-weapon-name" class="col-sm-2 control-label">Name</label>
+      
+      <div class="col-sm-10">  
+        <input class="form-control" id="add-weapon-name" placeholder="Name" />
+      </div>
+    </div>
+    
+    <div class="form-group edit">
+      <label for="add-video" class="col-sm-2 control-label">Youtube URL</label>
+      
+      <div class="col-sm-10">  
+        <textarea class="form-control" id="add-video" rows="3" placeholder="Youtube URL"></textarea>
+      </div>
+    </div>      
+          
+    <div class="form-group edit">
+      <div class="col-sm-offset-5">
+          <button class="btn btn-default" id="weapon-btn">Add</button>
+      </div>
+   </div>
+  </form>
 </template>
+
 
 <template name="weapons_pane">
 {{#if loading}}
@@ -412,11 +435,6 @@
   <div class="col-sm-5">
     <!-- Weapons Group Buttons -->
 
-    {{#if edit_and_weapons}}
-    <div id="weapon-instructions" align="right" style="margin-top: 0px; right: 10px; color: red; clear: both; display: block;">
-            Click on a weapon to edit it
-    </div>
-    {{/if}}
 
     <div class="panel panel-default" >
       <div class="panel-heading" >
@@ -426,11 +444,6 @@
           </ul>
           <ul class="nav navbar-nav navbar-right" >
             <div class="btn-group">
-               {{#if edit_mode}}
-               {{#if move_selected}}
-               <button type="button" class="btn btn-default" id="new_weapon_btn" >Add new weapon </button>
-               {{/if}}
-              {{/if}}
             </div>
           </ul>
         </div>
@@ -443,7 +456,16 @@
       {{/if}}
       {{#each weapons}}
 
-      <a class="list-group-item weapon-list-item {{maybe_active}}" id="weapon-{{_id}}"> {{name}}  </a>
+      <a class="list-group-item weapon-list-item {{maybe_active}}" id="weapon-{{_id}}"> {{name}}  
+      {{#if edit_mode}}
+          <div class="pull-right edit">
+
+      <span class="glyphicon glyphicon-pencil" id="pencil-{{_id}}" style="padding-right:0.5em;"></span>
+      <span class="glyphicon glyphicon-remove" id="remove-{{_id}}" ></span>
+
+      </div>
+      {{/if}}
+      </a>
       {{#if selected}}
     {{#if zero_edit_unselect}}
       Add or select a weapon group first
@@ -478,6 +500,9 @@
     {{/if}}
     {{/if}}
       {{/each}}
+      {{#if edit_mode}}
+      {{>add_weapon_form}}
+      {{/if}}
     </div>
         </div>
 
