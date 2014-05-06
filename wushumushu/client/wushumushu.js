@@ -175,7 +175,7 @@ Template.sections_pane.loading = function() {
 
 Template.sections_pane.sections = function() {
   console.log("Sections rendering");
-  console.log(Sections.find({act_id: Session.get("current_act_id")}));
+  //console.log(Sections.find({act_id: Session.get("current_act_id")}));
   return Sections.find({act_id: Session.get("current_act_id")});
 }
 
@@ -240,6 +240,17 @@ Template.update_section.events({
   }
 })
 
+Template.add_section.events({
+  'click #section-btn': function(evt, template) {
+    var newName = template.find("#add-section").value;
+    if (newName !== "") {
+      Sections.insert({name: newName, act_id: Session.get("current_act_id")});
+      $("#add-section").val("");
+    }
+  }
+
+})
+
 
 ////////// Helper for moves_pane /////////////
 
@@ -248,7 +259,7 @@ Template.moves_pane.loading = function() {
 }
 
 Template.moves_pane.moves = function() {
-  console.log(Moves.find({section_id: Session.get("current_section_id")}));
+  //console.log(Moves.find({section_id: Session.get("current_section_id")}));
   return Moves.find({section_id: Session.get("current_section_id")});
 }
 
@@ -303,20 +314,37 @@ Template.update_move.events({
     var newName = template.find("#update-move-title").value;
     var newInfo = template.find("#update-move").value;
     if (newName !== "") {
-      Sections.update(Session.get("editing_move"), 
+      Moves.update(Session.get("editing_move"), 
         {$set: {
           name: newName,
           info: newInfo
         }
       });
     } else {
-      Sections.update(Session.get("editing_move"), 
+      Moves.update(Session.get("editing_move"), 
         {$set: {
           info: newInfo
         }
       });
     }
     Session.set("editing_move", null);
+  }
+})
+
+Template.add_move.events({
+  'click #move-btn': function(evt, template) {
+    var newName = template.find("#add-move-title").value;
+    var newInfo = template.find("#add-move").value;
+    if (newName !== "") {
+      Moves.insert(
+        {
+          name: newName, 
+          info: newInfo,
+          section_id: Session.get("current_section_id")
+        })
+      $("#add-move-title").val("");
+      $("#add-move").val("");
+    }
   }
 })
 

@@ -141,12 +141,7 @@
     
       {{#if edit_mode}}
        {{#if not_editing_section}}
-        <div class="input-group edit" id="new-section-form">
-            <input type="text" id="add-section" class="form-control" placeholder="Section">
-            <span class="input-group-btn">
-              <button class="btn btn-default" id="section-btn" type="button">Add</button>
-            </span>      
-        </div>
+          {{>add_section}}
         {{/if}}
       {{/if}}
    
@@ -176,6 +171,16 @@
     <input type="text" id="update-section" class="form-control" placeholder="{{name}}">
      <span class="input-group-btn">
       <button class="btn btn-default update-btn update-section-btn" id = "{{name}}" type="button">Update</button>
+    </span>      
+  </div>
+</template>
+
+
+<template name="add_section">
+  <div class="input-group edit" id="new-section-form">
+    <input type="text" id="add-section" class="form-control" placeholder="Section">
+    <span class="input-group-btn">
+      <button class="btn btn-default" id="section-btn" type="button">Add</button>
     </span>      
   </div>
 </template>
