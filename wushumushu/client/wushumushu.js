@@ -179,6 +179,10 @@ Template.sections_pane.sections = function() {
   return Sections.find({act_id: Session.get("current_act_id")});
 }
 
+Template.sections_pane.default_active = function() {
+  Session.set("current_section_id", Sections.findOne({act_id: Session.get("current_act_id")}));
+}
+
 Template.sections_pane.editing_section = function() {
   return Session.equals("editing_section", this._id);
 }
@@ -208,6 +212,20 @@ Template.display_section.events({
     'click .glyphicon-pencil': function() {
       console.log(this._id + ' glyphicon-pencil clicked');
       Session.set("editing_section", this._id);
+    },
+
+    'click .glyphicon-remove': function() {
+      console.log(this._id + ' glyphicon-remove clicked');
+
+      $.prompt("Are you sure you want to delete this section and all information associated with it?", {
+            title: "Delete Section",
+            buttons: { "No": false, "Yes": true },
+            submit: function(e,v,m,f){
+              if (v) {
+                Sections.remove(Session.get("current_section_id"));
+              }
+            }
+          });
     }
 })
 
@@ -263,6 +281,20 @@ Template.display_move.events({
     'click .glyphicon-pencil': function() {
       console.log(this._id + ' glyphicon-pencil clicked');
       Session.set("editing_move", this._id);
+    },
+
+    'click .glyphicon-remove': function() {
+      console.log(this._id + ' glyphicon-remove clicked');
+
+      $.prompt("Are you sure you want to delete this move and all information associated with it?", {
+            title: "Delete Move",
+            buttons: { "No": false, "Yes": true },
+            submit: function(e,v,m,f){
+              if (v) {
+                Moves.remove(Session.get("current_move_id"));
+              }
+            }
+          });
     }
 })
 
@@ -270,12 +302,20 @@ Template.update_move.events({
   'click .update-move-btn': function(evt, template) {
     var newName = template.find("#update-move-title").value;
     var newInfo = template.find("#update-move").value;
-    Sections.update(Session.get("editing_move"), 
-      {$set: {
-        name: newName,
-        info: newInfo
-      }
-    });
+    if (newName !== "") {
+      Sections.update(Session.get("editing_move"), 
+        {$set: {
+          name: newName,
+          info: newInfo
+        }
+      });
+    } else {
+      Sections.update(Session.get("editing_move"), 
+        {$set: {
+          info: newInfo
+        }
+      });
+    }
     Session.set("editing_move", null);
   }
 })
