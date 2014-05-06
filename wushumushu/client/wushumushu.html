@@ -322,7 +322,9 @@
         
       {{#if edit_mode}}
         {{#if not_editing_move}}
+          {{#if section_selected}}
           {{>add_move}}
+          {{/if}}
         {{/if}}
       {{/if}}
         
@@ -396,6 +398,10 @@
 </template>
 
 
+<template name="video_pane">
+
+</template>
+
 <template name="weapons_pane">
 {{#if loading}}
   Loading...
@@ -421,37 +427,24 @@
           <ul class="nav navbar-nav navbar-right" >
             <div class="btn-group">
                {{#if edit_mode}}
+               {{#if move_selected}}
                <button type="button" class="btn btn-default" id="new_weapon_btn" >Add new weapon </button>
+               {{/if}}
               {{/if}}
             </div>
           </ul>
         </div>
       </div>
-    </div>
     <!--- Edit/delete row -->
 
 
-    <div class="btn-group" id = "weaponList">
+    <div class="list-group" id = "weaponList">
       {{#if no_weapons}}
       {{/if}}
       {{#each weapons}}
-      <button type="button" class="btn btn-default weapon-btn" id="weapon-{{_id}}"> {{name}}</button>
-      {{/each}}
-    </div>
 
-
-
-  <!-- Add Youtube player here 
-  0/edit/unselect: Add or select a weapon group first
-  1+/edit/unselect: Click on a weapon group to add or edit its video
-  1+/edit/select: Click on this weapon group in the list above to add a video
-  0/view/unselect: No weapons have been added for this section
-  1+/view/unselet: Click on a weapon group to view its video
-  1+/view/select: Video/no video has been added to this
-   -->
-  <div class="panel panel-default" >
-    <div class='panel-heading'>
-    </div>
+      <a class="list-group-item weapon-list-item {{maybe_active}}" id="weapon-{{_id}}"> {{name}}  </a>
+      {{#if selected}}
     {{#if zero_edit_unselect}}
       Add or select a weapon group first
     {{/if}}
@@ -483,7 +476,23 @@
         <iframe width="560" height="315" id="youtubePlugin" src="{{embed_url}}" frameborder="0" allowfullscreen></iframe>
       </div> 
     {{/if}}
-  </div>
+    {{/if}}
+      {{/each}}
+    </div>
+        </div>
+
+
+
+
+  <!-- Add Youtube player here 
+  0/edit/unselect: Add or select a weapon group first
+  1+/edit/unselect: Click on a weapon group to add or edit its video
+  1+/edit/select: Click on this weapon group in the list above to add a video
+  0/view/unselect: No weapons have been added for this section
+  1+/view/unselet: Click on a weapon group to view its video
+  1+/view/select: Video/no video has been added to this
+   -->
+
     <!--
     <div class = "panel panel-default" id = "selectWeaponPanel">
       <div class="panel-heading"></div>

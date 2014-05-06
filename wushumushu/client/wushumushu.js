@@ -431,6 +431,8 @@ Template.display_section.events({
     'click .section': function() {
       console.log(this._id + ' section clicked');
       Session.set("current_section_id", this._id);
+      Session.set('current_move_id',null);
+      Session.set('current_weapon_id',null);
     },
 
     'click .glyphicon-pencil': function() {
@@ -480,6 +482,10 @@ Template.add_section.events({
 
 Template.moves_pane.loading = function() {
   return !movesHandle.ready();
+}
+
+Template.moves_pane.section_selected = function() {
+  return !Session.equals('current_section_id',null)
 }
 
 Template.moves_pane.moves = function() {
@@ -573,13 +579,19 @@ Template.add_move.events({
 })
 
 
+////////// Helper for videos_pane ///////////
+
 ////////// Helper for weapons_pane //////////
+
 Template.weapons_pane.loading = function() {
   return !weaponsHandle.ready();
 }
 
 Template.weapons_pane.edit_mode = function() {
   return Session.equals('edit_mode', true);
+}
+Template.weapons_pane.move_selected =  function() {
+  return !Session.equals('current_move_id', null);
 }
 
 Template.weapons_pane.no_weapons = function() {
@@ -592,8 +604,20 @@ Template.weapons_pane.edit_and_weapons = function() {
 }
 
 Template.weapons_pane.weapons = function() {
+  console.log(Weapons.find({move_id: Session.get("current_move_id")}).fetch())
   return Weapons.find({move_id: Session.get("current_move_id")});
 }
+
+Template.weapons_pane.selected = function() {
+  return Session.equals('current_weapon_id',this._id)
+}
+
+Template.weapons_pane.maybe_active = function() {
+
+  return Session.equals('current_weapon_id',this._id)? "active": "";
+}
+
+
 
 
 var num_weapons = function() {
@@ -628,7 +652,7 @@ Template.weapons_pane.video_and_selected = function() {
   var currentWeapon = Weapons.findOne({_id: Session.get('current_weapon_id')})
   if (currentWeapon) {
     console.log(currentWeapon.video_url)
-    return ((currentWeapon.video_url != null) && (currentWeapon.video_url != undefined));
+    return ((currentWeapon.video_url != null) && (currentWeapon.video_url != undefined) && (currentWeapon.video_url != ""));
   }
   return false;
 }
@@ -648,7 +672,7 @@ Template.weapons_pane.embed_url = function() {
 }
 
 Template.weapons_pane.rendered = function() {
-  setSessionVars();
+  //setSessionVars();
 }
 
 
@@ -684,7 +708,8 @@ Template.weapons_pane.events({
     $.prompt(newWeaponPrompt);
 
   },
-  'click .weapon-btn': function() {
+  'click .weapon-list-item': function() {
+      console.log($(event.target).attr("id"))
       var weaponID = $(event.target).attr("id").split("-")[1];
       if (Session.equals('edit_mode', true)) {
       var weaponCursor = Weapons.findOne({_id: weaponID});
@@ -738,8 +763,11 @@ Template.weapons_pane.events({
           } // end deleteSlate
         }; // end editPrompt
       $.prompt(editPrompt);
+
+
+
     }
-    Session.set('current_weapon_id', weaponID);
+      Session.set('current_weapon_id', weaponID)
   }
 });
 
