@@ -140,12 +140,14 @@
       </div>
     
       {{#if edit_mode}}
-      <div class="input-group edit" id="new-section-form">
-          <input type="text" id="add-section" class="form-control" placeholder="Section">
-          <span class="input-group-btn">
-            <button class="btn btn-default" id="section-btn" type="button">Add</button>
-          </span>      
-      </div>
+       {{#if not_editing_section}}
+        <div class="input-group edit" id="new-section-form">
+            <input type="text" id="add-section" class="form-control" placeholder="Section">
+            <span class="input-group-btn">
+              <button class="btn btn-default" id="section-btn" type="button">Add</button>
+            </span>      
+        </div>
+        {{/if}}
       {{/if}}
    
         
@@ -208,7 +210,9 @@
       <!-- Reference: http://stackoverflow.com/questions/19738807/text-sticking-out-in-bootstrap-3-input-goup-textarea -->
         
       {{#if edit_mode}}
-        {{>add_move}}
+        {{#if not_editing_move}}
+          {{>add_move}}
+        {{/if}}
       {{/if}}
         
     </div>
@@ -236,13 +240,13 @@
     <div class="form-group edit" style="padding-top:0.5em;">
       <label for="update-move-title" class="col-sm-2 control-label">Title</label>
        <div class="col-sm-10"> 
-        <input class="form-control" id="update-move-title"/>    
+        <input class="form-control" id="update-move-title" placeholder="{{name}}"/>    
        </div>
     </div>
     <div class="form-group edit">
       <label for="update-move" class="col-sm-2 control-label">Moves</label>
        <div class="col-sm-10"> 
-        <textarea class="form-control" id="update-move" rows="3"> {{info}} </textarea>
+        <textarea class="form-control" id="update-move" rows="3" placeholder="{{info}}"></textarea>
        </div>
     </div>         
     <div class="form-group edit">

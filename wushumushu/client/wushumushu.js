@@ -183,6 +183,10 @@ Template.sections_pane.editing_section = function() {
   return Session.equals("editing_section", this._id);
 }
 
+Template.sections_pane.not_editing_section = function() {
+  return Session.equals("editing_section", null);
+}
+
 Template.sections_pane.edit_mode = function() {
   return Session.equals('edit_mode', true);
 }
@@ -210,7 +214,10 @@ Template.display_section.events({
 Template.update_section.events({
   'click .update-section-btn': function(evt, template) {
     var newName = template.find("#update-section").value;
-    Sections.update(Session.get("editing_section"), {$set: {name: newName}});
+    // Do not change the name value if the user types nothing.
+    if (newName !== "") {
+      Sections.update(Session.get("editing_section"), {$set: {name: newName}});
+    }
     Session.set("editing_section", null);
   }
 })
@@ -225,6 +232,14 @@ Template.moves_pane.loading = function() {
 Template.moves_pane.moves = function() {
   console.log(Moves.find({section_id: Session.get("current_section_id")}));
   return Moves.find({section_id: Session.get("current_section_id")});
+}
+
+Template.moves_pane.editing_move = function() {
+  return Session.equals("editing_move", this._id);
+}
+
+Template.moves_pane.not_editing_move = function() {
+  return Session.equals("editing_move", null);
 }
 
 Template.moves_pane.edit_mode = function() {
@@ -243,7 +258,26 @@ Template.display_move.events({
     'click': function() {
       console.log(this._id + ' move clicked');
       Session.set("current_move_id", this._id);
+    },
+
+    'click .glyphicon-pencil': function() {
+      console.log(this._id + ' glyphicon-pencil clicked');
+      Session.set("editing_move", this._id);
     }
+})
+
+Template.update_move.events({
+  'click .update-move-btn': function(evt, template) {
+    var newName = template.find("#update-move-title").value;
+    var newInfo = template.find("#update-move").value;
+    Sections.update(Session.get("editing_move"), 
+      {$set: {
+        name: newName,
+        info: newInfo
+      }
+    });
+    Session.set("editing_move", null);
+  }
 })
 
 
