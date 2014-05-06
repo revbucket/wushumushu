@@ -120,13 +120,13 @@ Template.nav_bar.current_section_name = function() {
 
 Template.nav_bar.edit_class =  function() {
   if (Session.equals('edit_mode',true)) {
-    return 'btn-info';
+    return 'btn-primary';
   }
 }
 
 Template.nav_bar.view_class = function() {
   if (Session.equals('edit_mode', false)) {
-    return 'btn-info'
+    return 'btn-primary';
   }
 }
 
