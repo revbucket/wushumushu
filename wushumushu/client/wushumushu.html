@@ -336,11 +336,11 @@
   
 
 <template name="display_move">
-  <a class="list-group-item move {{maybe_active}}" id="{{name}}-m"> <b>{{name}}</b> 
+  <a class="list-group-item move {{maybe_active}}" id="{{_id}}-m"> <b> {{title}}</b> 
   {{#if edit_mode}}
     <div class="pull-right edit">
-      <span class="glyphicon glyphicon-pencil" id="{{name}}-m-pencil" style="padding-right:0.5em;"></span>
-      <span class="glyphicon glyphicon-remove" id="{{name}}-m-remove" ></span>
+      <span class="glyphicon glyphicon-pencil" id="{{_id}}-m-pencil" style="padding-right:0.5em;"></span>
+      <span class="glyphicon glyphicon-remove" id="{{_id}}-m-remove" ></span>
     </div>
   {{/if}}
   <br> {{info}}

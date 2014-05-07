@@ -83,8 +83,6 @@ Template.nav_bar.loading = function() {
 }
 
 Template.nav_bar.show_selected = function() {
-  console.log("SHOW SELETED");
-  console.log(Session.equals('current_show_id', null))
   return !Session.equals('current_show_id', null);
 }
 
@@ -529,6 +527,7 @@ Template.display_move.edit_mode = function() {
 Template.display_move.maybe_active = function() {
   return Session.equals("current_move_id", this._id) ? "active" : "";
 };
+
 
 Template.display_move.events({
     'click': function() {
