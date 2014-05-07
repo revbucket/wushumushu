@@ -150,6 +150,22 @@ Template.shows_page.edit_mode = function() {
   return Session.equals('edit_mode', true);
 }
 
+function loadDatetimePickers() {
+  $(".date_picker").datepicker({
+    changeMonth : true ,
+    changeYear  : true ,
+  });
+  /*
+  
+  hold off until bug-free version of timepicker found
+
+  $(".time_picker").timepicker({
+    showInputs  : true ,
+    template    : 'backdrop' ,
+  });
+  */
+}
+
 Template.shows_page.events({
   'click #new-show-btn': function() {
     var rowSpacing = '<tr style="height:20px;"></tr>';
@@ -187,7 +203,7 @@ Template.shows_page.events({
       } // end state0 of newShowPrompt
     }; // end newShowPrompt
     $.prompt(newShowPrompt);
-    $(".date_picker").datepicker();
+    loadDatetimePickers();
   }, // end click #new-show-btn
   
   'click .show-item': function() {
@@ -258,7 +274,7 @@ Template.shows_page.events({
 
       }; // end editShowPrompt
       $.prompt(editShowPrompt);
-      $(".date_picker").datepicker();      
+      loadDatetimePickers();      
     } // end if block checking if edit mode on
 
     else { // execute when edit_mode is off, should direct link to acts
