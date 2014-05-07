@@ -463,7 +463,8 @@ Template.update_section.events({
       Sections.update(Session.get("editing_section"), {$set: {name: newName}});
     }
     Session.set("editing_section", null);
-  }
+  },
+
 })
 
 Template.add_section.events({
@@ -558,6 +559,9 @@ Template.update_move.events({
       });
     }
     Session.set("editing_move", null);
+  },
+    'submit form': function() {
+    return false;
   }
 })
 
@@ -570,7 +574,8 @@ Template.add_move.events({
         {
           name: newName, 
           info: newInfo,
-          section_id: Session.get("current_section_id")
+          section_id: Session.get("current_section_id"),
+          act_id: Session.get('current_act_id')
         })
       $("#add-move-title").val("");
       $("#add-move").val("");
@@ -792,6 +797,31 @@ Template.weapons_pane.events({
             }
           });
     }
+
+});
+
+Template.add_weapon_form.events({
+  'submit #new-weapon-form': function() {
+    return false;
+  },
+    'click #weapon-btn': function(evt, template) {
+    var newName = template.find("#add-weapon-name").value;
+    var newVideo = template.find("#add-video").value;
+    var url = (newVideo == "")? null: newVideo
+    if (newName !== "") {
+      Weapons.insert(
+        {
+          name: newName, 
+          video_url: url,
+          move_id: Session.get("current_move_id"),
+          act_id: Session.get('current_act_id')
+        })
+      $("#add-weapon-name").val("");
+      $("#add-video").val("");
+
+    }
+  },
+
 
 });
 
