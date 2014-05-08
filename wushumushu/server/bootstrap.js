@@ -8,7 +8,7 @@ Meteor.startup(function () {
     Weapons.remove({})
   }
   if (Shows.find().count() === 0) {
-  	var new_shows = [{name: "Show1",
+  	var new_shows = [{name: "Show123",
                      date: "5/5/2014",
                      start: "8PM",
                      end: "11PM",
