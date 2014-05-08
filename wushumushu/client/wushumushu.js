@@ -403,6 +403,11 @@ Template.acts_page.acts = function() {
 ////////// Helper for act_edit ////////////
 
 
+////////// Helper for song_upload //////////
+Template.song_upload.edit_mode = function() {
+  return Session.equals('edit_mode', true);
+}
+
 
 ////////// Helper for sections_pane //////////
 
@@ -504,7 +509,7 @@ Template.moves_pane.section_selected = function() {
 }
 
 Template.moves_pane.moves = function() {
-  //console.log(Moves.find({section_id: Session.get("current_section_id")}));
+  console.log(Moves.find({section_id: Session.get("current_section_id")}));
   return Moves.find({section_id: Session.get("current_section_id")});
 }
 

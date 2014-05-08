@@ -203,11 +203,12 @@
 
 
 <template name="song_upload">
+{{#if edit_mode}}
 <div class="row" id="song-pane">
     <div class="col-sm-7">
         
         <!-- Reference: view-source:http://labs.abeautifulsite.net/demos/bootstrap-file-inputs/ -->
-        <div class="input-group edit" style="padding-bottom:2em;">
+        <div class="input-group" style="padding-bottom:2em;">
             <span class="input-group-btn">
                 <span class="btn btn-default btn-file">
                     Add Song<input type="file" multiple>
@@ -218,6 +219,7 @@
         
     </div>
 </div>
+{{/if}}
 </template>
 
 
@@ -261,11 +263,11 @@
 
 
 <template name="display_section">
-  <a class="list-group-item section {{maybe_active}}" id="{{name}}-s"> {{name}}
+  <a class="list-group-item section {{maybe_active}}" id="{{_id}}-s"> {{name}}
   {{#if edit_mode}}
     <div class="pull-right edit">
-      <span class="glyphicon glyphicon-pencil" id="{{name}}-s-pencil" style="padding-right:0.5em;"></span>
-      <span class="glyphicon glyphicon-remove" id="{{name}}-s-remove" ></span>
+      <span class="glyphicon glyphicon-pencil" id="{{_id}}-s-pencil" style="padding-right:0.5em;"></span>
+      <span class="glyphicon glyphicon-remove" id="{{_id}}-s-remove" ></span>
     </div>
   {{/if}}
   </a>
@@ -273,10 +275,10 @@
 
 
 <template name="update_section">
-  <div class="input-group edit" id="{{name}}-form">
-    <input type="text" id="update-section" class="form-control" placeholder="{{name}}">
+  <div class="input-group edit" id="{{_id}}-form">
+    <input type="text" id="update-section" class="form-control">{{name}}
      <span class="input-group-btn">
-      <button class="btn btn-default update-btn update-section-btn" id = "{{name}}" type="button">Update</button>
+      <button class="btn btn-default update-btn update-section-btn" id = "{{_id}}" type="button">Update</button>
     </span>      
   </div>
 </template>
@@ -336,7 +338,7 @@
   
 
 <template name="display_move">
-  <a class="list-group-item move {{maybe_active}}" id="{{_id}}-m"> <b> {{title}}</b> 
+  <a class="list-group-item move {{maybe_active}}" id="{{_id}}-m"> <b> {{name}}</b> 
   {{#if edit_mode}}
     <div class="pull-right edit">
       <span class="glyphicon glyphicon-pencil" id="{{_id}}-m-pencil" style="padding-right:0.5em;"></span>
@@ -349,22 +351,22 @@
 
 
 <template name="update_move">
-  <form class="form-horizontal" id ="{{name}}-form" role="form">
+  <form class="form-horizontal" id ="{{_id}}-form" role="form">
     <div class="form-group edit" style="padding-top:0.5em;">
       <label for="update-move-title" class="col-sm-2 control-label">Title</label>
        <div class="col-sm-10"> 
-        <input class="form-control" id="update-move-title" placeholder="{{name}}"/>    
+        <input class="form-control" id="update-move-title"/>{{name}}   
        </div>
     </div>
     <div class="form-group edit">
       <label for="update-move" class="col-sm-2 control-label">Moves</label>
        <div class="col-sm-10"> 
-        <textarea class="form-control" id="update-move" rows="3" placeholder="{{info}}"></textarea>
+        <textarea class="form-control" id="update-move" rows="3"></textarea>{{info}}
        </div>
     </div>         
     <div class="form-group edit">
       <div class="col-sm-offset-5">
-          <button type="submit" class="btn btn-default update-btn update-move-btn" id="{{name}}"> Update</button>
+          <button type="submit" class="btn btn-default update-btn update-move-btn" id="{{_id}}"> Update</button>
       </div>
    </div>
   </form>
