@@ -24,6 +24,10 @@ Session.setDefault('current_weapon_id', null);
   Session.setDefault('editing_section', null);
   Session.setDefault('editing_move', null);
 
+// Var for current song
+  Session.setDefault('current_song', null);
+
+//var dataConfig="{'skin':'skins/tunes/skin.css','volume':50,'autoplay':false,'shuffle':false,'repeat':1,'placement':'top','showplaylist':false,'playlist':[{'title':'Ellie Goulding Lights','url':'https://www.youtube.com/watch?v=0NKUpo_xKyQ'}]}"
 
 ///////////DEBUGGING METHODS /////////////
 var setSessionVars = function() {
@@ -400,13 +404,27 @@ Template.acts_page.acts = function() {
 }
 
 
-////////// Helper for act_edit ////////////
+
+/////////// Helper for act_edit_page /////////////
+Template.act_edit_page.music_player = function() {
+  $.getScript("http://scmplayer.net/script.js?data-config='{'skin':'skins/tunes/skin.css','volume':50,'autoplay':false,'shuffle':false,'repeat':1,'placement':'top','showplaylist':false,'playlist':[{'title':'Ellie Goulding Lights','url':'https://www.youtube.com/watch?v=0NKUpo_xKyQ'}]}'", function() {
+    console.log('trying to load music player');
+  });
+}
 
 
-////////// Helper for song_upload //////////
-Template.song_upload.edit_mode = function() {
+//////////// Helper for change_song //////////
+Template.change_song.edit_mode = function() {
   return Session.equals('edit_mode', true);
 }
+
+Template.change_song.events({
+  'click .choose-song-btn': function() {
+    var songTitle = template.find("#song-title").value
+    var songURL = template.find("#song-url").value
+    //SCM.loadPlaylist([{title: songTitle, url: songURL}]);
+  }
+})
 
 
 ////////// Helper for sections_pane //////////

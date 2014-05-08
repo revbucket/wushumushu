@@ -1,7 +1,18 @@
 <head>
   <title>WushuMushu</title>
-  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Julee">  
+  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Julee"> 
+
+  <!-- SCM Music Player http://scmplayer.net -->
+  <!--<script type="text/javascript" src="http://scmplayer.net/script.js" 
+  data-config="{'skin':'skins/tunes/skin.css',
+  'volume':50,'autoplay':false,'shuffle':false,'repeat':1,'placement':'top','showplaylist':false,'playlist':[{'title':'Ellie Goulding Lights','url':'https://www.youtube.com/watch?v=0NKUpo_xKyQ'}]}" ></script>
+  <!-- SCM Music Player script end -->
+ 
 </head>
+
+<body>
+{{player}}
+</body>
 
 
 <!--- Home page templates [shows] -->
@@ -183,11 +194,12 @@
 
 <!--- single act page templates -->
 <template name="act_edit_page">
+  {{music_player}}
 
 <div class="container panel-container" role="main">
 
         {{>nav_bar}}
-        {{>song_upload}}
+        {{>change_song}}
         <div class="row">
         {{>sections_pane}}
         {{>moves_pane}}
@@ -201,25 +213,26 @@
 
 </template>
 
-
-<template name="song_upload">
-{{#if edit_mode}}
-<div class="row" id="song-pane">
-    <div class="col-sm-7">
-        
-        <!-- Reference: view-source:http://labs.abeautifulsite.net/demos/bootstrap-file-inputs/ -->
-        <div class="input-group" style="padding-bottom:2em;">
-            <span class="input-group-btn">
-                <span class="btn btn-default btn-file">
-                    Add Song<input type="file" multiple>
-                </span>
-            </span>
-            <input type="text" class="form-control" placeholder="Browse..." disabled>
-        </div>
-        
+<template name="change_song">
+  {{#if edit_mode}}
+  <div class="row">
+    <div class="col-sm-9">
+      <div class="panel panel-default">
+        <form class="form-inline" role="form">
+          <div class="form-group">
+            <label for="choose-song" style="margin:1em;">Song Title</label>
+            <input type="text" class="form-control" id="song-title" placeholder="Song Title" style="margin:1em;">
+          </div>
+          <div class="form-group">
+            <label for="choose-song" style="margin:1em;">Song URL</label>
+            <input type="text" class="form-control" id="song-url" placeholder="Song URL" style="margin:1em;">
+          </div>
+          <button type="submit" class="btn btn-default choose-song-btn" style="margin:1em;">Choose Song</button>
+        </form>
+      </div>
     </div>
-</div>
-{{/if}}
+  </div>
+  {{/if}}
 </template>
 
 
@@ -324,9 +337,7 @@
         
       {{#if edit_mode}}
         {{#if not_editing_move}}
-          {{#if section_selected}}
           {{>add_move}}
-          {{/if}}
         {{/if}}
       {{/if}}
         
