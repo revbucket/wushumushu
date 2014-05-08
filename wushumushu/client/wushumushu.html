@@ -183,12 +183,10 @@
 
 <!--- single act page templates -->
 <template name="act_edit_page">
-  {{music_player}}
 
 <div class="container panel-container" role="main">
 
         {{>nav_bar}}
-
         {{>song_player}}
         <div class="row">
         {{>sections_pane}}
@@ -209,7 +207,7 @@
 {{else}}
   <div class="row">
     <audio controls style="width:1000px; padding-bottom:2em; padding-top:2em;">
-      <source src= "http://api.soundcloud.com/tracks/137074191/stream?client_id=dcfa20cb4e60440dbf3e8bb3c54b68a8">
+      <source src= "{{song_url}}">
     </audio>
   </div>  
 {{/if}}
@@ -222,14 +220,15 @@
       <div class="panel panel-default">
         <form class="form-inline" role="form">
           <div class="form-group">
-            <label for="choose-song" style="margin:1em;">Song Title</label>
+            <label for="choose-song" style="margin:1em;">Enter a Song Title</label>
             <input type="text" class="form-control" id="song-title" placeholder="Song Title" style="margin:1em;">
           </div>
           <div class="form-group">
-            <label for="choose-song" style="margin:1em;">Song URL</label>
-            <input type="text" class="form-control" id="song-url" placeholder="Song URL" style="margin:1em;">
+            <label for="choose-song" style="margin:1em;">Or Artist</label>
+            <input type="text" class="form-control" id="artist" placeholder="Artist" style="margin:1em;">
           </div>
           <button type="submit" class="btn btn-default choose-song-btn" style="margin:1em;">Choose Song</button>
+          <span class="help-block" style="margin:1em;">Enter either a song title or artist.</span>
         </form>
       </div>
     </div>

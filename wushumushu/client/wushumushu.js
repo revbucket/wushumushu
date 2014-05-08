@@ -17,7 +17,7 @@ Session.setDefault('current_act_name', null);  //name for breadcrumb purposes
 Session.setDefault('current_section_id', null);
 Session.setDefault('current_move_id', null);
 Session.setDefault('current_weapon_id', null);
-Session.setDefault('current_song_id', null);
+Session.setDefault('current_song_url', null);
 
 // Edit mode: true if editing, false otherwise
   Session.setDefault('edit_mode',  false);
@@ -28,6 +28,8 @@ Session.setDefault('current_song_id', null);
 
 // Var for current song
   Session.setDefault('current_song', null);
+
+var clientId = "5fd98f74f1cfa3c22b3330bb71ac478a";
 
 
 ///////////DEBUGGING METHODS /////////////
@@ -70,7 +72,7 @@ Deps.autorun(function () {
 
   var act_id = Session.get('current_act_id');
   if (act_id) {
-    sectionsHandle = Meteor.subscribe('sections', act_id)
+    sectionsHandle = Meteor.subscribe('sections', act_id);
     movesHandle = Meteor.subscribe('moves', act_id);
     weaponsHandle = Meteor.subscribe('weapons', act_id);
   }
@@ -407,25 +409,49 @@ Template.acts_page.acts = function() {
 
 
 //////////// Helper for change_song //////////
+Template.song_player.song_url = function() {
+  var act_song = Songs.find({act_id: Session.get("current_act_id")});
+  console.log(act_song);
+  //current_song_url = url + "?client_id=" + clientId;
+  return current_song_url;
+  //return "hello world!";
+}
+
 Template.song_player.edit_mode = function() {
   return Session.equals('edit_mode', true);
 }
 
 Template.change_song.events({
   'click .choose-song-btn': function(evt, template) {
-    //evt.preventDefault();
+    evt.preventDefault();
     var songTitle = template.find("#song-title").value
-    var songURL = template.find("#song-url").value
-    console.log('choose song button pressed');
+    var artist = template.find("#artist").value
+    console.log('songTitle: ' + songTitle + " Artist: " + artist);
 
-    /*SC.initialize({
-      client_id: "5fd98f74f1cfa3c22b3330bb71ac478a",
+    SC.initialize({
+      client_id: clientId,
       redirect_uri: "http://example.com/callback.html",
     });
 
-    SC.get("/tracks", {title: songTitle}, function(tracks) {
-      console.log(tracks);
-    }); */
+    if (songTitle !== "") {
+      SC.get("/tracks", {q: songTitle}, function(tracks) {
+        console.log(tracks[0]['stream_url']);
+        var song_stream_url = tracks[0]['stream_url'];
+        Songs.insert({stream_url: song_stream_url, act_id: Session.get("current_act_id")});
+        console.log(Songs.find({act_id: Session.get("current_act_id")}));
+        current_song_url = song_stream_url + "?client_id=" + clientId;
+      });
+    } else {
+      SC.get("/tracks", {q: artist}, function(tracks) {
+        //console.log(tracks);
+        console.log(tracks[0]['stream_url']);
+        var song_stream_url = tracks[0]['stream_url'];
+        Songs.insert({stream_url: song_stream_url, act_id: Session.get("current_act_id")});
+        console.log(Songs.find({act_id: Session.get("current_act_id")}));
+        current_song_url = song_stream_url + "?client_id=" + clientId;
+      });
+    }
+
   }
 })
 

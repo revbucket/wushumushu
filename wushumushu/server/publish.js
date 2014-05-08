@@ -58,3 +58,14 @@ Meteor.publish('weapons', function (act_id) {
 	return Weapons.find({act_id: act_id});
 });
 
+/*Songs -- {stream_url: String,
+			act_id: String}
+*/
+Songs = new Meteor.Collection("songs");
+Meteor.publish('songs', function (act_id) {
+	check(act_id, String);
+	return Songs.find({act_id: act_id});
+});
+
+
+

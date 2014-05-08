@@ -3,7 +3,6 @@
     "iron-router": {},
     "jquery-ui": {},
     "bootstrap-3": {},
-    "soundcloud": {},
     "accounts-soundcloud": {}
   }
 }
