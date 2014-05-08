@@ -1,19 +1,8 @@
 <head>
   <title>WushuMushu</title>
   <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Julee"> 
-
-  <!-- SCM Music Player http://scmplayer.net -->
-  <!--<script type="text/javascript" src="http://scmplayer.net/script.js" 
-  data-config="{'skin':'skins/tunes/skin.css',
-  'volume':50,'autoplay':false,'shuffle':false,'repeat':1,'placement':'top','showplaylist':false,'playlist':[{'title':'Ellie Goulding Lights','url':'https://www.youtube.com/watch?v=0NKUpo_xKyQ'}]}" ></script>
-  <!-- SCM Music Player script end -->
  
 </head>
-
-<body>
-{{player}}
-</body>
-
 
 <!--- Home page templates [shows] -->
 <template name="shows_page">
@@ -199,7 +188,8 @@
 <div class="container panel-container" role="main">
 
         {{>nav_bar}}
-        {{>change_song}}
+
+        {{>song_player}}
         <div class="row">
         {{>sections_pane}}
         {{>moves_pane}}
@@ -213,8 +203,20 @@
 
 </template>
 
+<template name="song_player">
+{{#if edit_mode}}
+  {{>change_song}}
+{{else}}
+  <div class="row">
+    <audio controls style="width:1000px; padding-bottom:2em; padding-top:2em;">
+      <source src= "http://api.soundcloud.com/tracks/137074191/stream?client_id=dcfa20cb4e60440dbf3e8bb3c54b68a8">
+    </audio>
+  </div>  
+{{/if}}
+
+</template>
+
 <template name="change_song">
-  {{#if edit_mode}}
   <div class="row">
     <div class="col-sm-9">
       <div class="panel panel-default">
@@ -232,7 +234,6 @@
       </div>
     </div>
   </div>
-  {{/if}}
 </template>
 
 
@@ -289,7 +290,7 @@
 
 <template name="update_section">
   <div class="input-group edit" id="{{_id}}-form">
-    <input type="text" id="update-section" class="form-control">{{name}}
+    <input type="text" id="update-section" class="form-control" placeholder="{{name}}">
      <span class="input-group-btn">
       <button class="btn btn-default update-btn update-section-btn" id = "{{_id}}" type="button">Update</button>
     </span>      
@@ -366,13 +367,13 @@
     <div class="form-group edit" style="padding-top:0.5em;">
       <label for="update-move-title" class="col-sm-2 control-label">Title</label>
        <div class="col-sm-10"> 
-        <input class="form-control" id="update-move-title"/>{{name}}   
+        <input class="form-control" id="update-move-title" placeholder="{{name}}"/>   
        </div>
     </div>
     <div class="form-group edit">
       <label for="update-move" class="col-sm-2 control-label">Moves</label>
        <div class="col-sm-10"> 
-        <textarea class="form-control" id="update-move" rows="3"></textarea>{{info}}
+        <textarea class="form-control" id="update-move" rows="3" placeholder="{{info}}"></textarea>
        </div>
     </div>         
     <div class="form-group edit">

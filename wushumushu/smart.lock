@@ -5,7 +5,8 @@
       "iron-router": {},
       "jquery-ui": {},
       "bootstrap-3": {},
-      "wait-on-lib": {}
+      "soundcloud": {},
+      "accounts-soundcloud": {}
     },
     "packages": {
       "iron-router": {
@@ -23,10 +24,15 @@
         "tag": "v3.1.1-1",
         "commit": "63dd38968828bb8963636df93e9a1c45e2dfe67e"
       },
-      "wait-on-lib": {
-        "git": "https://github.com/DerMambo/wait-on-lib.git",
-        "tag": "v0.0.3",
-        "commit": "ee83a431019b59c341903c3f732ff3d8d038a8ce"
+      "soundcloud": {
+        "git": "https://github.com/sylvaingi/meteor-soundcloud.git",
+        "tag": "v0.1.1",
+        "commit": "7e152a1fa892d73d9ef41f070f6d112014283983"
+      },
+      "accounts-soundcloud": {
+        "git": "https://github.com/sylvaingi/meteor-accounts-soundcloud.git",
+        "tag": "v0.1.2",
+        "commit": "962879b116bdb107752fc1381d0e840f802e00ca"
       },
       "blaze-layout": {
         "git": "https://github.com/EventedMind/blaze-layout.git",

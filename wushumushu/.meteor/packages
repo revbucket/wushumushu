@@ -10,4 +10,6 @@ jquery
 autopublish
 jquery-ui
 bootstrap-3
-wait-on-lib
+soundcloud
+accounts-ui
+accounts-soundcloud

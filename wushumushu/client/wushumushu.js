@@ -6,6 +6,7 @@ Acts = new Meteor.Collection("acts");
 Sections = new Meteor.Collection("sections");
 Moves = new Meteor.Collection("moves");
 Weapons = new Meteor.Collection("weapons");
+Songs = new Meteor.Collection("songs");
 
 
 // ID of current show, act, section, move, weapon
@@ -16,6 +17,7 @@ Session.setDefault('current_act_name', null);  //name for breadcrumb purposes
 Session.setDefault('current_section_id', null);
 Session.setDefault('current_move_id', null);
 Session.setDefault('current_weapon_id', null);
+Session.setDefault('current_song_id', null);
 
 // Edit mode: true if editing, false otherwise
   Session.setDefault('edit_mode',  false);
@@ -27,7 +29,6 @@ Session.setDefault('current_weapon_id', null);
 // Var for current song
   Session.setDefault('current_song', null);
 
-//var dataConfig="{'skin':'skins/tunes/skin.css','volume':50,'autoplay':false,'shuffle':false,'repeat':1,'placement':'top','showplaylist':false,'playlist':[{'title':'Ellie Goulding Lights','url':'https://www.youtube.com/watch?v=0NKUpo_xKyQ'}]}"
 
 ///////////DEBUGGING METHODS /////////////
 var setSessionVars = function() {
@@ -405,26 +406,29 @@ Template.acts_page.acts = function() {
 
 
 
-/////////// Helper for act_edit_page /////////////
-Template.act_edit_page.music_player = function() {
-  $.getScript("http://scmplayer.net/script.js?data-config='{'skin':'skins/tunes/skin.css','volume':50,'autoplay':false,'shuffle':false,'repeat':1,'placement':'top','showplaylist':false,'playlist':[{'title':'Ellie Goulding Lights','url':'https://www.youtube.com/watch?v=0NKUpo_xKyQ'}]}'", function() {
-    console.log('trying to load music player');
-  });
-}
-
-
 //////////// Helper for change_song //////////
-Template.change_song.edit_mode = function() {
+Template.song_player.edit_mode = function() {
   return Session.equals('edit_mode', true);
 }
 
 Template.change_song.events({
-  'click .choose-song-btn': function() {
+  'click .choose-song-btn': function(evt, template) {
+    //evt.preventDefault();
     var songTitle = template.find("#song-title").value
     var songURL = template.find("#song-url").value
-    //SCM.loadPlaylist([{title: songTitle, url: songURL}]);
+    console.log('choose song button pressed');
+
+    /*SC.initialize({
+      client_id: "5fd98f74f1cfa3c22b3330bb71ac478a",
+      redirect_uri: "http://example.com/callback.html",
+    });
+
+    SC.get("/tracks", {title: songTitle}, function(tracks) {
+      console.log(tracks);
+    }); */
   }
 })
+
 
 
 ////////// Helper for sections_pane //////////
@@ -580,6 +584,7 @@ Template.display_move.events({
 
 Template.update_move.events({
   'click .update-move-btn': function(evt, template) {
+    //evt.preventDefault();
     var newName = template.find("#update-move-title").value;
     var newInfo = template.find("#update-move").value;
     if (newName !== "") {
@@ -605,6 +610,7 @@ Template.update_move.events({
 
 Template.add_move.events({
   'click #move-btn': function(evt, template) {
+    //evt.preventDefault();
     var newName = template.find("#add-move-title").value;
     var newInfo = template.find("#add-move").value;
     if (newName !== "") {
