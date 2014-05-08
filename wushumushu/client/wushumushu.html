@@ -157,28 +157,28 @@
 
 <template name="nav_bar">
 <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-    {{#if loading}}
-       <div class='container-fluid'>
-       Nav bar loading
-       </div>
-    {{else}}
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         <ul class="nav navbar-nav navbar-left">
             <ol class="breadcrumb list inline">
               <li><a href ="{{pathFor 'home'}}"> Home </a> </li>
+              {{#unless shows_loading}}
               {{#if show_selected}}
                 <li><a href="#" onclick="Router.go('actsShow',{_id: Session.get('current_show_id')})" > {{current_show_name}}</a></li>
+                {{#unless acts_loading}}
                 {{#if act_selected}}
                   <li> <a href = '#'>{{current_act_name}} </a></li>
+                  {{#unless sections_loading}}
                   {{#if section_selected}}
                   <li> <a href = '#'>{{current_section_name}}</a></li>
                   {{/if}}
+                  {{/unless}}
                 {{/if}}
+                {{/unless}}
               {{/if}}
+              {{/unless}}
             </ol>
         </ul>
-
         <ul class="nav navbar-nav navbar-right">
             <div class="btn-group">
               <button type="button" class="btn btn-default {{edit_class}}" id="edit-mode-button">Edit</button>
@@ -187,7 +187,6 @@
         </ul>
   
     </div><!--container-fluid -->
-    {{/if}}
 </nav>
 </template>
 

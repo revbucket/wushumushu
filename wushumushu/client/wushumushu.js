@@ -83,7 +83,19 @@ Deps.autorun(function () {
 
 ////////// Helpers for navbar ////////////
 Template.nav_bar.loading = function() {
+  return ((!showsHandle.ready()) || (!actsHandle.ready()) || (!sectionsHandle.ready()));
+}
+
+Template.nav_bar.shows_loading = function() {
   return !showsHandle.ready();
+}
+
+Template.nav_bar.acts_loading = function() {
+  return !actsHandle.ready();
+}
+
+Template.nav_bar.sections_loading = function() {
+  return !sectionsHandle.ready();
 }
 
 Template.nav_bar.show_selected = function() {
