@@ -5,9 +5,8 @@
 
 standard-app-packages
 insecure
-iron-router
 jquery
 autopublish
-jquery-ui
+iron-router
 bootstrap-3
-wait-on-lib
+jquery-ui
