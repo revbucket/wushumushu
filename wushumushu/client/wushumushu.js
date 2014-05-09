@@ -185,13 +185,6 @@ Template.shows_page.edit_mode = function() {
   return Session.equals('edit_mode', true);
 }
 
-Template.shows_page.rendered = function() {
-  $("#all-shows").sortable();
-  $(".show-item").disableSelection();
-  $(".show-item").draggable();
-  $("#all-shows").sortable();
-}
-
 function loadDatetimePickers() {
   $(".date_picker").datepicker({
     changeMonth : true ,
