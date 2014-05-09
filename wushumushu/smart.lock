@@ -4,7 +4,11 @@
     "basePackages": {
       "iron-router": {},
       "bootstrap-3": {},
+
       "jquery-ui": {}
+
+      "accounts-soundcloud": {}
+
     },
     "packages": {
       "iron-router": {
@@ -17,15 +21,27 @@
         "tag": "v3.1.1-1",
         "commit": "63dd38968828bb8963636df93e9a1c45e2dfe67e"
       },
+
       "jquery-ui": {
         "git": "https://github.com/TimHeckel/meteor-jquery-ui.git",
         "tag": "v1.9.2",
         "commit": "c437d45edcf1367df8d5ffa8bad2867758030bd2"
+
+      "accounts-soundcloud": {
+        "git": "https://github.com/sylvaingi/meteor-accounts-soundcloud.git",
+        "tag": "v0.1.2",
+        "commit": "962879b116bdb107752fc1381d0e840f802e00ca"
+
       },
       "blaze-layout": {
         "git": "https://github.com/EventedMind/blaze-layout.git",
         "tag": "v0.2.4",
         "commit": "b40e9b0612329288d75cf52ad14a7da64bb8618f"
+      },
+      "soundcloud": {
+        "git": "https://github.com/sylvaingi/meteor-soundcloud.git",
+        "tag": "v0.1.1",
+        "commit": "7e152a1fa892d73d9ef41f070f6d112014283983"
       }
     }
   }

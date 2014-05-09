@@ -16,6 +16,7 @@ Session.setDefault('current_act_name', null);  //name for breadcrumb purposes
 Session.setDefault('current_section_id', null);
 Session.setDefault('current_move_id', null);
 Session.setDefault('current_weapon_id', null);
+Session.setDefault('current_song_url', null);
 
 // Edit mode: true if editing, false otherwise
   Session.setDefault('edit_mode',  false);
@@ -24,10 +25,12 @@ Session.setDefault('current_weapon_id', null);
   Session.setDefault('editing_section', null);
   Session.setDefault('editing_move', null);
 
-// Var for current song
-  Session.setDefault('current_song', null);
 
-//var dataConfig="{'skin':'skins/tunes/skin.css','volume':50,'autoplay':false,'shuffle':false,'repeat':1,'placement':'top','showplaylist':false,'playlist':[{'title':'Ellie Goulding Lights','url':'https://www.youtube.com/watch?v=0NKUpo_xKyQ'}]}"
+var clientId = "5fd98f74f1cfa3c22b3330bb71ac478a";
+
+var songOptions = [];
+
+Session.setDefault('song_options', null);
 
 ///////////DEBUGGING METHODS /////////////
 var setSessionVars = function() {
@@ -69,7 +72,7 @@ Deps.autorun(function () {
 
   var act_id = Session.get('current_act_id');
   if (act_id) {
-    sectionsHandle = Meteor.subscribe('sections', act_id)
+    sectionsHandle = Meteor.subscribe('sections', act_id);
     movesHandle = Meteor.subscribe('moves', act_id);
     weaponsHandle = Meteor.subscribe('weapons', act_id);
   }
@@ -405,26 +408,119 @@ Template.acts_page.acts = function() {
 
 
 
-/////////// Helper for act_edit_page /////////////
-Template.act_edit_page.music_player = function() {
-  $.getScript("http://scmplayer.net/script.js?data-config='{'skin':'skins/tunes/skin.css','volume':50,'autoplay':false,'shuffle':false,'repeat':1,'placement':'top','showplaylist':false,'playlist':[{'title':'Ellie Goulding Lights','url':'https://www.youtube.com/watch?v=0NKUpo_xKyQ'}]}'", function() {
-    console.log('trying to load music player');
-  });
+//////////// Helper for change_song //////////
+Template.song_player.loading = function() {
+  Session.set('song_options', []);
 }
 
+Template.song_player.stream_url = function() {
+  console.log('testing song url');
+  if (!Session.equals('current_act_id', undefined)) {
+    console.log('trying to get song url');
+    console.log(Acts.findOne({_id: Session.get('current_act_id')}));
+    console.log(Acts.findOne({_id: Session.get('current_act_id')}).stream_url);
+    var url = Acts.findOne({_id: Session.get('current_act_id')}).stream_url + "?client_id=" + clientId;
+    Session.set('current_song_url', url);
+    return url;
+  }
+  /*console.log(act_data);
+  var act_song = act_data.fetch()[0];
+  console.log(act_song);
+  Session.set('current_song_url', act_song['stream_url']);
+  console.log(Session.get('current_song_url'));
+  return Session.get('current_song_url');*/
+  //return "hello world!";
+}
 
-//////////// Helper for change_song //////////
-Template.change_song.edit_mode = function() {
+Template.song_player.rendered = function() {
+  console.log('song player rendered');
+  var audio = $("player");
+  $("#current_song").attr("src", Session.get("current_song_url"));
+
+  audio[0].pause();
+  audio[0].load();//suspends and restores all audio element
+}
+
+Template.song_player.edit_mode = function() {
   return Session.equals('edit_mode', true);
 }
 
+Template.choose_song.song_options = function() {
+  //console.log(songOptions);
+  console.log(Session.get('song_options'));
+  //console.log(Session.equals('song_options', []));
+  return Session.get('song_options');
+}
+
 Template.change_song.events({
-  'click .choose-song-btn': function() {
+  'click .choose-song-btn': function(evt, template) {
+    evt.preventDefault();
     var songTitle = template.find("#song-title").value
-    var songURL = template.find("#song-url").value
-    //SCM.loadPlaylist([{title: songTitle, url: songURL}]);
+    var artist = template.find("#artist").value
+    console.log('songTitle: ' + songTitle + " Artist: " + artist);
+
+    SC.initialize({
+      client_id: clientId,
+      redirect_uri: "http://example.com/callback.html",
+    });
+
+    if (songTitle !== "") {
+      SC.get("/tracks", {q: songTitle}, function(tracks) {
+        songOptions = [];
+        for (var i=0; i < tracks.length; i++) {
+          songOptions.push({id: tracks[i]['id'], 
+            stream_url: tracks[i]['stream_url'], 
+            title: tracks[i]['title']});
+        }
+        //console.log(songOptions);
+        Session.set('song_options', songOptions);
+
+        /*console.log(tracks);
+        console.log(tracks[0]['stream_url']);
+        var song_stream_url = tracks[0]['stream_url'];
+        Acts.update(Session.get("current_act_id"), {$set: {stream_url: song_stream_url}});
+        console.log(Acts.find(Session.get("current_act_id")));
+        Session.set('current_song_url', song_stream_url + "?client_id=" + clientId);*/
+      });
+    } else {
+      SC.get("/tracks", {q: artist}, function(tracks) {
+        songOptions = [];
+        for (var i=0; i < tracks.length; i++) {
+          songOptions.push({id: tracks[i]['id'], 
+            stream_url: tracks[i]['stream_url'], 
+            title: tracks[i]['title']});
+        }
+        //console.log(songOptions);
+        Session.set('song_options', songOptions);
+
+        /*console.log(tracks);
+        console.log(tracks[0]['stream_url']);
+        var song_stream_url = tracks[0]['stream_url'];
+        Acts.update(Session.get("current_act_id"), {$set: {stream_url: song_stream_url}});
+        console.log(Acts.find(Session.get("current_act_id")));
+        Session.set('current_song_url', song_stream_url + "?client_id=" + clientId);*/
+      });
+    }
+
   }
 })
+
+Template.show_song_option.events({
+  'click .glyphicon-ok': function(evt, template) {
+    console.log(evt.target.id);
+    var id = evt.target.id.slice(0, -8);
+    console.log(id);
+    var result = Session.get('song_options').filter(function (obj) {
+      return obj.id == id;
+    });
+    var selected_song = result[0];
+    console.log(selected_song);
+    Session.set('current_song_url',selected_song['stream_url'] + "?client_id=" + clientId);
+    Acts.update(Session.get("current_act_id"), {$set: {stream_url: selected_song['stream_url']}});
+    Session.set('song_options', []);
+  }
+})
+
 
 
 ////////// Helper for sections_pane //////////
@@ -580,6 +676,7 @@ Template.display_move.events({
 
 Template.update_move.events({
   'click .update-move-btn': function(evt, template) {
+    //evt.preventDefault();
     var newName = template.find("#update-move-title").value;
     var newInfo = template.find("#update-move").value;
     if (newName !== "") {
@@ -605,6 +702,7 @@ Template.update_move.events({
 
 Template.add_move.events({
   'click #move-btn': function(evt, template) {
+    //evt.preventDefault();
     var newName = template.find("#add-move-title").value;
     var newInfo = template.find("#add-move").value;
     if (newName !== "") {
