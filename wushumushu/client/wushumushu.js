@@ -86,7 +86,19 @@ Deps.autorun(function () {
 
 ////////// Helpers for navbar ////////////
 Template.nav_bar.loading = function() {
+  return ((!showsHandle.ready()) || (!actsHandle.ready()) || (!sectionsHandle.ready()));
+}
+
+Template.nav_bar.shows_loading = function() {
   return !showsHandle.ready();
+}
+
+Template.nav_bar.acts_loading = function() {
+  return !actsHandle.ready();
+}
+
+Template.nav_bar.sections_loading = function() {
+  return !sectionsHandle.ready();
 }
 
 Template.nav_bar.show_selected = function() {
@@ -147,6 +159,24 @@ Template.nav_bar.events({
 
 ////////// Helpers for shows /////////////
 
+/*
+        <ul class="list-group" id="all-shows">
+          {{#each shows}}
+          <li class="list-group-item show-item" id="show-{{_id}}" style="pointer-events: all;">
+          <table style="width: 100%; margin: 0px;"><tr>
+          <td style="vertical-align: top; font-size: 22pt;">
+          <b><div> {{name}} </div></b>
+          </td><td style="text-align: right; vertical-align: top; width: 40%;">
+          <div> {{location}} </div>
+          <div> {{date}} </div>
+          <div>
+            <span> {{start}} </span> &#8212; <span> {{end}} </span>
+          </div>
+          </td></tr></table></li>
+          {{/each}}
+        </ul><!-- end list-group of shows -->
+*/
+
 Template.shows_page.loading = function() {
   return !showsHandle.ready();
 }
@@ -155,11 +185,19 @@ Template.shows_page.edit_mode = function() {
   return Session.equals('edit_mode', true);
 }
 
+Template.shows_page.rendered = function() {
+  $("#all-shows").sortable();
+  $(".show-item").disableSelection();
+  $(".show-item").draggable();
+  $("#all-shows").sortable();
+}
+
 function loadDatetimePickers() {
   $(".date_picker").datepicker({
     changeMonth : true ,
     changeYear  : true ,
   });
+  $(".time_picker").timepicker();
   /*
   
   hold off until bug-free version of timepicker found
@@ -197,9 +235,9 @@ Template.shows_page.events({
             var new_show_id = Shows.insert({
               name: f.showName,
               date: f.showDate,
-              timeStart: f.showTimeStart,
-              timeEnd: f.showTimeEnd,
-              loc: f.showLocation,
+              start: f.showTimeStart,
+              end: f.showTimeEnd,
+              location: f.showLocation,
             });
             e.preventDefault();
             $.prompt.close();
@@ -224,13 +262,13 @@ Template.shows_page.events({
       'class="date_picker" value="'+ showCursor.date +
       '"></td></tr>'+rowSpacing+
       '<tr><td><label>Start time</label></td><td><input type="text" name="showTimeStart" '+
-      'class="time_picker" value="'+ showCursor.timeStart +
+      'class="time_picker" value="'+ showCursor.start +
       '"></td></tr>'+rowSpacing+
       '<tr><td><label>End time</label></td><td><input type="text" name="showTimeEnd" '+
-      'class="time_picker" value="'+ showCursor.timeEnd +
+      'class="time_picker" value="'+ showCursor.end +
       '"></td></tr>'+rowSpacing+
       '<tr><td><label>Location</label></td><td><input type="text" name="showLocation" '+
-      'value="'+ showCursor.loc +
+      'value="'+ showCursor.location +
       '"></td></tr></table><br>Fields marked \* are required<br><br>';
       var editShowPrompt = {
         state0: {
@@ -244,9 +282,9 @@ Template.shows_page.events({
               Shows.update({ _id: showID }, {
                 name: f.showName,
                 date: f.showDate,
-                timeStart: f.showTimeStart,
-                timeEnd: f.showTimeEnd,
-                loc: f.showLocation,
+                start: f.showTimeStart,
+                end: f.showTimeEnd,
+                location: f.showLocation,
                 show_id: Session.get('current_show_id')
               });
               e.preventDefault();
