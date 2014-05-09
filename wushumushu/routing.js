@@ -13,6 +13,7 @@ Router.map(function() {
     	Session.set('current_section_id', null);
     	Session.set('current_move_id', null);
     	Session.set('current_weapon_id', null);
+      Session.set('current_song_url', null);
     }
   });
 
@@ -34,6 +35,7 @@ Router.map(function() {
     	Session.set('current_section_id', null);
     	Session.set('current_move_id', null);
     	Session.set('current_weapon_id', null);
+      Session.set('current_song_url', null);
   	}
     
   });
@@ -54,6 +56,7 @@ Router.map(function() {
     	Session.set('current_move_id', null);
     	Session.set('current_weapon_id', null);
   		Session.set('current_act_id', this.params._id);
+      Session.set('current_song_url', null);
     }
   });
 });

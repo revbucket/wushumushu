@@ -202,16 +202,20 @@
 </template>
 
 <template name="song_player">
-{{#if edit_mode}}
-  {{>change_song}}
+{{#if loading}}
+  Loading song pane...
 {{else}}
-  <div class="row">
-    <audio controls style="width:1000px; padding-bottom:2em; padding-top:2em;">
-      <source src= "{{song_url}}">
-    </audio>
-  </div>  
+  {{#if edit_mode}}
+    {{>change_song}}
+    {{>choose_song}}
+  {{else}}
+    <div class="row">
+      <audio controls style="width:1000px; padding-bottom:2em; padding-top:2em;">
+        <source src= "{{song_url}}">
+      </audio>
+    </div>  
+  {{/if}}
 {{/if}}
-
 </template>
 
 <template name="change_song">
@@ -233,6 +237,32 @@
       </div>
     </div>
   </div>
+</template>
+
+
+<template name="choose_song">
+  <div class="row">
+    <div class="col-sm-9">
+      <div class="panel panel-default">
+        <div class="panel-heading">Results</div>
+        <div class="list-group" id="song-list">
+          {{#each song_option}}
+            {{>show_song_option}}
+          {{/each}}
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+
+<template name="show_song_option">
+  <a class="list-group-item" id="{{id}}-song"> {{title}}
+    <div class="pull-right edit">
+      <span class="glyphicon glyphicon-ok" id="{{id}}-song-ok" style="padding-right:0.5em;"></span>
+      <span class="glyphicon glyphicon-remove" id="{{id}}-song-remove"></span>
+    </div>
+  </a>
 </template>
 
 

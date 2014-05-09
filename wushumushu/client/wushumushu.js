@@ -26,11 +26,10 @@ Session.setDefault('current_song_url', null);
   Session.setDefault('editing_section', null);
   Session.setDefault('editing_move', null);
 
-// Var for current song
-  Session.setDefault('current_song', null);
 
 var clientId = "5fd98f74f1cfa3c22b3330bb71ac478a";
 
+var songOptions = [];
 
 ///////////DEBUGGING METHODS /////////////
 var setSessionVars = function() {
@@ -56,6 +55,7 @@ var actsHandle = null;
 var sectionsHandle = null;
 var movesHandle = null;
 var weaponsHandle = null;
+var songsHandle = null;
 // Always be subscribed to shows, and only subscribe to acts for current show
 // Always be subscribed to the sections, moves and weapons for the selected act.
 Deps.autorun(function () {
@@ -75,11 +75,13 @@ Deps.autorun(function () {
     sectionsHandle = Meteor.subscribe('sections', act_id);
     movesHandle = Meteor.subscribe('moves', act_id);
     weaponsHandle = Meteor.subscribe('weapons', act_id);
+    songsHandle = Meteor.subscribe('songs');
   }
   else {
     sectionsHandle = null;
     movesHandle = null;
     weaponsHandle = null;
+    songsHandle = null;
   }
 });
 
@@ -409,6 +411,10 @@ Template.acts_page.acts = function() {
 
 
 //////////// Helper for change_song //////////
+Template.song_player.loading = function() {
+  return !songsHandle.ready();
+}
+
 Template.song_player.song_url = function() {
   var act_song = Songs.find({act_id: Session.get("current_act_id")});
   console.log(act_song);
@@ -435,6 +441,14 @@ Template.change_song.events({
 
     if (songTitle !== "") {
       SC.get("/tracks", {q: songTitle}, function(tracks) {
+        for (var i=0; i < tracks.length; i++) {
+          songOptions.push({id: tracks[i]['id'], 
+            stream_url: tracks[i]['stream_url'], 
+            title: tracks[i]['title']});
+        }
+        console.log(songOptions);
+
+        console.log(tracks[0]);
         console.log(tracks[0]['stream_url']);
         var song_stream_url = tracks[0]['stream_url'];
         Songs.insert({stream_url: song_stream_url, act_id: Session.get("current_act_id")});
@@ -443,7 +457,14 @@ Template.change_song.events({
       });
     } else {
       SC.get("/tracks", {q: artist}, function(tracks) {
-        //console.log(tracks);
+        for (var i=0; i < tracks.length; i++) {
+          songOptions.push({id: tracks[i]['id'], 
+            stream_url: tracks[i]['stream_url'], 
+            title: tracks[i]['title']});
+        }
+        console.log(songOptions);
+        
+        console.log(tracks);
         console.log(tracks[0]['stream_url']);
         var song_stream_url = tracks[0]['stream_url'];
         Songs.insert({stream_url: song_stream_url, act_id: Session.get("current_act_id")});

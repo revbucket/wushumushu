@@ -32,8 +32,8 @@ Meteor.publish('sections', function(act_id) {
   return Sections.find({act_id: act_id});
 });
 
-/*Moves -- {title: String, 
-	        description: String, 
+/*Moves -- {name: String, 
+	        info: String, 
 	        section_id: String,
 	        act_id: String}
 */
@@ -62,9 +62,8 @@ Meteor.publish('weapons', function (act_id) {
 			act_id: String}
 */
 Songs = new Meteor.Collection("songs");
-Meteor.publish('songs', function (act_id) {
-	check(act_id, String);
-	return Songs.find({act_id: act_id});
+Meteor.publish('songs', function () {
+	return Songs.find();
 });
 
 
