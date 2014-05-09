@@ -413,8 +413,16 @@ Template.song_player.loading = function() {
   Session.set('song_options', []);
 }
 
-Template.song_player.song_url = function() {
-  return Acts.find({_id: Session.get("current_act_id")});
+Template.song_player.stream_url = function() {
+  console.log('testing song url');
+  if (!Session.equals('current_act_id', null)) {
+    console.log('trying to get song url');
+    console.log(Acts.findOne({_id: Session.get('current_act_id')}));
+    console.log(Acts.findOne({_id: Session.get('current_act_id')}).stream_url);
+    var url = Acts.findOne({_id: Session.get('current_act_id')}).stream_url + "?client_id=" + clientId;
+    Session.set('current_song_url', url);
+    return url;
+  }
   /*console.log(act_data);
   var act_song = act_data.fetch()[0];
   console.log(act_song);
@@ -429,7 +437,9 @@ Template.song_player.edit_mode = function() {
 }
 
 Template.choose_song.song_options = function() {
-  console.log(songOptions);
+  //console.log(songOptions);
+  console.log(Session.get('song_options'));
+  //console.log(Session.equals('song_options', []));
   return Session.get('song_options');
 }
 
@@ -492,7 +502,7 @@ Template.show_song_option.events({
     var id = evt.target.id.slice(0, -8);
     console.log(id);
     var result = Session.get('song_options').filter(function (obj) {
-      return obj.id = id;
+      return obj.id == id;
     });
     var selected_song = result[0];
     console.log(selected_song);
