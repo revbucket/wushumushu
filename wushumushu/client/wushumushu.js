@@ -207,9 +207,9 @@ Template.shows_page.events({
             var new_show_id = Shows.insert({
               name: f.showName,
               date: f.showDate,
-              timeStart: f.showTimeStart,
-              timeEnd: f.showTimeEnd,
-              loc: f.showLocation,
+              start: f.showTimeStart,
+              end: f.showTimeEnd,
+              location: f.showLocation,
             });
             e.preventDefault();
             $.prompt.close();
@@ -234,13 +234,13 @@ Template.shows_page.events({
       'class="date_picker" value="'+ showCursor.date +
       '"></td></tr>'+rowSpacing+
       '<tr><td><label>Start time</label></td><td><input type="text" name="showTimeStart" '+
-      'class="time_picker" value="'+ showCursor.timeStart +
+      'class="time_picker" value="'+ showCursor.start +
       '"></td></tr>'+rowSpacing+
       '<tr><td><label>End time</label></td><td><input type="text" name="showTimeEnd" '+
-      'class="time_picker" value="'+ showCursor.timeEnd +
+      'class="time_picker" value="'+ showCursor.end +
       '"></td></tr>'+rowSpacing+
       '<tr><td><label>Location</label></td><td><input type="text" name="showLocation" '+
-      'value="'+ showCursor.loc +
+      'value="'+ showCursor.location +
       '"></td></tr></table><br>Fields marked \* are required<br><br>';
       var editShowPrompt = {
         state0: {
@@ -254,9 +254,9 @@ Template.shows_page.events({
               Shows.update({ _id: showID }, {
                 name: f.showName,
                 date: f.showDate,
-                timeStart: f.showTimeStart,
-                timeEnd: f.showTimeEnd,
-                loc: f.showLocation,
+                start: f.showTimeStart,
+                end: f.showTimeEnd,
+                location: f.showLocation,
                 show_id: Session.get('current_show_id')
               });
               e.preventDefault();
