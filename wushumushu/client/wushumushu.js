@@ -415,7 +415,7 @@ Template.song_player.loading = function() {
 
 Template.song_player.stream_url = function() {
   console.log('testing song url');
-  if (!Session.equals('current_act_id', null)) {
+  if (!Session.equals('current_act_id', undefined)) {
     console.log('trying to get song url');
     console.log(Acts.findOne({_id: Session.get('current_act_id')}));
     console.log(Acts.findOne({_id: Session.get('current_act_id')}).stream_url);
@@ -430,6 +430,15 @@ Template.song_player.stream_url = function() {
   console.log(Session.get('current_song_url'));
   return Session.get('current_song_url');*/
   //return "hello world!";
+}
+
+Template.song_player.rendered = function() {
+  console.log('song player rendered');
+  var audio = $("player");
+  $("#current_song").attr("src", Session.get("current_song_url"));
+
+  audio[0].pause();
+  audio[0].load();//suspends and restores all audio element
 }
 
 Template.song_player.edit_mode = function() {
