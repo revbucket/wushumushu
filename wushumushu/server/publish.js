@@ -47,7 +47,8 @@ Meteor.publish('moves', function (act_id) {
 
 
 /*Weapons -- {name: String, 
-	          video_url: String, 
+	          video_url: String,
+	          song_url: String, 
 	          move_id: String
 	          act_id: String}
 */	      
@@ -58,13 +59,7 @@ Meteor.publish('weapons', function (act_id) {
 	return Weapons.find({act_id: act_id});
 });
 
-/*Songs -- {stream_url: String,
-			act_id: String}
-*/
-Songs = new Meteor.Collection("songs");
-Meteor.publish('songs', function () {
-	return Songs.find();
-});
+
 
 
 

@@ -6,7 +6,6 @@ Acts = new Meteor.Collection("acts");
 Sections = new Meteor.Collection("sections");
 Moves = new Meteor.Collection("moves");
 Weapons = new Meteor.Collection("weapons");
-Songs = new Meteor.Collection("songs");
 
 
 // ID of current show, act, section, move, weapon
@@ -57,7 +56,6 @@ var actsHandle = null;
 var sectionsHandle = null;
 var movesHandle = null;
 var weaponsHandle = null;
-var songsHandle = null;
 // Always be subscribed to shows, and only subscribe to acts for current show
 // Always be subscribed to the sections, moves and weapons for the selected act.
 Deps.autorun(function () {
@@ -77,13 +75,11 @@ Deps.autorun(function () {
     sectionsHandle = Meteor.subscribe('sections', act_id);
     movesHandle = Meteor.subscribe('moves', act_id);
     weaponsHandle = Meteor.subscribe('weapons', act_id);
-    songsHandle = Meteor.subscribe('songs');
   }
   else {
     sectionsHandle = null;
     movesHandle = null;
     weaponsHandle = null;
-    songsHandle = null;
   }
 });
 
@@ -414,14 +410,17 @@ Template.acts_page.acts = function() {
 
 //////////// Helper for change_song //////////
 Template.song_player.loading = function() {
-  return !songsHandle.ready();
+  Session.set('song_options', []);
 }
 
 Template.song_player.song_url = function() {
-  var act_song = Songs.find({act_id: Session.get("current_act_id")});
+  return Acts.find({_id: Session.get("current_act_id")});
+  /*console.log(act_data);
+  var act_song = act_data.fetch()[0];
   console.log(act_song);
-  //current_song_url = url + "?client_id=" + clientId;
-  return current_song_url;
+  Session.set('current_song_url', act_song['stream_url']);
+  console.log(Session.get('current_song_url'));
+  return Session.get('current_song_url');*/
   //return "hello world!";
 }
 
@@ -430,7 +429,7 @@ Template.song_player.edit_mode = function() {
 }
 
 Template.choose_song.song_options = function() {
-  console.log('songOptions are' + songOptions);
+  console.log(songOptions);
   return Session.get('song_options');
 }
 
@@ -448,40 +447,58 @@ Template.change_song.events({
 
     if (songTitle !== "") {
       SC.get("/tracks", {q: songTitle}, function(tracks) {
+        songOptions = [];
         for (var i=0; i < tracks.length; i++) {
           songOptions.push({id: tracks[i]['id'], 
             stream_url: tracks[i]['stream_url'], 
             title: tracks[i]['title']});
         }
-        console.log(songOptions);
+        //console.log(songOptions);
         Session.set('song_options', songOptions);
 
-        console.log(tracks[0]);
+        /*console.log(tracks);
         console.log(tracks[0]['stream_url']);
         var song_stream_url = tracks[0]['stream_url'];
-        Songs.insert({stream_url: song_stream_url, act_id: Session.get("current_act_id")});
-        console.log(Songs.find({act_id: Session.get("current_act_id")}));
-        current_song_url = song_stream_url + "?client_id=" + clientId;
+        Acts.update(Session.get("current_act_id"), {$set: {stream_url: song_stream_url}});
+        console.log(Acts.find(Session.get("current_act_id")));
+        Session.set('current_song_url', song_stream_url + "?client_id=" + clientId);*/
       });
     } else {
       SC.get("/tracks", {q: artist}, function(tracks) {
+        songOptions = [];
         for (var i=0; i < tracks.length; i++) {
           songOptions.push({id: tracks[i]['id'], 
             stream_url: tracks[i]['stream_url'], 
             title: tracks[i]['title']});
         }
-        console.log(songOptions);
+        //console.log(songOptions);
         Session.set('song_options', songOptions);
 
-        console.log(tracks);
+        /*console.log(tracks);
         console.log(tracks[0]['stream_url']);
         var song_stream_url = tracks[0]['stream_url'];
-        Songs.insert({stream_url: song_stream_url, act_id: Session.get("current_act_id")});
-        console.log(Songs.find({act_id: Session.get("current_act_id")}));
-        current_song_url = song_stream_url + "?client_id=" + clientId;
+        Acts.update(Session.get("current_act_id"), {$set: {stream_url: song_stream_url}});
+        console.log(Acts.find(Session.get("current_act_id")));
+        Session.set('current_song_url', song_stream_url + "?client_id=" + clientId);*/
       });
     }
 
+  }
+})
+
+Template.show_song_option.events({
+  'click .glyphicon-ok': function(evt, template) {
+    console.log(evt.target.id);
+    var id = evt.target.id.slice(0, -8);
+    console.log(id);
+    var result = Session.get('song_options').filter(function (obj) {
+      return obj.id = id;
+    });
+    var selected_song = result[0];
+    console.log(selected_song);
+    Session.set('current_song_url',selected_song['stream_url'] + "?client_id=" + clientId);
+    Acts.update(Session.get("current_act_id"), {$set: {stream_url: selected_song['stream_url']}});
+    Session.set('song_options', []);
   }
 })
 

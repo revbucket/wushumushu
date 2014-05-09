@@ -205,15 +205,16 @@
 {{#if loading}}
   Loading song pane...
 {{else}}
+  <div class="row">
+    <div class="col-sm-9">
+      <audio controls style="width:700px; padding-bottom:2em; padding-bottom:1em; padding-top:1em;">
+        <source src= "{{stream_url}}">
+      </audio>
+    </div>
+  </div>  
   {{#if edit_mode}}
     {{>change_song}}
     {{>choose_song}}
-  {{else}}
-    <div class="row">
-      <audio controls style="width:1000px; padding-bottom:2em; padding-top:2em;">
-        <source src= "{{song_url}}">
-      </audio>
-    </div>  
   {{/if}}
 {{/if}}
 </template>
@@ -257,10 +258,10 @@
 
 
 <template name="show_song_option">
-  <a class="list-group-item" id="{{id}}-song"> {{title}}
+  <a class="list-group-item song-option {{maybe_active}}" id="{{id}}-song"> {{title}}
     <div class="pull-right edit">
       <span class="glyphicon glyphicon-ok" id="{{id}}-song-ok" style="padding-right:0.5em;"></span>
-      <span class="glyphicon glyphicon-remove" id="{{id}}-song-remove"></span>
+      <!--<span class="glyphicon glyphicon-remove" id="{{id}}-song-remove"></span> -->
     </div>
   </a>
 </template>
