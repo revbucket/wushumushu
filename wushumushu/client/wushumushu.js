@@ -472,8 +472,8 @@ Template.song_player.stream_url = function() {
 
 Template.song_player.rendered = function() {
   console.log('song player rendered');
-  var audio = $("player");
-  $("#current_song").attr("src", Session.get("current_song_url"));
+  var audio = $("#player");
+  $("#current_song").attr("src", Session.get("current_song_url")).detach().appendTo("#player");;
 
   audio[0].pause();
   audio[0].load();//suspends and restores all audio element
@@ -556,6 +556,11 @@ Template.show_song_option.events({
     Session.set('current_song_url',selected_song['stream_url'] + "?client_id=" + clientId);
     Acts.update(Session.get("current_act_id"), {$set: {stream_url: selected_song['stream_url']}});
     Session.set('song_options', []);
+    var audio = $("#player");
+    $("#current_song").attr("src", Session.get("current_song_url")).detach().appendTo("#player");;
+
+    audio[0].pause();
+    audio[0].load();//suspends and restores all audio element
   }
 })
 
