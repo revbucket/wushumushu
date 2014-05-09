@@ -31,6 +31,8 @@ var clientId = "5fd98f74f1cfa3c22b3330bb71ac478a";
 
 var songOptions = [];
 
+Session.setDefault('song_options', null);
+
 ///////////DEBUGGING METHODS /////////////
 var setSessionVars = function() {
   pickedSection = Sections.findOne({act_id: Session.get("current_act_id")});
@@ -427,6 +429,11 @@ Template.song_player.edit_mode = function() {
   return Session.equals('edit_mode', true);
 }
 
+Template.choose_song.song_options = function() {
+  console.log('songOptions are' + songOptions);
+  return Session.get('song_options');
+}
+
 Template.change_song.events({
   'click .choose-song-btn': function(evt, template) {
     evt.preventDefault();
@@ -447,6 +454,7 @@ Template.change_song.events({
             title: tracks[i]['title']});
         }
         console.log(songOptions);
+        Session.set('song_options', songOptions);
 
         console.log(tracks[0]);
         console.log(tracks[0]['stream_url']);
@@ -463,7 +471,8 @@ Template.change_song.events({
             title: tracks[i]['title']});
         }
         console.log(songOptions);
-        
+        Session.set('song_options', songOptions);
+
         console.log(tracks);
         console.log(tracks[0]['stream_url']);
         var song_stream_url = tracks[0]['stream_url'];
