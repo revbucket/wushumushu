@@ -32,8 +32,8 @@ Meteor.publish('sections', function(act_id) {
   return Sections.find({act_id: act_id});
 });
 
-/*Moves -- {name: String, 
-	        info: String, 
+/*Moves -- {title: String, 
+	        description: String, 
 	        section_id: String,
 	        act_id: String}
 */

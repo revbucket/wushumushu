@@ -718,14 +718,14 @@ Template.update_move.events({
     if (newName !== "") {
       Moves.update(Session.get("editing_move"), 
         {$set: {
-          name: newName,
-          info: newInfo
+          title: newName,
+          description: newInfo
         }
       });
     } else {
       Moves.update(Session.get("editing_move"), 
         {$set: {
-          info: newInfo
+          description: newInfo
         }
       });
     }
@@ -744,8 +744,8 @@ Template.add_move.events({
     if (newName !== "") {
       Moves.insert(
         {
-          name: newName, 
-          info: newInfo,
+          title: newName, 
+          description: newInfo,
           section_id: Session.get("current_section_id"),
           act_id: Session.get('current_act_id')
         })

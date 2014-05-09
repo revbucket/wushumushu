@@ -2,10 +2,8 @@
   "packages": {
     "iron-router": {},
     "bootstrap-3": {},
-
-    "jquery-ui": {}
-
-    "accounts-soundcloud": {}
-
+    "jquery-ui": {},
+    "accounts-soundcloud": {},
+    "jquery-timepicker": {}
   }
 }

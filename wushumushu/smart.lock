@@ -4,11 +4,9 @@
     "basePackages": {
       "iron-router": {},
       "bootstrap-3": {},
-
-      "jquery-ui": {}
-
-      "accounts-soundcloud": {}
-
+      "jquery-ui": {},
+      "accounts-soundcloud": {},
+      "jquery-timepicker": {}
     },
     "packages": {
       "iron-router": {
@@ -21,17 +19,20 @@
         "tag": "v3.1.1-1",
         "commit": "63dd38968828bb8963636df93e9a1c45e2dfe67e"
       },
-
       "jquery-ui": {
         "git": "https://github.com/TimHeckel/meteor-jquery-ui.git",
         "tag": "v1.9.2",
         "commit": "c437d45edcf1367df8d5ffa8bad2867758030bd2"
-
+      },
       "accounts-soundcloud": {
         "git": "https://github.com/sylvaingi/meteor-accounts-soundcloud.git",
         "tag": "v0.1.2",
         "commit": "962879b116bdb107752fc1381d0e840f802e00ca"
-
+      },
+      "jquery-timepicker": {
+        "git": "https://github.com/scmart/meteor-timepicker.git",
+        "tag": "v1.3.8",
+        "commit": "c98bdb9791c84ba2710eaba7023663dd5f5afe44"
       },
       "blaze-layout": {
         "git": "https://github.com/EventedMind/blaze-layout.git",
