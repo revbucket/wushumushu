@@ -156,12 +156,37 @@ Template.nav_bar.events({
 
 ////////// Helpers for shows /////////////
 
+/*
+        <ul class="list-group" id="all-shows">
+          {{#each shows}}
+          <li class="list-group-item show-item" id="show-{{_id}}" style="pointer-events: all;">
+          <table style="width: 100%; margin: 0px;"><tr>
+          <td style="vertical-align: top; font-size: 22pt;">
+          <b><div> {{name}} </div></b>
+          </td><td style="text-align: right; vertical-align: top; width: 40%;">
+          <div> {{location}} </div>
+          <div> {{date}} </div>
+          <div>
+            <span> {{start}} </span> &#8212; <span> {{end}} </span>
+          </div>
+          </td></tr></table></li>
+          {{/each}}
+        </ul><!-- end list-group of shows -->
+*/
+
 Template.shows_page.loading = function() {
   return !showsHandle.ready();
 }
 
 Template.shows_page.edit_mode = function() {
   return Session.equals('edit_mode', true);
+}
+
+Template.shows_page.rendered = function() {
+  $("#all-shows").sortable();
+  $(".show-item").disableSelection();
+  $(".show-item").draggable();
+  $("#all-shows").sortable();
 }
 
 function loadDatetimePickers() {
