@@ -169,6 +169,7 @@ function loadDatetimePickers() {
     changeMonth : true ,
     changeYear  : true ,
   });
+  $(".time_picker").timepicker();
   /*
   
   hold off until bug-free version of timepicker found
